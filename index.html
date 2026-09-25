@@ -37,220 +37,323 @@
     const TELEGRAM_CHAT_ID = "1065529492";
 
     // ==========================================
-    // SCIENTIFIC DATA & SOURCES (BOOKS & PAPERS)
+    // MULTILINGUAL DICTIONARY
     // ==========================================
+    const TRANSLATIONS = {
+      et: {
+        title: "Alkohol ja aju",
+        subtitle: "Gümnaasiumi praktiline töö • Hariduslik veebikeskkond",
+        nav: {
+          hero: "Avaleht",
+          brain: "Mis toimub ajus?",
+          memory: "Mälutest",
+          attention: "Tähelepanutest",
+          quiz: "Müüt või fakt?",
+          feedback: "Küsimustik",
+          sources: "Allikad"
+        },
+        heroTitle: "Mis toimub mälu ja tähelepanuga",
+        heroTitleColored: "alkoholi tarvitamisel?",
+        heroDesc: "Teaduspõhine ja interaktiivne ülevaade sellest, kuidas etanool mõjutab noore, alles areneva aju funktsioone: lühimälu, tähelepanu koondamist, reageerimiskiirust ja otsustamisprotsesse.",
+        btnStart: "Alusta uurimist",
+        btnTryTests: "Proovi interaktiivseid teste",
+        btnFillSurvey: "Täida küsimustik",
+        brainSectionTitle: "2. Mis toimub ajus?",
+        brainSectionDesc: "Klõpsa valdkonnal, et näha lähemat selgitust etanooli mõju kohta konkreetses ajuosas.",
+        btnReadMore: "Loe rohkem teaduslikku tausta",
+        btnClose: "Sulge selgitus",
+        memoryTitle: "3. Pane oma mälu proovile",
+        memoryDesc: "See on üldine lühimälu harjutus teabe säilitamise demonstreerimiseks. See EI SIMULEERI ega diagnoosi alkoholijoovet.",
+        attentionTitle: "4. Kui tähelepanelik sa oled?",
+        attentionDesc: "Leia ruudustikust üles kõik märgitud sihtsümbolid nii kiiresti ja täpselt kui võimalik.",
+        quizTitle: "5. Müüt või fakt?",
+        quizDesc: "KONTROLLI OMA TEADMISI: Vali, kas esitatud väide on tõene fakt või levinud müüt.",
+        sourcesTitle: "7. Allikad ja viited (Teaduskirjandus)",
+        aboutTitle: "Projektist",
+        aboutDesc: "See veebikeskkond on loodud 11. klassi praktilise töö raames gümnaasiumiõpilastele hariduslikul eesmärgil.",
+        authorLabel: "Autor:",
+        schoolLabel: "Kool:",
+        yearLabel: "Aasta:",
+        // Survey labels
+        surveyTitle: "6. Osale uurimuses ja anna tagasisidet",
+        surveyDesc: "Palun vasta järgmistele küsimustele. Sinu vastused aitavad täiendada praktilise töö analüüsi ja saadetakse otse uurimistöö autorile.",
+        block1: "Plokk 1: Demograafia ja algseis",
+        schoolInput: "Kool:",
+        gradeInput: "Klass:",
+        preKnowledgeLabel: "Kuidas hindasid oma teadmisi alkoholi mõjust ajule ENNE selle lehe külastamist? (1 - väga madalad, 5 - väga põhjalikud)",
+        block2: "Plokk 2: Teadmiste kontroll",
+        q1Label: "1. Mis vanuseni jätkub teaduslikult inimese aju (eriti prefrontaalse korteksi) aktiivne areng?",
+        q2Label: "2. Mis juhtub mälu ja hippokampusega mälulünga (blackout) ajal?",
+        q3Label: "3. Kas kohv või külm dušš kiirendavad etanooli lagundamist maksas?",
+        block3: "Plokk 3: Veebikeskkonna ja interaktiivsuse hindamine",
+        q4Label: "4. Kuivõrd arusaadavalt olid keerulised neurobioloogilised protsessid lehel lahti seletatud? (1 - keeruline, 5 - väga selge)",
+        q5Label: "5. Milline interaktiivne element aitas materjali kõige paremini mõista?",
+        q6Label: "6. Kas see veebileht pani Sind ümber mõtlema mõnda alkoholiga seotud müüti? Kui jah, siis millist?",
+        btnSend: "Saada vastused uurijale",
+        sending: "Saadab vastuseid...",
+        sendSuccess: "Suur tänu! Sinu vastused on edukalt saadetud.",
+        sendError: "Viga saatmisel. Kontrolli internetiühendust."
+      },
+      en: {
+        title: "Alcohol and Brain",
+        subtitle: "High School Practical Work • Educational Web Platform",
+        nav: {
+          hero: "Home",
+          brain: "Brain Mechanisms",
+          memory: "Memory Test",
+          attention: "Attention Test",
+          quiz: "Myth or Fact?",
+          feedback: "Survey",
+          sources: "Sources"
+        },
+        heroTitle: "What happens to memory and attention",
+        heroTitleColored: "under the influence of alcohol?",
+        heroDesc: "A science-based interactive overview of how ethanol affects developing brain functions: short-term memory, attention focus, reaction time, and decision-making.",
+        btnStart: "Start Exploring",
+        btnTryTests: "Try Interactive Tests",
+        btnFillSurvey: "Take the Survey",
+        brainSectionTitle: "2. What happens in the brain?",
+        brainSectionDesc: "Click on a domain to read a detailed explanation of ethanol's effects on specific brain regions.",
+        btnReadMore: "Read scientific background",
+        btnClose: "Close explanation",
+        memoryTitle: "3. Test your memory",
+        memoryDesc: "This is a general short-term memory exercise. It DOES NOT simulate or diagnose alcohol intoxication.",
+        attentionTitle: "4. How attentive are you?",
+        attentionDesc: "Find and click all target symbols in the grid as quickly and accurately as possible.",
+        quizTitle: "5. Myth or Fact?",
+        quizDesc: "TEST YOUR KNOWLEDGE: Choose whether the statement is a true fact or a common myth.",
+        sourcesTitle: "7. Sources & References (Scientific Literature)",
+        aboutTitle: "About the Project",
+        aboutDesc: "This web environment was developed for educational purposes as part of an 11th-grade research project.",
+        authorLabel: "Author:",
+        schoolLabel: "School:",
+        yearLabel: "Year:",
+        // Survey labels
+        surveyTitle: "6. Participate in the study & give feedback",
+        surveyDesc: "Please answer the following questions. Your responses will help complement the research analysis and will be sent directly to the author.",
+        block1: "Block 1: Demographics & Initial Knowledge",
+        schoolInput: "School:",
+        gradeInput: "Grade / Class:",
+        preKnowledgeLabel: "How would you rate your knowledge about alcohol's effect on the brain BEFORE visiting this site? (1 - Very low, 5 - Very high)",
+        block2: "Block 2: Knowledge Check",
+        q1Label: "1. Until what age does human brain (especially prefrontal cortex) active development continue?",
+        q2Label: "2. What happens to memory and hippocampus during a blackout?",
+        q3Label: "3. Does coffee or a cold shower speed up ethanol breakdown in the liver?",
+        block3: "Block 3: Web Platform Evaluation",
+        q4Label: "4. How clearly were complex neurobiological processes explained? (1 - Confusing, 5 - Very clear)",
+        q5Label: "5. Which interactive element helped you understand the material best?",
+        q6Label: "6. Did this site make you reconsider any myths about alcohol? If yes, which one?",
+        btnSend: "Submit answers to researcher",
+        sending: "Submitting...",
+        sendSuccess: "Thank you! Your responses have been sent successfully.",
+        sendError: "Error sending data. Please check your internet connection."
+      },
+      ru: {
+        title: "Алкоголь и мозг",
+        subtitle: "Практическая работа 11 класса • Обучающая веб-платформа",
+        nav: {
+          hero: "Главная",
+          brain: "Что происходит с мозгом?",
+          memory: "Тест памяти",
+          attention: "Тест внимания",
+          quiz: "Миф или факт?",
+          feedback: "Опросник",
+          sources: "Источники"
+        },
+        heroTitle: "Что происходит с памятью и вниманием",
+        heroTitleColored: "при употреблении алкоголя?",
+        heroDesc: "Научно обоснованный интерактивный обзор того, как этанол влияет на функции развивающегося мозга: кратковременную память, концентрацию внимания, скорость реакции и принятие решений.",
+        btnStart: "Начать изучение",
+        btnTryTests: "Пройти интерактивные тесты",
+        btnFillSurvey: "Заполнить опросник",
+        brainSectionTitle: "2. Что происходит в мозге?",
+        brainSectionDesc: "Нажмите на нужную область, чтобы прочитать подробное объяснение воздействия этанола.",
+        btnReadMore: "Читать научное обоснование",
+        btnClose: "Закрыть описание",
+        memoryTitle: "3. Проверьте свою память",
+        memoryDesc: "Это упражнение для проверки кратковременной памяти. Оно НЕ СИМУЛИРУЕТ и не диагностирует состояние алкогольного опьянения.",
+        attentionTitle: "4. Насколько вы внимательны?",
+        attentionDesc: "Найдите и нажмите все отмеченные символы в сетке как можно быстрее и точнее.",
+        quizTitle: "5. Миф или факт?",
+        quizDesc: "ПРОВЕРЬТЕ СВОИ ЗНАНИЯ: Выберите, является ли утверждение достоверным фактом или распространенным мифом.",
+        sourcesTitle: "7. Источники и литература (Научные публикации)",
+        aboutTitle: "О проекте",
+        aboutDesc: "Этот веб-ресурс создан в образовательных целях в рамках практической исследовательской работы 11 класса.",
+        authorLabel: "Автор:",
+        schoolLabel: "Школа:",
+        yearLabel: "Год:",
+        // Survey labels
+        surveyTitle: "6. Примите участие в исследовании и оставьте отзыв",
+        surveyDesc: "Пожалуйста, ответьте на вопросы ниже. Ваши ответы помогут дополнить анализ практической работы и будут отправлены напрямую автору.",
+        block1: "Блок 1: Демография и начальный уровень",
+        schoolInput: "Школа:",
+        gradeInput: "Класс:",
+        preKnowledgeLabel: "Как вы оценивали свои знания о влиянии алкоголя на мозг ДО посещения этого сайта? (1 - очень низкие, 5 - очень глубокие)",
+        block2: "Блок 2: Проверка усвоенных знаний",
+        q1Label: "1. До какого возраста научно продолжается активное созревание мозга (особенно префронтальной коры)?",
+        q2Label: "2. Что происходит с памятью и гиппокампом во время блэкаута (mälulünk)?",
+        q3Label: "3. Ускоряет ли кофе или холодный душ расщепление этанола печенью?",
+        block3: "Блок 3: Оценка сайта и интерактивности",
+        q4Label: "4. Насколько понятно на сайте объяснены сложные нейробиологические процессы? (1 - сложно, 5 - очень понятно)",
+        q5Label: "5. Какой интерактивный элемент помог вам лучше всего усвоить материал?",
+        q6Label: "6. Заставил ли этот сайт вас пересмотреть какой-либо миф об алкоголе? Если да, то какой?",
+        btnSend: "Отправить ответы автору",
+        sending: "Отправка...",
+        sendSuccess: "Большое спасибо! Ваши ответы успешно отправлены.",
+        sendError: "Ошибка при отправке. Проверьте подключение к интернету."
+      }
+    };
+
+    // MULTILINGUAL BRAIN DATA
+    const BRAIN_AREAS_I18N = {
+      et: [
+        {
+          id: 'memory',
+          title: 'Mälu ja Hippokampus',
+          subtitle: 'Kuidas alkohol segab mälestuste salvestamist',
+          iconName: 'brain',
+          shortDesc: 'Alkohol pärsib hippokampuse funktsiooni, mis on hädavajalik uue teabe kinnistamiseks lühimälust pikaajalisse mällu.',
+          detailedText: `Alkohol mõjutab otseselt hippokampust — ajuosa, mis vastutab uute mälestuste moodustamise ja õppimise eest [3, 8]. Ägeda joobe korral pärsib etanool NMDA-glutamaadi retseptoreid, takistades pikaajalist potentsreerumist (LTP), mis on mälujälgede tekkimise keemiline alus [1, 3].\n\nSee võib põhjustada mälulünki (blackouts), kus inimene on ärkvel, kuid aju ei salvesta toimuvat pikaajalisse mällu [3]. Nooruki eas, mil hippokampus alles areneb, võib korduv suurtes kogustes alkoholi tarvitamine tuua kaasa püsivamaid mälu- ja õppimisraskusi [4, 5].`,
+          citationIds: [1, 3, 4, 5, 8]
+        },
+        {
+          id: 'attention',
+          title: 'Tähelepanu ja Otsmikusagar',
+          subtitle: 'Keskendumisvõime ja tähelepanu jaotamine',
+          iconName: 'target',
+          shortDesc: 'Prefrontaalne korteks ehk otsmikusagar kaotab võime tõhusalt filtreerida stiimuleid ja hoida fookust.',
+          detailedText: `Prefrontaalne korteks (otsmikusagar) on aju juhtimiskeskus, mis vastutab tähelepanu koondamise, töömälu ja stiimulite filtreerimise eest [5, 9]. Alkohol tugevdab GABA-A retseptorite inhibeerivat mõju, mis aeglustab närviimpulsside edastamist selles piirkonnas [8].\n\nTulemuseks on selektiivse tähelepanu nõrgenemine — raskem on keskenduda ühele ülesandele või jagada tähelepanu mitme tegevuse vahel korraga [6].`,
+          citationIds: [5, 6, 8, 9]
+        },
+        {
+          id: 'reaction',
+          title: 'Reaktsioonikiirus ja Väikeaju',
+          subtitle: 'Signaalide aeglustumine ja koordinatsioon',
+          iconName: 'activity',
+          shortDesc: 'Väikeaju (cerebellum) ja mootorsüsteemi pärssimine pikendab reageerimisaega ja halvendab motoorikat.',
+          detailedText: `Reaktsiooniaeg sõltub visuaalse või auditoorse signaali töötlemisest ajus ja sellele järgnevast mootorsignaali edastamisest lihastele [6]. Alkohol pikendab signaali läbimise aega sünapsides.\n\nVäikeaju (cerebellum) pärssimine häirib peenmotoorikat, tasakaalu ja ajalist reageerimist [6]. Eriti ohtlik on see situatsioonides, mis nõuavad kiiret otsustamist murdosa sekundi jooksul.`,
+          citationIds: [1, 6]
+        },
+        {
+          id: 'decision',
+          title: 'Otsustamine ja Impulsside Kontroll',
+          subtitle: 'Raskused riskide hindamisel',
+          iconName: 'shield-alert',
+          shortDesc: 'Inhibitsioonide vähenemine viib kriitilise mõtlemise halvenemiseni ja riskantsuse suurenemiseni.',
+          detailedText: `Prefrontaalne korteks areneb inimesel täielikult välja alles umbes 25. eluaastaks [4, 5]. Alkohol pärsib selle piirkonna kriitilist funktsiooni — ihade ja impulsside pidurdamist (response inhibition) [6].\n\nSelle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb valmidus võtta ebavajalikke riske sekä halveneb võime teha kaalutletud otsuseid [1, 5, 6].`,
+          citationIds: [1, 4, 5, 6]
+        }
+      ],
+      en: [
+        {
+          id: 'memory',
+          title: 'Memory & Hippocampus',
+          subtitle: 'How alcohol impairs memory formation',
+          iconName: 'brain',
+          shortDesc: 'Alcohol suppresses hippocampal function, which is essential for consolidating new information from short-term to long-term memory.',
+          detailedText: `Alcohol directly affects the hippocampus — the brain structure responsible for memory formation and learning [3, 8]. During acute intoxication, ethanol inhibits NMDA glutamate receptors, blocking long-term potentiation (LTP) [1, 3].\n\nThis causes alcohol-induced blackouts, where a person remains conscious but the brain stops transferring events into long-term memory [3].`,
+          citationIds: [1, 3, 4, 5, 8]
+        },
+        {
+          id: 'attention',
+          title: 'Attention & Prefrontal Cortex',
+          subtitle: 'Focus and cognitive control',
+          iconName: 'target',
+          shortDesc: 'The prefrontal cortex loses its ability to filter stimuli effectively and sustain attention.',
+          detailedText: `The prefrontal cortex is the executive center of the brain [5, 9]. Alcohol enhances GABA-A receptor inhibition, slowing neural signal transmission in this area [8].\n\nThis leads to impaired selective attention and working memory capacity [6].`,
+          citationIds: [5, 6, 8, 9]
+        },
+        {
+          id: 'reaction',
+          title: 'Reaction Time & Cerebellum',
+          subtitle: 'Signal deceleration and coordination',
+          iconName: 'activity',
+          shortDesc: 'Inhibition of the cerebellum and motor system prolongs reaction time and impairs fine motor skills.',
+          detailedText: `Reaction time depends on signal processing speed in synapses [6]. Alcohol delays motor signal transmission.\n\nCerebellar suppression disrupts balance, spatial awareness, and split-second decision-making [6].`,
+          citationIds: [1, 6]
+        },
+        {
+          id: 'decision',
+          title: 'Decision-Making & Impulse Control',
+          subtitle: 'Impaired risk assessment',
+          iconName: 'shield-alert',
+          shortDesc: 'Reduced inhibition leads to poor critical thinking and increased risk-taking behavior.',
+          detailedText: `The prefrontal cortex matures fully only around age 25 [4, 5]. Alcohol suppresses response inhibition [6], leading to impaired risk evaluation and impulsive behavior [1, 5, 6].`,
+          citationIds: [1, 4, 5, 6]
+        }
+      ],
+      ru: [
+        {
+          id: 'memory',
+          title: 'Память и Гиппокамп',
+          subtitle: 'Как алкоголь блокирует сохранение воспоминаний',
+          iconName: 'brain',
+          shortDesc: 'Алкоголь угнетает функцию гиппокампа, необходимого для консолидации информации из кратковременной памяти в долговременную.',
+          detailedText: `Алкоголь напрямую воздействует на гиппокамп — структуру мозга, отвечающую за обучение и формирование новых воспоминаний [3, 8]. При острой интоксикации этанол блокирует NMDA-рецепторы глутамата, нарушая долговременную потенциацию (LTP) [1, 3].\n\nЭто приводит к алкогольным блэкаутам (mälulünka), когда человек находится в сознании, но мозг физически не записывает происходящее в долговременную память [3].`,
+          citationIds: [1, 3, 4, 5, 8]
+        },
+        {
+          id: 'attention',
+          title: 'Внимание и Лобная Доля',
+          subtitle: 'Концентрация и управляющие функции',
+          iconName: 'target',
+          shortDesc: 'Префронтальная кора теряет способность эффективно фильтровать раздражители и удерживать фокус.',
+          detailedText: `Префронтальная кора — командный центр мозга, отвечающий за контроль и внимание [5, 9]. Алкоголь усиливает тормозящее действие ГАМК-А рецепторов, замедляя передачу импульсов [8].\n\nВ результате снижается избирательное внимание и объем рабочей памяти [6].`,
+          citationIds: [5, 6, 8, 9]
+        },
+        {
+          id: 'reaction',
+          title: 'Скорость Реакции и Мозжечок',
+          subtitle: 'Замедление сигналов и координация',
+          iconName: 'activity',
+          shortDesc: 'Затормаживание мозжечка и моторной системы увеличивает время реакции и ухудшает координацию.',
+          detailedText: `Время реакции зависит от скорости прохождения нейронного сигнала через синапсы [6]. Алкоголь удлиняет эту задержку.\n\nПодавление мозжечка нарушает моторику, баланс и способность быстро принимать решения за доли секунды [6].`,
+          citationIds: [1, 6]
+        },
+        {
+          id: 'decision',
+          title: 'Принятие Решений и Контроль Импульсов',
+          subtitle: 'Сбои в оценке рисков',
+          iconName: 'shield-alert',
+          shortDesc: 'Снижение торможения ведет к ухудшению критического мышления и склонности к риску.',
+          detailedText: `Префронтальная кора полностью созревает только к 25 годам [4, 5]. Алкоголь подавляет функцию контроля импульсов (response inhibition) [6], что приводит к недооценке рисков и необдуманным поступкам [1, 5, 6].`,
+          citationIds: [1, 4, 5, 6]
+        }
+      ]
+    };
+
     const SCIENTIFIC_SOURCES = [
-      {
-        id: 1,
-        type: "raport",
-        authors: "Žiljajev, M.",
-        title: "A Comparative Analysis of Nicotine, Alcohol, and Cannabis: Harm, Addiction, Pharmacology, and Social Consequences",
-        year: "2026",
-        publisher: "Sõltumatu uurimisraport, Tallinn, Eesti",
-        note: "Põhineb peer-reviewed uuringutel, WHO, EMCDDA ja NIDA aruannetel.",
-        status: "verified"
-      },
-      {
-        id: 2,
-        type: "artikkel",
-        authors: "Nutt, D. J., King, L. A., & Phillips, L. D.",
-        title: "Drug harms in the UK: a multicriteria decision analysis",
-        year: "2010",
-        publisher: "The Lancet, 376(9752), 1558-1565. DOI: 10.1016/S0140-6736(10)61462-6",
-        note: "MCDA uuring aine üldkahjude kriteeriumide kohta.",
-        status: "verified"
-      },
-      {
-        id: 3,
-        type: "artikkel",
-        authors: "White, A. M.",
-        title: "What happened? Alcohol, memory blackout, and the brain",
-        year: "2003",
-        publisher: "Alcohol Research & Health, 27(2), 186-196",
-        note: "Hippokampuse NMDA retseptorite ja mälulünkade (blackouts) mehhanismid.",
-        status: "verified"
-      },
-      {
-        id: 4,
-        type: "artikkel",
-        authors: "Lees, B., Meredith, L. R., Kirkland, A. E., Bryant, B. E., & Squeglia, L. M.",
-        title: "Effect of alcohol use on the adolescent brain and behavior",
-        year: "2020",
-        publisher: "Neuropharmacology, 177, 108218",
-        note: "Alkoholitarvitamise mõju nooruki aju struktuurile ja hallainele.",
-        status: "verified"
-      },
-      {
-        id: 5,
-        type: "artikkel",
-        authors: "Carbia, C., Lopez-Caneda, E., Corral, M., & Cadaveira, F.",
-        title: "Binge drinking during adolescence/young adulthood and executive functioning: A systematic review",
-        year: "2018",
-        publisher: "Neuroscience & Biobehavioral Reviews, 89, 54-71",
-        note: "Süstemaatiline ülevaade juhtimisfunktsioonide pärssimisest binge drinking puhul.",
-        status: "verified"
-      },
-      {
-        id: 6,
-        type: "artikkel",
-        authors: "Fillmore, M. T.",
-        title: "Acute alcohol-induced impairment of cognitive functions: past and present findings",
-        year: "2007",
-        publisher: "International Journal of Disability and Human Development, 6(2), 115-126",
-        note: "Reaktsiooniaja ja impulsside pidurdamise (response inhibition) uurimus.",
-        status: "verified"
-      },
-      {
-        id: 7,
-        type: "artikkel",
-        authors: "Millwood, I. Y., et al.",
-        title: "Conventional and genetic evidence on alcohol and vascular disease etiology: a prospective study of 500,000 men and women in China",
-        year: "2019",
-        publisher: "The Lancet, 393(10183), 1831-1842",
-        note: "Mendeli randomiseerimine: tõestus, et väikesed alkoholidoosid ei oma kaitsvat mõju.",
-        status: "verified"
-      },
-      {
-        id: 8,
-        type: "raamat",
-        authors: "Stahl, S. M.",
-        title: "Stahl's Essential Psychopharmacology: Neuroscientific Basis and Practical Applications (5th ed.)",
-        year: "2021",
-        publisher: "Cambridge University Press",
-        note: "GABA-A ja NMDA neurokeemilised mehhanismid.",
-        status: "verified"
-      },
-      {
-        id: 9,
-        type: "raamat",
-        authors: "Luria, A. R.",
-        title: "The Working Brain: An Introduction to Neuropsychology",
-        year: "1973",
-        publisher: "Basic Books / Luuria neuropsühholoogia alused",
-        note: "Aju plokkide teooria ja juhtimisfunktsioonid.",
-        status: "verified"
-      },
-      {
-        id: 10,
-        type: "statistika",
-        authors: "Tervise Arengu Instituut (TAI)",
-        title: "Eesti noorte alkoholitarvitamise statistika ja ESPAD uuring",
-        year: "2024",
-        publisher: "TAI / [ALLIKAS VAJALIK: Täpsustada konkreetse raporti lehekülg]",
-        note: "MÄRKUS: Kontrollida täpseid Eesti noorte arve enne lõplikku kaitsmist.",
-        status: "needs_verification"
-      }
+      { id: 1, authors: "Žiljajev, M.", title: "A Comparative Analysis of Nicotine, Alcohol, and Cannabis: Harm, Addiction, Pharmacology, and Social Consequences", year: "2026", publisher: "Sõltumatu uurimisraport, Tallinn, Eesti" },
+      { id: 2, authors: "Nutt, D. J., King, L. A., & Phillips, L. D.", title: "Drug harms in the UK: a multicriteria decision analysis", year: "2010", publisher: "The Lancet, 376(9752), 1558-1565" },
+      { id: 3, authors: "White, A. M.", title: "What happened? Alcohol, memory blackout, and the brain", year: "2003", publisher: "Alcohol Research & Health, 27(2), 186-196" },
+      { id: 4, authors: "Lees, B., et al.", title: "Effect of alcohol use on the adolescent brain and behavior", year: "2020", publisher: "Neuropharmacology, 177, 108218" },
+      { id: 5, authors: "Carbia, C., et al.", title: "Binge drinking during adolescence/young adulthood and executive functioning: A systematic review", year: "2018", publisher: "Neuroscience & Biobehavioral Reviews, 89, 54-71" },
+      { id: 6, authors: "Fillmore, M. T.", title: "Acute alcohol-induced impairment of cognitive functions: past and present findings", year: "2007", publisher: "Int. Journal of Disability and Human Development, 6(2), 115-126" },
+      { id: 7, authors: "Millwood, I. Y., et al.", title: "Conventional and genetic evidence on alcohol and vascular disease etiology", year: "2019", publisher: "The Lancet, 393(10183), 1831-1842" },
+      { id: 8, authors: "Stahl, S. M.", title: "Stahl's Essential Psychopharmacology (5th ed.)", year: "2021", publisher: "Cambridge University Press" },
+      { id: 9, authors: "Luria, A. R.", title: "The Working Brain: An Introduction to Neuropsychology", year: "1973", publisher: "Basic Books" }
     ];
 
-    const BRAIN_AREAS = [
-      {
-        id: 'memory',
-        title: 'Mälu ja Hippokampus',
-        subtitle: 'Kuidas alkohol segab mälestuste salvestamist',
-        iconName: 'brain',
-        shortDesc: 'Alkohol pärsib hippokampuse funktsiooni, mis on hädavajalik uue teabe kinnistamiseks lühimälust pikaajalisse mällu.',
-        detailedText: `Alkohol mõjutab otseselt hippokampust — ajuosa, mis vastutab uute mälestuste moodustamise ja õppimise eest [3, 8]. Ägeda joobe korral pärsib etanool NMDA-glutamaadi retseptoreid, takistades pikaajalist potentsreerumist (LTP), mis on mälujälgede tekkimise keemiline alus [1, 3].
-
-See võib põhjustada niinimetatud "mälulünki" (blackouts), kus inimene on ärkvel, kuid aju ei salvesta toimuvat pikaajalisse mällu [3]. Nooruki eas, mil hippokampus alles areneb, võib korduv suurtes kogustes alkoholi tarvitamine tuua kaasa püsivamaid mälu- ja õppimisraskusi [4, 5].`,
-        citationIds: [1, 3, 4, 5, 8],
-        todoNote: null
-      },
-      {
-        id: 'attention',
-        title: 'Tähelepanu ja Otsmikusagar',
-        subtitle: 'Keskendumisvõime ja tähelepanu jaotamine',
-        iconName: 'target',
-        shortDesc: 'Prefrontaalne korteks ehk otsmikusagar kaotab võime tõhusalt filtreerida stiimuleid ja hoida fookust.',
-        detailedText: `Prefrontaalne korteks (otsmikusagar) on aju juhtimiskeskus, mis vastutab tähelepanu koondamise, töömälu ja stiimulite filtreerimise eest [5, 9]. Alkohol tugevdab GABA-A retseptorite inhibeerivat mõju, mis aeglustab närviimpulsside edastamist selles piirkonnas [8].
-
-Tulemuseks on selektiivse tähelepanu nõrgenemine — raskem on keskenduda ühele ülesandele või jagada tähelepanu mitme tegevuse vahel korraga [6].`,
-        citationIds: [5, 6, 8, 9],
-        todoNote: null
-      },
-      {
-        id: 'reaction',
-        title: 'Reaktsioonikiirus ja Väikeaju',
-        subtitle: 'Signaalide aeglustumine ja koordinatsioon',
-        iconName: 'activity',
-        shortDesc: 'Väikeaju (cerebellum) ja mootorsüsteemi pärssimine pikendab reageerimisaega ja halvendab motoorikat.',
-        detailedText: `Reaktsiooniaeg sõltub visuaalse või auditoorse signaali töötlemisest ajus ja sellele järgnevast mootorsignaali edastamisest lihastele [6]. Alkohol pikendab signaali läbimise aega sünapsides.
-
-Väikeaju (cerebellum) pärssimine häirib peenmotoorikat, tasakaalu ja ajalist reageerimist [6]. Eriti ohtlik on see situatsioonides, mis nõuavad kiiret otsustamist murdosa sekundi jooksul.`,
-        citationIds: [1, 6],
-        todoNote: "ДОПИСАТЬ / ИЗУЧИТЬ: Добавить конкретные цифры миллисекунд задержки реакций при различных BAC (Blood Alcohol Concentration) из статьи Fillmore 2007."
-      },
-      {
-        id: 'decision',
-        title: 'Otsustamine ja Impulsside Kontroll',
-        subtitle: 'Raskused riskide hindamisel',
-        iconName: 'shield-alert',
-        shortDesc: 'Inhibitsioonide vähenemine viib kriitilise mõtlemise halvenemiseni ja riskantsuse suurenemiseni.',
-        detailedText: `Prefrontaalne korteks areneb inimesel täielikult välja alles umbes 25. eluaastaks [4, 5]. Alkohol pärsib selle piirkonna kriitilist funktsiooni — ihade ja impulsside pidurdamist (response inhibition) [6].
-
-Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb valmidus võtta ebavajalikke riske ning halveneb võime teha kaalutletud otsuseid [1, 5, 6].`,
-        citationIds: [1, 4, 5, 6],
-        todoNote: null
-      }
-    ];
-
-    const MYTH_FACT_QUIZ = [
-      {
-        id: 1,
-        statement: "Tass kanget kohvi või külm dušš aitavad alkoholist kiiremini kaineda.",
-        isFact: false,
-        explanation: "MÜÜT! Kohv ega külm dušš ei kiirenda maksas etanooli lagundamist. Maks lagundab alkoholi keskmiselt umbes 0.1–0.15 promilli tunnis. Kohvis sisalduv kofeiin tekitab vaid pettealuse 'ärksa joobe' tunnet [1].",
-        citation: "[1]"
-      },
-      {
-        id: 2,
-        statement: "Nooruki aju on alkoholi mõjude suhtes tundlikum kui täiskasvanu aju.",
-        isFact: true,
-        explanation: "FAKT! Kuna prefrontaalne korteks ja närvikiudude müeliniseerumine jätkuvad kuni umbes 25. eluaastani, on nooruki aju struktuurselt vastuvõtlikum neurotoksilistele mõjudele ja sõltuvuse kujunemisele [4, 5].",
-        citation: "[4, 5]"
-      },
-      {
-        id: 3,
-        statement: "Alkoholile järgnev mälulünk (blackout) tähendab lihtsalt seda, et asjad ununesid hiljem ära.",
-        isFact: false,
-        explanation: "MÜÜT! Mälulünga ajal ei pühita mälestusi hiljem minema, vaid alkohol halvas hippokampuse NMDA-retseptorid nii, et teave EI SALVESTUNUDKI pikaajalisse mällu [3].",
-        citation: "[3]"
-      },
-      {
-        id: 4,
-        statement: "Väikeses koguses alkoholi tarvitamine on südame-veresoonkonnale kasulik.",
-        isFact: false,
-        explanation: "MÜÜT! Kaasaegsed Mendeli randomiseerimise uuringud (nt Millwood et al. 2019, The Lancet) näitavad, et nn 'J-kõver' oli eelnevates uuringutes metoodiline viga ning igasugune alkoholitarvitamine suurendab lineaarselt vererõhu- ja insuldiriski [7].",
-        citation: "[7]"
-      },
-      {
-        id: 5,
-        statement: "Reaktsiooniaeg ja tähelepanu võivad olla häiritud ka järgmisel päeval ehk pohmelli ajal.",
-        isFact: true,
-        explanation: "FAKT! Uuringud näitavad, et kognitiivsed funktsioonid, töömälu ja tähelepanu juhtimine on pärsitud ka siis, kui vere alkoholisisaldus on taas nulli lähedal [6].",
-        citation: "[6]"
-      },
-      {
-        id: 6,
-        statement: "Uuringute kohaselt tekitab alkohol ühiskondlikul tasandil rohkem kogukahju kui paljud teised ained.",
-        isFact: true,
-        explanation: "FAKT! Mitme kriteeriumiga otsusanalüüside (MCDA, Nutt et al. 2010) kohaselt on alkohol kõrgeima üldkahjuga aine täiskasvanute populatsioonis, ühendades kahju kasutajale ja ulatusliku kahju teistele [1, 2].",
-        citation: "[1, 2]"
-      },
-      {
-        id: 7,
-        statement: "Sõltuvuse tekkimise risk on noorena alustades madalam kui täiskasvanuna.",
-        isFact: false,
-        explanation: "MÜÜT! Varajane tarvitamise alustamine (enne 15.–18. eluaastat) suurendab statistiliselt sõltuvuse kujunemise riski kuni 4 korda võrreldes neiga, kes alustavad täiskasvanueas [1, 4].",
-        citation: "[1, 4]"
-      },
-      {
-        id: 8,
-        statement: "Lühiajaline kognitiivne test veebis suudab täpselt diagnoosida alkoholi kahjustuse taset ajus.",
-        isFact: false,
-        explanation: "MÜÜT! Veebitestid on vaid hariduslikud enesetestimise harjutused lühimälu ja tähelepanu demonstreerimiseks ning ei kujuta endast meditsiinilist ega neuropsühholoogilist diagnoosi [1].",
-        citation: "[1]"
-      }
-    ];
+    const MYTH_FACT_QUIZ_I18N = {
+      et: [
+        { id: 1, statement: "Tass kanget kohvi või külm dušš aitavad alkoholist kiiremini kaineda.", isFact: false, explanation: "MÜÜT! Kohv ega külm dušš ei kiirenda maksas etanooli lagundamist. Maks lagundab alkoholi keskmiselt umbes 0.1–0.15 promilli tunnis [1]." },
+        { id: 2, statement: "Nooruki aju on alkoholi mõjude suhtes tundlikum kui täiskasvanu aju.", isFact: true, explanation: "FAKT! Kuna prefrontaalne korteks ja müeliniseerumine jätkuvad kuni umbes 25. eluaastani, on nooruki aju vastuvõtlikum neurotoksilistele mõjudele [4, 5]." },
+        { id: 3, statement: "Alkoholile järgnev mälulünk (blackout) tähendab lihtsalt seda, et asjad ununesid hiljem ära.", isFact: false, explanation: "MÜÜT! Mälulünga ajal teave EI SALVESTUNUDKI pikaajalisse mällu NMDA-retseptorite pärssimise tõttu [3]." },
+        { id: 4, statement: "Väikeses koguses alkoholi tarvitamine on südame-veresoonkonnale kasulik.", isFact: false, explanation: "MÜÜT! Kaasaegsed Mendeli randomiseerimise uuringud näitavad, et igasugune alkoholitarvitamine suurendab vererõhu- ja insuldiriski [7]." }
+      ],
+      en: [
+        { id: 1, statement: "A cup of strong coffee or a cold shower helps you sober up faster.", isFact: false, explanation: "MYTH! Coffee or cold showers do not speed up ethanol metabolism in the liver. The liver breaks down alcohol at a constant rate [1]." },
+        { id: 2, statement: "An adolescent brain is more vulnerable to alcohol than an adult brain.", isFact: true, explanation: "FACT! Because the prefrontal cortex develops until around age 25, young brains are structurally more sensitive to neurotoxic damage [4, 5]." },
+        { id: 3, statement: "An alcohol blackout just means you forgot what happened later.", isFact: false, explanation: "MYTH! During a blackout, information was NEVER saved to long-term memory due to NMDA receptor blockade [3]." },
+        { id: 4, statement: "Moderate alcohol consumption is good for cardiovascular health.", isFact: false, explanation: "MYTH! Recent genetic studies (Mendelian randomization) show that any alcohol intake linearly increases hypertension and stroke risks [7]." }
+      ],
+      ru: [
+        { id: 1, statement: "Чашка крепкого кофе или холодный душ помогают быстрее протрезветь.", isFact: false, explanation: "МИФ! Кофе и душ не ускоряют расщепление этанола печенью. Печень метаболизирует алкоголь с постоянной скоростью [1]." },
+        { id: 2, statement: "Мозг подростка более уязвим к алкоголю, чем мозг взрослого.", isFact: true, explanation: "ФАКТ! Так как префронтальная кора созревает примерно до 25 лет, развивающийся мозг более чувствителен к нейротоксичным повреждениям [4, 5]." },
+        { id: 3, statement: "Алкогольный блэкаут означает, что человек просто забыл события позже.", isFact: false, explanation: "МИФ! Во время блэкаута информация ВООБЩЕ НЕ ЗАПИСЫВАЛАСЬ в долговременную память из-за блокады NMDA-рецепторов [3]." },
+        { id: 4, statement: "Употребление алкоголя в малых дозах полезно для сердца и сосудов.", isFact: false, explanation: "МИФ! Современные генетические исследования показывают, что любые дозы алкоголя повышают риск гипертонии и инсульта [7]." }
+      ]
+    };
 
     const WORD_BANK = [
       ["Aju", "Mälu", "Fookus", "Sünaps", "Uuring", "Neuroon", "Tähelepanu", "Impulss"],
@@ -261,14 +364,19 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
     // MAIN APP COMPONENT
     // ==========================================
     function App() {
+      const [lang, setLang] = useState('et');
       const [activeTab, setActiveTab] = useState('hero');
       const [expandedCard, setExpandedCard] = useState(null);
+
+      const t = TRANSLATIONS[lang];
+      const brainAreas = BRAIN_AREAS_I18N[lang];
+      const mythQuiz = MYTH_FACT_QUIZ_I18N[lang];
 
       useEffect(() => {
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [expandedCard, activeTab]);
+      }, [expandedCard, activeTab, lang]);
 
       const scrollTo = (id) => {
         setActiveTab(id);
@@ -289,19 +397,19 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
                   <i data-lucide="brain" class="w-6 h-6 text-indigo-400"></i>
                 </div>
                 <span className="font-bold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white to-purple-300">
-                  Alkohol ja aju
+                  {t.title}
                 </span>
               </div>
 
               <nav className="hidden md:flex items-center space-x-1 text-sm font-medium text-slate-300">
                 {[
-                  { id: 'hero', label: 'Avaleht' },
-                  { id: 'brain', label: 'Mis toimub ajus?' },
-                  { id: 'memory-task', label: 'Mälutest' },
-                  { id: 'attention-task', label: 'Tähelepanutest' },
-                  { id: 'quiz', label: 'Müüt või fakt?' },
-                  { id: 'feedback-form', label: 'Küsimustik' },
-                  { id: 'sources', label: 'Allikad' }
+                  { id: 'hero', label: t.nav.hero },
+                  { id: 'brain', label: t.nav.brain },
+                  { id: 'memory-task', label: t.nav.memory },
+                  { id: 'attention-task', label: t.nav.attention },
+                  { id: 'quiz', label: t.nav.quiz },
+                  { id: 'feedback-form', label: t.nav.feedback },
+                  { id: 'sources', label: t.nav.sources }
                 ].map((item) => (
                   <button
                     key={item.id}
@@ -317,12 +425,27 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
                 ))}
               </nav>
 
-              <button 
-                onClick={() => scrollTo('feedback-form')}
-                className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-3.5 py-2 rounded-lg transition shadow-lg shadow-indigo-600/20"
-              >
-                Täida küsimustik
-              </button>
+              {/* LANGUAGE SWITCHER */}
+              <div className="flex items-center space-x-2 bg-slate-800/80 p-1 rounded-xl border border-slate-700 text-xs font-semibold">
+                <button 
+                  onClick={() => setLang('et')}
+                  className={`px-2 py-1 rounded-lg transition ${lang === 'et' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                >
+                  ET
+                </button>
+                <button 
+                  onClick={() => setLang('en')}
+                  className={`px-2 py-1 rounded-lg transition ${lang === 'en' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                >
+                  EN
+                </button>
+                <button 
+                  onClick={() => setLang('ru')}
+                  className={`px-2 py-1 rounded-lg transition ${lang === 'ru' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                >
+                  RU
+                </button>
+              </div>
             </div>
           </header>
 
@@ -333,18 +456,18 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
             <section id="hero" className="pt-8 pb-12 text-center relative overflow-hidden">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/60 border border-indigo-800/50 text-indigo-300 text-xs font-semibold uppercase tracking-wider mb-6">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                Gümnaasiumi praktiline töö • Hariduslik veebikeskkond
+                {t.subtitle}
               </div>
 
               <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
-                Mis toimub mälu ja tähelepanuga <br class="hidden sm:inline" />
+                {t.heroTitle} <br class="hidden sm:inline" />
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400">
-                  alkoholi tarvitamisel?
+                  {t.heroTitleColored}
                 </span>
               </h1>
 
               <p className="max-w-2xl mx-auto text-lg text-slate-300 mb-10 leading-relaxed">
-                Teaduspõhine ja interaktiivne ülevaade sellest, kuidas etanool mõjutab noore, alles areneva aju funktsioone: lühimälu, tähelepanu koondamist, reageerimiskiirust ja otsustamisprotsesse.
+                {t.heroDesc}
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -352,13 +475,13 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
                   onClick={() => scrollTo('brain')}
                   className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold flex items-center justify-center gap-2 transition shadow-xl shadow-indigo-600/25"
                 >
-                  Alusta uurimist <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                  {t.btnStart} <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
                 <button 
                   onClick={() => scrollTo('memory-task')}
                   className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold border border-slate-700 transition"
                 >
-                  Proovi interaktiivseid teste
+                  {t.btnTryTests}
                 </button>
               </div>
             </section>
@@ -366,14 +489,12 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
             {/* MIS TOIMUB AJUS SECTION */}
             <section id="brain" className="space-y-8">
               <div className="text-center space-y-3">
-                <h2 className="text-3xl font-bold text-white">2. Mis toimub ajus?</h2>
-                <p className="text-slate-400 max-w-2xl mx-auto">
-                  Klõpsa valdkonnal, et näha lähemat selgitust etanooli mõju kohta konkreetses ajuosas.
-                </p>
+                <h2 className="text-3xl font-bold text-white">{t.brainSectionTitle}</h2>
+                <p className="text-slate-400 max-w-2xl mx-auto">{t.brainSectionDesc}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {BRAIN_AREAS.map((area) => {
+                {brainAreas.map((area) => {
                   const isExpanded = expandedCard === area.id;
 
                   return (
@@ -404,16 +525,8 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
                       {isExpanded && (
                         <div className="mt-6 pt-4 border-t border-slate-700/60 text-sm text-slate-300 space-y-3 whitespace-pre-line animate-fadeIn">
                           {area.detailedText}
-                          
-                          {area.todoNote && (
-                            <div className="p-3 rounded-xl bg-amber-950/50 border border-amber-600/60 text-amber-200 text-xs font-mono">
-                              <strong>[МАРКЕР РАЗРАБОТЧИКА / ТОЧКА ДОРАБОТКИ]:</strong>
-                              <br />{area.todoNote}
-                            </div>
-                          )}
-
                           <div className="pt-2 text-xs text-slate-500 italic">
-                            Viited allikatele: {area.citationIds.map(id => `[${id}]`).join(', ')}
+                            Viited: {area.citationIds.map(id => `[${id}]`).join(', ')}
                           </div>
                         </div>
                       )}
@@ -422,7 +535,7 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
                         onClick={() => setExpandedCard(isExpanded ? null : area.id)}
                         className="mt-6 w-full py-2 px-4 rounded-xl bg-slate-800 hover:bg-slate-700/80 text-xs font-semibold text-slate-200 border border-slate-700 flex items-center justify-center gap-2 transition"
                       >
-                        {isExpanded ? 'Sulge selgitus' : 'Loe rohkem teaduslikku tausta'}
+                        {isExpanded ? t.btnClose : t.btnReadMore}
                         <i data-lucide="chevron-down" class={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}></i>
                       </button>
                     </div>
@@ -434,43 +547,28 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
             {/* INTERACTIVE MEMORY TASK */}
             <section id="memory-task" className="p-8 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-8">
               <div className="max-w-2xl">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-950/60 border border-purple-800/50 text-purple-300 text-xs font-semibold uppercase mb-3">
-                  Kognitiivne harjutus
-                </div>
-                <h2 className="text-3xl font-bold text-white">3. Pane oma mälu proovile</h2>
-                <p className="text-slate-400 text-sm mt-2">
-                  See on üldine lühimälu harjutus teabe säilitamise demonstreerimiseks. <strong className="text-slate-200">See EI SIMULEERI ega diagnoosi alkoholijoovet.</strong>
-                </p>
+                <h2 className="text-3xl font-bold text-white">{t.memoryTitle}</h2>
+                <p className="text-slate-400 text-sm mt-2">{t.memoryDesc}</p>
               </div>
-
               <MemoryGame />
             </section>
 
             {/* ATTENTION TASK */}
             <section id="attention-task" className="p-8 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-8">
               <div className="max-w-2xl">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/60 border border-emerald-800/50 text-emerald-300 text-xs font-semibold uppercase mb-3">
-                  Tähelepanu ja fookus
-                </div>
-                <h2 className="text-3xl font-bold text-white">4. Kui tähelepanelik sa oled?</h2>
-                <p className="text-slate-400 text-sm mt-2">
-                  Leia ruudustikust üles kõik märgitud sihtsümbolid nii kiiresti ja täpselt kui võimalik.
-                </p>
+                <h2 className="text-3xl font-bold text-white">{t.attentionTitle}</h2>
+                <p className="text-slate-400 text-sm mt-2">{t.attentionDesc}</p>
               </div>
-
               <AttentionGame />
             </section>
 
             {/* MYTH VS FACT QUIZ */}
             <section id="quiz" className="space-y-8">
               <div className="text-center space-y-3">
-                <h2 className="text-3xl font-bold text-white">5. Müüt või fakt?</h2>
-                <p className="text-slate-400 max-w-xl mx-auto text-sm">
-                  KONTROLLI OMA TEADMISI: Vali, kas esitatud väide on tõene fakt või levinud müüt.
-                </p>
+                <h2 className="text-3xl font-bold text-white">{t.quizTitle}</h2>
+                <p className="text-slate-400 max-w-xl mx-auto text-sm">{t.quizDesc}</p>
               </div>
-
-              <MythFactQuiz />
+              <MythFactQuiz quizData={mythQuiz} />
             </section>
 
             {/* TELEGRAM QUESTIONNAIRE MODULE */}
@@ -479,13 +577,11 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/80 border border-indigo-800/50 text-indigo-300 text-xs font-semibold uppercase mb-3">
                   Uurimistöö Küsimustik
                 </div>
-                <h2 className="text-3xl font-bold text-white">6. Osale uurimuses ja anna tagasisidet</h2>
-                <p className="text-slate-400 text-sm mt-2">
-                  Palun vasta järgmistele küsimustele. Sinu vastused aitavad täiendada praktilise töö analüüsi ja saadetakse otse uurimistöö autorile.
-                </p>
+                <h2 className="text-3xl font-bold text-white">{t.surveyTitle}</h2>
+                <p className="text-slate-400 text-sm mt-2">{t.surveyDesc}</p>
               </div>
 
-              <TelegramFeedbackForm />
+              <TelegramFeedbackForm t={t} />
             </section>
 
             {/* SOURCES SECTION */}
@@ -494,28 +590,18 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
                 <div className="p-2 bg-slate-800 rounded-lg text-slate-300">
                   <i data-lucide="book-open" class="w-5 h-5"></i>
                 </div>
-                <h2 className="text-2xl font-bold text-white">7. Allikad ja viited (Teaduskirjandus)</h2>
+                <h2 className="text-2xl font-bold text-white">{t.sourcesTitle}</h2>
               </div>
 
               <div className="space-y-4">
                 {SCIENTIFIC_SOURCES.map((source) => (
                   <div key={source.id} className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/40 text-sm space-y-1">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-indigo-400">[{source.id}]</span>
-                        <span className="font-semibold text-slate-200">{source.authors} ({source.year}).</span>
-                      </div>
-                      <span className={`text-[10px] px-2 py-0.5 rounded uppercase font-bold ${
-                        source.status === 'verified' 
-                          ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' 
-                          : 'bg-amber-950 text-amber-400 border border-amber-800'
-                      }`}>
-                        {source.status === 'verified' ? 'Kinnitatud allikas' : '[ALLIKAS VAJALIK]'}
-                      </span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-indigo-400">[{source.id}]</span>
+                      <span className="font-semibold text-slate-200">{source.authors} ({source.year}).</span>
                     </div>
                     <div className="text-slate-300 italic">{source.title}.</div>
                     <div className="text-xs text-slate-400">{source.publisher}</div>
-                    {source.note && <div className="text-xs text-indigo-300/80 pt-1">Märkus: {source.note}</div>}
                   </div>
                 ))}
               </div>
@@ -523,20 +609,13 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
 
             {/* ABOUT PROJECT SECTION */}
             <section className="p-8 rounded-3xl bg-slate-900/30 border border-slate-800/60 text-center space-y-4">
-              <h3 className="text-lg font-bold text-white">Projektist</h3>
-              <p className="text-sm text-slate-400 max-w-xl mx-auto">
-                See veebikeskkond on loodud 11. klassi praktilise töö raames gümnaasiumiõpilastele hariduslikul eesmärgil.
-              </p>
-
-              {/* ДОПИСАТЬ / ИЗУЧИТЬ - МАРКЕР */}
-              <div className="p-3 max-w-md mx-auto rounded-xl bg-indigo-950/40 border border-indigo-700/50 text-indigo-300 text-xs">
-                <strong>[ДОПИСАТЬ / ИЗУЧИТЬ]:</strong> Сюда можно добавить личную аннотацию автора и благодарности научному руководителю перед сдачей работы.
-              </div>
-
+              <h3 className="text-lg font-bold text-white">{t.aboutTitle}</h3>
+              <p className="text-sm text-slate-400 max-w-xl mx-auto">{t.aboutDesc}</p>
+              
               <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400 border-t border-slate-800/80 max-w-md mx-auto">
-                <div><strong className="text-slate-300">Autor:</strong> Mihail Žiljajev</div>
-                <div><strong className="text-slate-300">Kool:</strong> Tallinna Linnamäe Vene Lütseum</div>
-                <div><strong className="text-slate-300">Aasta:</strong> 2026</div>
+                <div><strong className="text-slate-300">{t.authorLabel}</strong> Mihail Žiljajev</div>
+                <div><strong className="text-slate-300">{t.schoolLabel}</strong> Tallinna Linnamäe Vene Lütseum</div>
+                <div><strong className="text-slate-300">{t.yearLabel}</strong> 2026</div>
               </div>
             </section>
 
@@ -552,19 +631,19 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
     }
 
     // ==========================================
-    // TELEGRAM FEEDBACK FORM COMPONENT
+    // UPDATED TELEGRAM FEEDBACK FORM
     // ==========================================
-    function TelegramFeedbackForm() {
+    function TelegramFeedbackForm({ t }) {
       const [formData, setFormData] = useState({
         school: '',
         grade: '',
-        ageGroup: '11–12. klass',
+        preKnowledge: '3',
         qAge: 'Umbes kuni 25. eluaastani',
-        qMemory: 'Hippokampus (hippocampus)',
-        qCoffee: 'Ei, kohv tekitab vaid pettealuse ärksuse, maksagunduse kiirus ei muutu',
-        qSleep: 'Häirib REM-und ja taastumisprotsesse ajus',
-        qInteractive: 'Aju piirkondade ja funktsioonide selgitused',
-        qFeedback: ''
+        qMemory: 'Teave ei salvestunudki pikaajalisse mällu NMDA-retseptorite pärssimise tõttu',
+        qCoffee: 'Ei, need tekitavad vaid pettealuse ärksuse, maksamolekulide kiirus ei muutu',
+        qClarity: '5',
+        qInteractive: 'Aju piirkondade ja funktsioonide kaardid',
+        qMythReflect: ''
       });
 
       const [status, setStatus] = useState({ loading: false, success: false, error: false });
@@ -574,18 +653,18 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
         setStatus({ loading: true, success: false, error: false });
 
         const messageText = 
-          `📩 *UUS VASTUS KÜSIMUSTIKULE! (Alkohol ja aju)*\n\n` +
+          `📩 *UUS UURIMISTÖÖ VASTUS! (Alkohol ja aju)*\n\n` +
           `🏫 *Kool:* ${formData.school || "Pole märgitud"}\n` +
           `📚 *Klass:* ${formData.grade || "Pole märgitud"}\n` +
-          `👤 *Vanuserühm:* ${formData.ageGroup}\n\n` +
+          `📊 *Enesehinnang enne (1-5):* ${formData.preKnowledge}\n\n` +
           `*TEADMISTE KONTROLL:*\n` +
           `1️⃣ *Aju küpsemise iga:* ${formData.qAge}\n` +
-          `2️⃣ *Mälustruktuur:* ${formData.qMemory}\n` +
-          `3️⃣ *Kohv ja kainedus:* ${formData.qCoffee}\n` +
-          `4️⃣ *Mõju unele:* ${formData.qSleep}\n\n` +
-          `*TAGASISIDE LEHELE:*\n` +
-          `💡 *Kõige kasulikum osa:* ${formData.qInteractive}\n` +
-          `💬 *Kommentaar:* ${formData.qFeedback || "Puudub"}`;
+          `2️⃣ *Mälulünk (blackout):* ${formData.qMemory}\n` +
+          `3️⃣ *Kohv ja kainedus:* ${formData.qCoffee}\n\n` +
+          `*LEHE HINDAMINE:*\n` +
+          `⭐ *Arusaadavus (1-5):* ${formData.qClarity}\n` +
+          `💡 *Parim element:* ${formData.qInteractive}\n` +
+          `💬 *Ümbermõeldud müüdid / arvamus:* ${formData.qMythReflect || "Puudub"}`;
 
         try {
           const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
@@ -611,38 +690,62 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
       return (
         <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
           
-          {/* BLOCK 1: DEMOGRAPHICS */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/60 p-5 rounded-2xl border border-slate-800">
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Kool:</label>
-              <input 
-                type="text" 
-                required 
-                placeholder="Nt: Tallinna Linnamäe Vene Lütseum"
-                value={formData.school}
-                onChange={(e) => setFormData({...formData, school: e.target.value})}
-                className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-indigo-500"
-              />
+          {/* BLOCK 1 */}
+          <div className="space-y-4 bg-slate-950/60 p-5 rounded-2xl border border-slate-800">
+            <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">{t.block1}</h3>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">{t.schoolInput}</label>
+                <input 
+                  type="text" 
+                  required 
+                  placeholder="Nt: TLVL"
+                  value={formData.school}
+                  onChange={(e) => setFormData({...formData, school: e.target.value})}
+                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">{t.gradeInput}</label>
+                <input 
+                  type="text" 
+                  required 
+                  placeholder="Nt: 11A"
+                  value={formData.grade}
+                  onChange={(e) => setFormData({...formData, grade: e.target.value})}
+                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-indigo-500"
+                />
+              </div>
             </div>
+
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Klass:</label>
-              <input 
-                type="text" 
-                required 
-                placeholder="Nt: 11A"
-                value={formData.grade}
-                onChange={(e) => setFormData({...formData, grade: e.target.value})}
-                className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-indigo-500"
-              />
+              <label className="block text-xs font-semibold text-slate-300 mb-2">{t.preKnowledgeLabel}</label>
+              <div className="flex items-center justify-between gap-2 max-w-xs">
+                {[1, 2, 3, 4, 5].map((num) => (
+                  <button
+                    key={num}
+                    type="button"
+                    onClick={() => setFormData({...formData, preKnowledge: String(num)})}
+                    className={`flex-1 py-2 rounded-xl text-xs font-bold border transition ${
+                      formData.preKnowledge === String(num)
+                        ? 'bg-indigo-600 text-white border-indigo-500'
+                        : 'bg-slate-900 text-slate-400 border-slate-700 hover:bg-slate-800'
+                    }`}
+                  >
+                    {num}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* BLOCK 2: KNOWLEDGE QUESTIONS */}
+          {/* BLOCK 2 */}
           <div className="space-y-4">
+            <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">{t.block2}</h3>
+
             <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
-              <label className="block text-sm font-semibold text-white">
-                1. Mis vanuseni jätkub teaduslikult inimese aju (eriti prefrontaalse korteksi) aktiivne areng?
-              </label>
+              <label className="block text-xs font-semibold text-white">{t.q1Label}</label>
               <select 
                 value={formData.qAge}
                 onChange={(e) => setFormData({...formData, qAge: e.target.value})}
@@ -651,81 +754,80 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
                 <option>Umbes kuni 14. eluaastani</option>
                 <option>Umbes kuni 18. eluaastani</option>
                 <option>Umbes kuni 25. eluaastani</option>
-                <option>Aju on täielikult valmis juba varases lapses</option>
               </select>
             </div>
 
             <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
-              <label className="block text-sm font-semibold text-white">
-                2. Milline ajustruktuur vastutab peamiselt uute mälestuste salvestamise eest pikaajalisse mällu?
-              </label>
+              <label className="block text-xs font-semibold text-white">{t.q2Label}</label>
               <select 
                 value={formData.qMemory}
                 onChange={(e) => setFormData({...formData, qMemory: e.target.value})}
                 className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
               >
-                <option>Väikeaju (cerebellum)</option>
-                <option>Hippokampus (hippocampus)</option>
-                <option>Kuklasagar</option>
+                <option>Mälestused kustuvad ajust alles järgmisel päeval</option>
+                <option>Teave ei salvestunudki pikaajalisse mällu NMDA-retseptorite pärssimise tõttu</option>
+                <option>Inimene näeb lihtsalt unenägusid</option>
               </select>
             </div>
 
             <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
-              <label className="block text-sm font-semibold text-white">
-                3. Kas kange kohv või külm dušš aitavad alkoholist kiiremini kaineda?
-              </label>
+              <label className="block text-xs font-semibold text-white">{t.q3Label}</label>
               <select 
                 value={formData.qCoffee}
                 onChange={(e) => setFormData({...formData, qCoffee: e.target.value})}
                 className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
               >
-                <option>Jah, kiirendab etanooli lagundamist maksas umbes poole võrra</option>
-                <option>Ei, kohv tekitab vaid pettealuse ärksuse, maksagunduse kiirus ei muutu</option>
-                <option>Jah, aga ainult koos suure hulga vee joomisega</option>
-              </select>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
-              <label className="block text-sm font-semibold text-white">
-                4. Kuidas mõjutab alkohol une struktuuri?
-              </label>
-              <select 
-                value={formData.qSleep}
-                onChange={(e) => setFormData({...formData, qSleep: e.target.value})}
-                className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
-              >
-                <option>Parandab une kvaliteeti ja aitab ajul sügavamalt puhata</option>
-                <option>Häirib REM-und ja taastumisprotsesse ajus</option>
-                <option>Ei mõjuta une faase ega kvaliteeti</option>
+                <option>Jah, umbes poole võrra</option>
+                <option>Ei, need tekitavad vaid pettealuse ärksuse, maksamolekulide kiirus ei muutu</option>
               </select>
             </div>
           </div>
 
-          {/* BLOCK 3: FEEDBACK */}
-          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-3">
-            <label className="block text-sm font-semibold text-white">
-              5. Milline veebilehe osa oli Sinu jaoks kõige huvitavam või kasulikum?
-            </label>
-            <select 
-              value={formData.qInteractive}
-              onChange={(e) => setFormData({...formData, qInteractive: e.target.value})}
-              className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
-            >
-              <option>Aju piirkondade ja funktsioonide selgitused</option>
-              <option>Interaktiivne mälutest (Memory Task)</option>
-              <option>Tähelepanu ja fookuse ruudustik (Attention Grid)</option>
-              <option>Müüt või fakt viktoriiin</option>
-            </select>
+          {/* BLOCK 3 */}
+          <div className="space-y-4">
+            <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">{t.block3}</h3>
 
-            <div className="pt-2">
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
-                Sinu kommentaar või arvamus (valikuline):
-              </label>
+            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
+              <label className="block text-xs font-semibold text-white">{t.q4Label}</label>
+              <div className="flex items-center justify-between gap-2 max-w-xs pt-1">
+                {[1, 2, 3, 4, 5].map((num) => (
+                  <button
+                    key={num}
+                    type="button"
+                    onClick={() => setFormData({...formData, qClarity: String(num)})}
+                    className={`flex-1 py-2 rounded-xl text-xs font-bold border transition ${
+                      formData.qClarity === String(num)
+                        ? 'bg-emerald-600 text-white border-emerald-500'
+                        : 'bg-slate-900 text-slate-400 border-slate-700 hover:bg-slate-800'
+                    }`}
+                  >
+                    {num}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
+              <label className="block text-xs font-semibold text-white">{t.q5Label}</label>
+              <select 
+                value={formData.qInteractive}
+                onChange={(e) => setFormData({...formData, qInteractive: e.target.value})}
+                className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
+              >
+                <option>Aju piirkondade ja funktsioonide kaardid</option>
+                <option>Lühimälu harjutus (Memory Task)</option>
+                <option>Tähelepanu ja fookuse ruudustik (Attention Grid)</option>
+                <option>Müüt või fakt viktoriin</option>
+              </select>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
+              <label className="block text-xs font-semibold text-white">{t.q6Label}</label>
               <textarea 
                 rows="3"
-                placeholder="Kirjuta siia oma mõtted või küsimused..."
-                value={formData.qFeedback}
-                onChange={(e) => setFormData({...formData, qFeedback: e.target.value})}
+                placeholder="..."
+                value={formData.qMythReflect}
+                onChange={(e) => setFormData({...formData, qMythReflect: e.target.value})}
                 className="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500"
               ></textarea>
             </div>
@@ -736,18 +838,18 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
             disabled={status.loading}
             className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-semibold rounded-xl text-sm transition shadow-lg shadow-indigo-600/20"
           >
-            {status.loading ? 'Saadab vastuseid...' : 'Saada vastused uurijale'}
+            {status.loading ? t.sending : t.btnSend}
           </button>
 
           {status.success && (
             <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-600 text-emerald-200 text-xs text-center font-medium animate-fadeIn">
-              Suur tänu! Sinu vastused on edukalt saadetud.
+              {t.sendSuccess}
             </div>
           )}
 
           {status.error && (
             <div className="p-4 rounded-xl bg-rose-950/60 border border-rose-600 text-rose-200 text-xs text-center font-medium animate-fadeIn">
-              Viga saatmisel. Kontrolli internetiühendust.
+              {t.sendError}
             </div>
           )}
         </form>
@@ -816,14 +918,11 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
         <div className="space-y-6">
           {gameState === 'idle' && (
             <div className="text-center py-8 space-y-4 bg-slate-950/40 rounded-2xl border border-slate-800">
-              <p className="text-sm text-slate-300 max-w-md mx-auto">
-                Sulle kuvatakse 6 sekundi jooksul 8 eestikeelset sõna. Pärast lühikest vaheülesannet pead meenutama, millised sõnad olid nimekirjas.
-              </p>
               <button
                 onClick={startTask}
                 className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-semibold text-white transition shadow-lg shadow-indigo-600/20"
               >
-                Alusta mälutesti
+                Start Memory Task
               </button>
             </div>
           )}
@@ -831,9 +930,8 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
           {gameState === 'memorizing' && (
             <div className="text-center py-8 space-y-6 bg-slate-950/60 rounded-2xl border border-slate-800">
               <div className="flex items-center justify-center space-x-2 text-indigo-400 font-bold text-lg">
-                <span>Jäta meelde! Aega jäänud: {timer}s</span>
+                <span>Timer: {timer}s</span>
               </div>
-
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-lg mx-auto">
                 {currentWords.map((word, idx) => (
                   <div key={idx} className="p-3 bg-slate-800 rounded-xl font-bold text-indigo-200 border border-slate-700">
@@ -846,9 +944,6 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
 
           {gameState === 'distraction' && (
             <div className="text-center py-8 space-y-4 bg-slate-950/60 rounded-2xl border border-slate-800 max-w-md mx-auto">
-              <h3 className="font-bold text-white text-lg">Vaheülesanne (Tähelepanu hajutamine)</h3>
-              <p className="text-xs text-slate-400">Lahenda lihtne tehe enne sõnade meenutamist:</p>
-              
               <form onSubmit={(e) => { e.preventDefault(); setGameState('recall'); }} className="space-y-4">
                 <div className="text-2xl font-extrabold text-indigo-300">
                   {distractionMath.a} + {distractionMath.b} = ?
@@ -857,16 +952,12 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
                   type="number"
                   value={distractionAnswer}
                   onChange={(e) => setDistractionAnswer(e.target.value)}
-                  placeholder="Vastus"
                   required
                   className="px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-center text-white font-bold w-32 focus:outline-none"
                 />
                 <div>
-                  <button
-                    type="submit"
-                    className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-semibold text-white text-sm"
-                  >
-                    Edasi meenutamise juurde
+                  <button type="submit" className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-semibold text-white text-sm">
+                    Next
                   </button>
                 </div>
               </form>
@@ -875,52 +966,38 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
 
           {gameState === 'recall' && (
             <div className="space-y-6 bg-slate-950/60 p-6 rounded-2xl border border-slate-800">
-              <div className="flex items-center justify-between">
-                <h3 className="font-bold text-white">Vali 8 sõna, mis olid algses nimekirjas:</h3>
-                <span className="text-xs text-indigo-400 font-semibold">{selectedWords.length} / 8 valitud</span>
-              </div>
-
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {optionsGrid.map((word, idx) => {
-                  const isSelected = selectedWords.includes(word);
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => toggleWordSelect(word)}
-                      className={`p-3 rounded-xl text-sm font-semibold border transition ${
-                        isSelected
-                          ? 'bg-indigo-600 text-white border-indigo-400'
-                          : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
-                      }`}
-                    >
-                      {word}
-                    </button>
-                  );
-                })}
+                {optionsGrid.map((word, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => toggleWordSelect(word)}
+                    className={`p-3 rounded-xl text-sm font-semibold border transition ${
+                      selectedWords.includes(word)
+                        ? 'bg-indigo-600 text-white border-indigo-400'
+                        : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+                    }`}
+                  >
+                    {word}
+                  </button>
+                ))}
               </div>
-
               <div className="text-center pt-4">
                 <button
                   onClick={() => setGameState('result')}
                   disabled={selectedWords.length === 0}
-                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-semibold rounded-xl text-sm transition"
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-sm transition"
                 >
-                  Vaata tulemust
+                  View Score
                 </button>
               </div>
             </div>
           )}
 
           {gameState === 'result' && (
-            <div className="p-6 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-6 text-center">
-              <h3 className="text-2xl font-bold text-white">Sinu tulemus: {calculateScore()} / 8 õiget sõna</h3>
-              <p className="text-xs text-slate-400">Lühimälu töötluse näidisharjutus</p>
-
-              <button
-                onClick={startTask}
-                className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-sm font-semibold border border-slate-700 transition"
-              >
-                Proovi uuesti
+            <div className="p-6 bg-slate-950/80 rounded-2xl border border-slate-800 text-center space-y-4">
+              <h3 className="text-2xl font-bold text-white">Score: {calculateScore()} / 8</h3>
+              <button onClick={startTask} className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-sm font-semibold border border-slate-700">
+                Retry
               </button>
             </div>
           )}
@@ -961,67 +1038,41 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
         setGameState('playing');
 
         if (timerRef.current) clearInterval(timerRef.current);
-        timerRef.current = setInterval(() => {
-          setTime(prev => prev + 1);
-        }, 1000);
+        timerRef.current = setInterval(() => setTime(prev => prev + 1), 1000);
       };
 
       const handleCellClick = (index) => {
         if (grid[index].clicked) return;
-
-        const updatedGrid = [...grid];
-        updatedGrid[index].clicked = true;
-        setGrid(updatedGrid);
-
-        if (updatedGrid[index].isTarget) {
-          setFoundCount(prev => prev + 1);
-        }
-      };
-
-      const finishTask = () => {
-        if (timerRef.current) clearInterval(timerRef.current);
-        setGameState('result');
+        const updated = [...grid];
+        updated[index].clicked = true;
+        setGrid(updated);
+        if (updated[index].isTarget) setFoundCount(prev => prev + 1);
       };
 
       return (
         <div className="space-y-6">
           {gameState === 'idle' && (
-            <div className="text-center py-8 space-y-4 bg-slate-950/40 rounded-2xl border border-slate-800">
-              <p className="text-sm text-slate-300 max-w-md mx-auto">
-                Sulle kuvatakse sümbolite ruudustik. Sinu ülesandeks on leida ja klõpsata võimalikult kiiresti kõiki <span className="text-amber-400 font-bold">★</span> sümboleid.
-              </p>
-              <button
-                onClick={startAttentionTask}
-                className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-semibold text-white transition shadow-lg shadow-emerald-600/20"
-              >
-                Alusta tähelepanutesti
+            <div className="text-center py-8 bg-slate-950/40 rounded-2xl border border-slate-800">
+              <button onClick={startAttentionTask} className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-semibold text-white transition">
+                Start Attention Test
               </button>
             </div>
           )}
 
           {gameState === 'playing' && (
             <div className="space-y-6 bg-slate-950/60 p-6 rounded-2xl border border-slate-800">
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center space-x-2">
-                  <span className="text-slate-400">Otsi sümbolit:</span>
-                  <span className="text-amber-400 font-bold text-xl">★</span>
-                </div>
-                <div className="flex items-center space-x-4 text-xs font-semibold">
-                  <span className="text-indigo-400">Aeg: {time}s</span>
-                  <span className="text-emerald-400">Leitud: {foundCount} / {totalTargets}</span>
-                </div>
+              <div className="flex justify-between text-sm">
+                <span>Find: <strong className="text-amber-400">★</strong></span>
+                <span>Time: {time}s | Found: {foundCount}/{totalTargets}</span>
               </div>
-
               <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
                 {grid.map((cell, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleCellClick(idx)}
-                    className={`h-14 rounded-xl text-xl font-bold border transition flex items-center justify-center ${
+                    className={`h-14 rounded-xl text-xl font-bold border transition ${
                       cell.clicked
-                        ? cell.isTarget
-                          ? 'bg-emerald-600/30 border-emerald-500 text-emerald-300'
-                          : 'bg-rose-900/30 border-rose-500 text-rose-300'
+                        ? cell.isTarget ? 'bg-emerald-600/30 border-emerald-500 text-emerald-300' : 'bg-rose-900/30 border-rose-500 text-rose-300'
                         : 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700'
                     }`}
                   >
@@ -1029,44 +1080,17 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
                   </button>
                 ))}
               </div>
-
-              <div className="text-center pt-2">
-                <button
-                  onClick={finishTask}
-                  className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-xs border border-slate-700 transition"
-                >
-                  Lõpeta test
-                </button>
-              </div>
+              <button onClick={() => { clearInterval(timerRef.current); setGameState('result'); }} className="px-5 py-2 bg-slate-800 text-slate-200 rounded-xl text-xs border border-slate-700">
+                Finish
+              </button>
             </div>
           )}
 
           {gameState === 'result' && (
-            <div className="p-6 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-6 text-center">
-              <h3 className="text-2xl font-bold text-white">Tähelepanutesti tulemused</h3>
-              
-              <div className="grid grid-cols-3 gap-4 max-w-md mx-auto">
-                <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
-                  <div className="text-xs text-slate-400">Aeg</div>
-                  <div className="text-lg font-bold text-indigo-400">{time}s</div>
-                </div>
-                <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
-                  <div className="text-xs text-slate-400">Leitud</div>
-                  <div className="text-lg font-bold text-emerald-400">{foundCount} / {totalTargets}</div>
-                </div>
-                <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
-                  <div className="text-xs text-slate-400">Täpsus</div>
-                  <div className="text-lg font-bold text-purple-400">
-                    {totalTargets > 0 ? Math.round((foundCount / totalTargets) * 100) : 0}%
-                  </div>
-                </div>
-              </div>
-
-              <button
-                onClick={startAttentionTask}
-                className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-sm font-semibold border border-slate-700 transition"
-              >
-                Proovi uuesti
+            <div className="p-6 bg-slate-950/80 rounded-2xl border border-slate-800 text-center space-y-4">
+              <h3 className="text-2xl font-bold text-white">Result: {foundCount} / {totalTargets} in {time}s</h3>
+              <button onClick={startAttentionTask} className="px-5 py-2 bg-slate-800 text-slate-200 rounded-xl text-sm font-semibold border border-slate-700">
+                Retry
               </button>
             </div>
           )}
@@ -1077,12 +1101,12 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
     // ==========================================
     // MYTH VS FACT SUB-COMPONENT
     // ==========================================
-    function MythFactQuiz() {
+    function MythFactQuiz({ quizData }) {
       const [currentIndex, setCurrentIndex] = useState(0);
       const [userAnswers, setUserAnswers] = useState({});
       const [showExplanation, setShowExplanation] = useState(false);
 
-      const currentItem = MYTH_FACT_QUIZ[currentIndex];
+      const currentItem = quizData[currentIndex] || quizData[0];
       const isAnswered = userAnswers[currentItem.id] !== undefined;
       const isCorrect = isAnswered && userAnswers[currentItem.id] === currentItem.isFact;
 
@@ -1094,7 +1118,7 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
 
       const nextQuestion = () => {
         setShowExplanation(false);
-        if (currentIndex < MYTH_FACT_QUIZ.length - 1) {
+        if (currentIndex < quizData.length - 1) {
           setCurrentIndex(prev => prev + 1);
         }
       };
@@ -1110,48 +1134,32 @@ Selle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb 
               <button
                 onClick={() => handleAnswer(false)}
                 disabled={isAnswered}
-                className={`py-3.5 px-4 rounded-xl font-bold text-sm border transition ${
-                  isAnswered && !currentItem.isFact 
-                    ? 'bg-rose-600/30 border-rose-500 text-rose-200' 
-                    : 'bg-slate-800 hover:bg-slate-700/80 border-slate-700 text-slate-200'
-                }`}
+                className="py-3.5 px-4 rounded-xl font-bold text-sm bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-slate-200"
               >
-                MÜÜT
+                MYTH / MÜÜT / МИФ
               </button>
 
               <button
                 onClick={() => handleAnswer(true)}
                 disabled={isAnswered}
-                className={`py-3.5 px-4 rounded-xl font-bold text-sm border transition ${
-                  isAnswered && currentItem.isFact 
-                    ? 'bg-emerald-600/30 border-emerald-500 text-emerald-200' 
-                    : 'bg-slate-800 hover:bg-slate-700/80 border-slate-700 text-slate-200'
-                }`}
+                className="py-3.5 px-4 rounded-xl font-bold text-sm bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-slate-200"
               >
-                FAKT
+                FACT / FAKT / ФАКТ
               </button>
             </div>
 
             {showExplanation && (
               <div className={`p-4 rounded-2xl border text-sm space-y-2 animate-fadeIn ${
-                isCorrect 
-                  ? 'bg-emerald-950/40 border-emerald-800/60 text-emerald-200' 
-                  : 'bg-rose-950/40 border-rose-800/60 text-rose-200'
+                isCorrect ? 'bg-emerald-950/40 border-emerald-800/60 text-emerald-200' : 'bg-rose-950/40 border-rose-800/60 text-rose-200'
               }`}>
-                <div className="font-bold">{isCorrect ? 'Õige vastus!' : 'Vale vastus!'}</div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  {currentItem.explanation}
-                </p>
+                <p className="text-xs text-slate-300 leading-relaxed">{currentItem.explanation}</p>
               </div>
             )}
 
-            {isAnswered && currentIndex < MYTH_FACT_QUIZ.length - 1 && (
+            {isAnswered && currentIndex < quizData.length - 1 && (
               <div className="text-right">
-                <button
-                  onClick={nextQuestion}
-                  className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-xs transition"
-                >
-                  Järgmine küsimus
+                <button onClick={nextQuestion} className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-xs">
+                  Next Question
                 </button>
               </div>
             )}
