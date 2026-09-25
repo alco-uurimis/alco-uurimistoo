@@ -26,6 +26,15 @@
     .animate-fadeIn {
       animation: fadeIn 0.25s ease-out forwards;
     }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card-hover:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.2);
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white min-h-screen">
@@ -39,7 +48,6 @@
     // HELPER COMPONENTS & UTILS
     // ==========================================
     
-    // Компонент иконки Lucide с динамическим обновлением DOM
     function LucideIcon({ name, className = "w-5 h-5", ...props }) {
       const iconRef = useRef(null);
 
@@ -54,6 +62,107 @@
       }, [name, className]);
 
       return <span ref={iconRef} className="inline-flex items-center justify-center" {...props} />;
+    }
+
+    // Interactive Neural Canvas Background
+    function NeuralCanvas() {
+      const canvasRef = useRef(null);
+
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let animationFrameId;
+
+        const resize = () => {
+          if (canvas.parentElement) {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+          }
+        };
+        resize();
+        window.addEventListener('resize', resize);
+
+        const particles = Array.from({ length: 45 }).map(() => ({
+          x: Math.random() * (canvas.width || 800),
+          y: Math.random() * (canvas.height || 400),
+          vx: (Math.random() - 0.5) * 0.6,
+          vy: (Math.random() - 0.5) * 0.6,
+          radius: Math.random() * 2 + 1.5
+        }));
+
+        const draw = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+              const dx = particles[i].x - particles[j].x;
+              const dy = particles[i].y - particles[j].y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+
+              if (dist < 110) {
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.strokeStyle = `rgba(99, 102, 241, ${0.25 * (1 - dist / 110)})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+              }
+            }
+          }
+
+          particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+
+            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = '#818cf8';
+            ctx.fill();
+          });
+
+          animationFrameId = requestAnimationFrame(draw);
+        };
+
+        draw();
+
+        return () => {
+          window.removeEventListener('resize', resize);
+          cancelAnimationFrame(animationFrameId);
+        };
+      }, []);
+
+      return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none opacity-40" />;
+    }
+
+    // Custom SVG Visuals for Brain & Alcohol
+    function BrainIllustration() {
+      return (
+        <svg viewBox="0 0 400 240" className="w-full h-auto max-w-md mx-auto rounded-2xl border border-indigo-500/20 bg-slate-900/60 p-4 shadow-inner">
+          <defs>
+            <linearGradient id="gradBrain" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#818cf8" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#c084fc" stopOpacity="0.4" />
+            </linearGradient>
+            <linearGradient id="gradEthanol" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#f43f5e" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#fb7185" stopOpacity="0.2" />
+            </linearGradient>
+          </defs>
+          <path d="M 100 120 C 80 80, 130 30, 200 30 C 270 30, 330 70, 320 120 C 330 160, 290 200, 240 190 C 210 210, 160 210, 130 180 C 90 170, 80 140, 100 120 Z" 
+                fill="url(#gradBrain)" stroke="#a5b4fc" strokeWidth="2.5" strokeDasharray="6 3" />
+          <ellipse cx="180" cy="130" rx="35" ry="18" fill="#f43f5e" fillOpacity="0.5" stroke="#fda4af" strokeWidth="1.5" />
+          <text x="180" y="134" textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="bold">Hippocampus</text>
+          <path d="M 250 50 C 290 70, 300 110, 280 140 C 260 110, 250 80, 250 50 Z" fill="#6366f1" fillOpacity="0.5" />
+          <text x="270" y="95" textAnchor="middle" fill="#ffffff" fontSize="9" fontWeight="bold">Prefrontal Cortex</text>
+          <circle cx="160" cy="125" r="4" fill="#fb7185" />
+          <line x1="160" y1="125" x2="140" y2="100" stroke="#f43f5e" strokeWidth="1.5" />
+          <text x="125" y="95" fill="#f43f5e" fontSize="9" fontWeight="bold">NMDA Block (GABA↑)</text>
+        </svg>
+      );
     }
 
     // ==========================================
@@ -101,20 +210,24 @@
         preKnowledgeLabel: "Kuidas hindasid oma teadmisi alkoholi mõjust ajule ENNE selle lehe külastamist? (1 - väga madalad, 5 - väga põhjalikud)",
         block2: "Plokk 2: Teadmiste kontroll",
         q1Label: "1. Mis vanuseni jätkub teaduslikult inimese aju (eriti prefrontaalse korteksi) aktiivne areng?",
-        q2Label: "2. Mis juhtub mälu ja hippokampusega mälulünga (blackout) ajal?",
         q3Label: "3. Kas kohv või külm dušš kiirendavad etanooli lagundamist maksas?",
         block3: "Plokk 3: Veebikeskkonna ja interaktiivsuse hindamine",
         q4Label: "4. Kuivõrd arusaadavalt olid keerulised neurobioloogilised protsessid lehel lahti seletatud? (1 - keeruline, 5 - väga selge)",
         q5Label: "5. Milline interaktiivne element aitas materjali kõige paremini mõista?",
         q6Label: "6. Kas see veebileht pani Sind ümber mõtlema mõnda alkoholiga seotud müüti? Kui jah, siis millist?",
+        block4: "Plokk 4: Sotsiaalne kogemus ja vaatlused (Anonüümne)",
+        qSoc1Label: "1. Kui tihti oled oma tutvusringkonnas või üritustel märganud, et noored ei tea alkoholi tegelikku mõju mälule?",
+        qSoc2Label: "2. Kas oled oma tuttavate seas näinud või kuulnud mälulünkadest (blackout) pärast pidusid?",
+        qSoc3Label: "3. Kui suur on Sinu hinnangul eakaaslaste surve (peer pressure) alkoholi tarvitamiseks noorte pidudel? (1 - puudub, 5 - väga suur)",
         btnSend: "Saada vastused uurijale",
         sending: "Saadab vastuseid...",
         sendSuccess: "Suur tänu! Sinu vastused on edukalt saadetud.",
         sendError: "Viga saatmisel. Kontrolli internetiühendust.",
         optsQ1: ["Umbes kuni 14. eluaastani", "Umbes kuni 18. eluaastani", "Umbes kuni 25. eluaastani"],
-        optsQ2: ["Mälestused kustuvad ajust alles järgmisel päeval", "Teave ei salvestunudki pikaajalisse mällu NMDA-retseptorite pärssimise tõttu", "Inimene näeb lihtsalt unenägusid"],
         optsQ3: ["Jah, umbes poole võrra", "Ei, need tekitavad vaid pettealuse ärksuse, maksamolekulide kiirus ei muutu"],
-        optsQ5: ["Aju piirkondade ja funktsioonide kaardid", "Lühimälu harjutus (Memory Task)", "Tähelepanu ja fookuse ruudustik (Attention Grid)", "Müüt või fakt viktoriin"]
+        optsQ5: ["Aju piirkondade ja funktsioonide kaardid", "Lühimälu harjutus (Memory Task)", "Tähelepanu ja fookuse ruudustik (Attention Grid)", "Müüt või fakt viktoriin"],
+        optsSoc1: ["Pidevalt / Väga tihti", "Mõnikord", "Harva või mitte kunagi"],
+        optsSoc2: ["Jah, see on üsna tavaline nähtus", "Mõnel üksikul korral", "Ei ole kunagi märganud / kuulnud"]
       },
       en: {
         title: "Alcohol and Brain",
@@ -157,20 +270,24 @@
         preKnowledgeLabel: "How would you rate your knowledge about alcohol's effect on the brain BEFORE visiting this site? (1 - Very low, 5 - Very high)",
         block2: "Block 2: Knowledge Check",
         q1Label: "1. Until what age does human brain (especially prefrontal cortex) active development continue?",
-        q2Label: "2. What happens to memory and hippocampus during a blackout?",
         q3Label: "3. Does coffee or a cold shower speed up ethanol breakdown in the liver?",
         block3: "Block 3: Web Platform Evaluation",
         q4Label: "4. How clearly were complex neurobiological processes explained? (1 - Confusing, 5 - Very clear)",
         q5Label: "5. Which interactive element helped you understand the material best?",
         q6Label: "6. Did this site make you reconsider any myths about alcohol? If yes, which one?",
+        block4: "Block 4: Social Perception & Experience (Anonymous)",
+        qSoc1Label: "1. How often have you observed peers lacking awareness about alcohol's real impact on memory?",
+        qSoc2Label: "2. Have you witnessed or heard about blackouts among acquaintances after social gatherings?",
+        qSoc3Label: "3. In your opinion, how strong is peer pressure regarding alcohol consumption among youth? (1 - Non-existent, 5 - Very strong)",
         btnSend: "Submit answers to researcher",
         sending: "Submitting...",
         sendSuccess: "Thank you! Your responses have been sent successfully.",
         sendError: "Error sending data. Please check your internet connection.",
         optsQ1: ["Until about 14 years old", "Until about 18 years old", "Until about 25 years old"],
-        optsQ2: ["Memories fade from the brain only the next day", "Information was never consolidated into long-term memory due to NMDA inhibition", "The person is simply dreaming"],
         optsQ3: ["Yes, by about half", "No, they only create a false sense of alertness; liver enzyme activity remains unchanged"],
-        optsQ5: ["Brain region & function cards", "Short-term memory exercise", "Attention grid exercise", "Myth or Fact quiz"]
+        optsQ5: ["Brain region & function cards", "Short-term memory exercise", "Attention grid exercise", "Myth or Fact quiz"],
+        optsSoc1: ["Constantly / Very often", "Sometimes", "Rarely or never"],
+        optsSoc2: ["Yes, it is quite common", "On a few occasions", "Never observed / heard"]
       },
       ru: {
         title: "Алкоголь и мозг",
@@ -213,24 +330,27 @@
         preKnowledgeLabel: "Как вы оценивали свои знания о влиянии алкоголя на мозг ДО посещения этого сайта? (1 - очень низкие, 5 - очень глубокие)",
         block2: "Блок 2: Проверка усвоенных знаний",
         q1Label: "1. До какого возраста научно продолжается активное созревание мозга (особенно префронтальной коры)?",
-        q2Label: "2. Что происходит с памятью и гиппокампом во время блэкаута (mälulünk)?",
         q3Label: "3. Ускоряет ли кофе или холодный душ расщепление этанола печенью?",
         block3: "Блок 3: Оценка сайта и интерактивности",
         q4Label: "4. Насколько понятно на сайте объяснены сложные нейробиологические процессы? (1 - сложно, 5 - очень понятно)",
         q5Label: "5. Какой интерактивный элемент помог вам лучше всего усвоить материал?",
         q6Label: "6. Заставил ли этот сайт вас пересмотреть какой-либо миф об алкоголе? Если да, то какой?",
+        block4: "Блок 4: Социальный опыт и наблюдения (Анонимно)",
+        qSoc1Label: "1. Как часто в своем окружении вы замечаете, что молодежь не осознает реальное влияние алкоголя на память?",
+        qSoc2Label: "2. Слышали ли вы или замечали проявления блэкаутов (провалов в памяти) у знакомых после вечеринок?",
+        qSoc3Label: "3. Насколько велико, по вашей оценке, давление сверстников (peer pressure) в вопросе алкоголя? (1 - отсутствует, 5 - очень высокое)",
         btnSend: "Отправить ответы автору",
         sending: "Отправка...",
         sendSuccess: "Большое спасибо! Ваши ответы успешно отправлены.",
         sendError: "Ошибка при отправке. Проверьте подключение к интернету.",
         optsQ1: ["Примерно до 14 лет", "Примерно до 18 лет", "Примерно до 25 лет"],
-        optsQ2: ["Воспоминания стираются из мозга только на следующий день", "Информация вовсе не записалась в долговременную память из-за блокады NMDA-рецепторов", "Человек просто видит сны"],
         optsQ3: ["Да, примерно в два раза", "Нет, они лишь создают иллюзию бодрости, скорость ферментов печени не меняется"],
-        optsQ5: ["Карточки областей мозга и их функций", "Упражнение на кратковременную память", "Сетка внимания и концентрации", "Викторина «Миф или факт»"]
+        optsQ5: ["Карточки областей мозга и их функций", "Упражнение на кратковременную память", "Сетка внимания и концентрации", "Викторина «Миф или факт»"],
+        optsSoc1: ["Постоянно / Очень часто", "Иногда", "Редко или никогда"],
+        optsSoc2: ["Да, это достаточно распространенное явление", "В единичных случаях", "Никогда не замечал(а) / не слышал(а)"]
       }
     };
 
-    // MULTILINGUAL BRAIN DATA
     const BRAIN_AREAS_I18N = {
       et: [
         {
@@ -239,7 +359,7 @@
           subtitle: 'Kuidas alkohol segab mälestuste salvestamist',
           iconName: 'brain',
           shortDesc: 'Alkohol pärsib hippokampuse funktsiooni, mis on hädavajalik uue teabe kinnistamiseks lühimälust pikaajalisse mällu.',
-          detailedText: `Alkohol mõjutab otseselt hippokampust — ajuosa, mis vastutab uute mälestuste moodustamise ja õppimise eest [3, 8]. Ägeda joobe korral pärsib etanool NMDA-glutamaadi retseptoreid, takistades pikaajalist potentsreerumist (LTP), mis on mälujälgede tekkimise keemiline alus [1, 3].\n\nSee võib põhjustada mälulünki (blackouts), kus inimene on ärkvel, kuid aju ei salvesta toimuvat pikaajalisse mällu [3]. Nooruki eas, mil hippokampus alles areneb, võib korduv suurtes kogustes alkoholi tarvitamine tuua kaasa püsivamaid mälu- ja õppimisraskusi [4, 5].`,
+          detailedText: `Alkohol mõjutab otseselt hippokampust — ajuosa, mis vastutab uute mälestuste moodustamise ja õppimise eest [3, 8]. Ägeda joobe korral pärsib etanool NMDA-glutamaadi retseptoreid, takistades pikaajalist potentsreerumist (LTP) [1, 3].\n\nSee võib põhjustada mälulünki (blackouts), kus inimene on ärkvel, kuid aju ei salvesta toimuvat pikaajalisse mällu [3].`,
           citationIds: [1, 3, 4, 5, 8]
         },
         {
@@ -248,7 +368,7 @@
           subtitle: 'Keskendumisvõime ja tähelepanu jaotamine',
           iconName: 'target',
           shortDesc: 'Prefrontaalne korteks ehk otsmikusagar kaotab võime tõhusalt filtreerida stiimuleid ja hoida fookust.',
-          detailedText: `Prefrontaalne korteks (otsmikusagar) on aju juhtimiskeskus, mis vastutab tähelepanu koondamise, töömälu ja stiimulite filtreerimise eest [5, 9]. Alkohol tugevdab GABA-A retseptorite inhibeerivat mõju, mis aeglustab närviimpulsside edastamist selles piirkonnas [8].\n\nTulemuseks on selektiivse tähelepanu nõrgenemine — raskem on keskenduda ühele ülesandele või jagada tähelepanu mitme tegevuse vahel korraga [6].`,
+          detailedText: `Prefrontaalne korteks (otsmikusagar) on aju juhtimiskeskus [5, 9]. Alkohol tugevdab GABA-A retseptorite pärssivat mõju, mis aeglustab närviimpulsside edastamist tähelepanukeskustes [8].\n\nTulemuseks on selektiivse tähelepanu nõrgenemine ja raskused fookuse hoidmisel [6].`,
           citationIds: [5, 6, 8, 9]
         },
         {
@@ -256,8 +376,8 @@
           title: 'Reaktsioonikiirus ja Väikeaju',
           subtitle: 'Signaalide aeglustumine ja koordinatsioon',
           iconName: 'activity',
-          shortDesc: 'Väikeaju (cerebellum) ja mootorsüsteemi pärssimine pikendab reageerimisaega ja halvendab motoorikat.',
-          detailedText: `Reaktsiooniaeg sõltub visuaalse või auditoorse signaali töötlemisest ajus ja sellele järgnevast mootorsignaali edastamisest lihastele [6]. Alkohol pikendab signaali läbimise aega sünapsides.\n\nVäikeaju (cerebellum) pärssimine häirib peenmotoorikat, tasakaalu ja ajalist reageerimist [6]. Eriti ohtlik on see situatsioonides, mis nõuavad kiiret otsustamist murdosa sekundi jooksul.`,
+          shortDesc: 'Väikeaju (cerebellum) pärssimine pikendab reageerimisaega ja halvendab tasakaalu.',
+          detailedText: `Reaktsiooniaeg sõltub visuaalse signaali töötlemisest ja mootorsignaali edastamisest [6]. Alkohol pärsib väikeaju (cerebellum), mis halvendab peenmotoorikat ja pikendab reageerimisaega ohtudele.`,
           citationIds: [1, 6]
         },
         {
@@ -266,7 +386,7 @@
           subtitle: 'Raskused riskide hindamisel',
           iconName: 'shield-alert',
           shortDesc: 'Inhibitsioonide vähenemine viib kriitilise mõtlemise halvenemiseni ja riskantsuse suurenemiseni.',
-          detailedText: `Prefrontaalne korteks areneb inimesel täielikult välja alles umbes 25. eluaastaks [4, 5]. Alkohol pärsib selle piirkonna kriitilist funktsiooni — ihade ja impulsside pidurdamist (response inhibition) [6].\n\nSelle tulemusena väheneb võime ette näha oma käitumise tagajärgi, suureneb valmidus võtta ebavajalikke riske sekä halveneb võime teha kaalutletud otsuseid [1, 5, 6].`,
+          detailedText: `Prefrontaalne korteks areneb täielikult umbes 25. eluaastaks [4, 5]. Alkohol pärsib ihade ja impulsside pidurdamist (response inhibition), suurendades riskeerivat käitumist [1, 5, 6].`,
           citationIds: [1, 4, 5, 6]
         }
       ],
@@ -276,8 +396,8 @@
           title: 'Memory & Hippocampus',
           subtitle: 'How alcohol impairs memory formation',
           iconName: 'brain',
-          shortDesc: 'Alcohol suppresses hippocampal function, which is essential for consolidating new information from short-term to long-term memory.',
-          detailedText: `Alcohol directly affects the hippocampus — the brain structure responsible for memory formation and learning [3, 8]. During acute intoxication, ethanol inhibits NMDA glutamate receptors, blocking long-term potentiation (LTP) [1, 3].\n\nThis causes alcohol-induced blackouts, where a person remains conscious but the brain stops transferring events into long-term memory [3].`,
+          shortDesc: 'Alcohol suppresses hippocampal function, essential for consolidating memory.',
+          detailedText: `Ethanol inhibits NMDA glutamate receptors in the hippocampus, preventing LTP [1, 3]. This produces blackouts where memories fail to form [3].`,
           citationIds: [1, 3, 4, 5, 8]
         },
         {
@@ -285,26 +405,26 @@
           title: 'Attention & Prefrontal Cortex',
           subtitle: 'Focus and cognitive control',
           iconName: 'target',
-          shortDesc: 'The prefrontal cortex loses its ability to filter stimuli effectively and sustain attention.',
-          detailedText: `The prefrontal cortex is the executive center of the brain [5, 9]. Alcohol enhances GABA-A receptor inhibition, slowing neural signal transmission in this area [8].\n\nThis leads to impaired selective attention and working memory capacity [6].`,
+          shortDesc: 'The prefrontal cortex loses focus control due to GABA-A receptor enhancement.',
+          detailedText: `Alcohol slows down executive function networks in the frontal lobe, impairing working memory and attention filtering [5, 8].`,
           citationIds: [5, 6, 8, 9]
         },
         {
           id: 'reaction',
           title: 'Reaction Time & Cerebellum',
-          subtitle: 'Signal deceleration and coordination',
+          subtitle: 'Coordination and delay',
           iconName: 'activity',
-          shortDesc: 'Inhibition of the cerebellum and motor system prolongs reaction time and impairs fine motor skills.',
-          detailedText: `Reaction time depends on signal processing speed in synapses [6]. Alcohol delays motor signal transmission.\n\nCerebellar suppression disrupts balance, spatial awareness, and split-second decision-making [6].`,
+          shortDesc: 'Cerebellar suppression delays motor reaction times.',
+          detailedText: `Synaptic transmission in the cerebellum is dampened, prolonging motor reaction latency [1, 6].`,
           citationIds: [1, 6]
         },
         {
           id: 'decision',
           title: 'Decision-Making & Impulse Control',
-          subtitle: 'Impaired risk assessment',
+          subtitle: 'Risk evaluation failure',
           iconName: 'shield-alert',
-          shortDesc: 'Reduced inhibition leads to poor critical thinking and increased risk-taking behavior.',
-          detailedText: `The prefrontal cortex matures fully only around age 25 [4, 5]. Alcohol suppresses response inhibition [6], leading to impaired risk evaluation and impulsive behavior [1, 5, 6].`,
+          shortDesc: 'Decreased response inhibition promotes impulsive behavior.',
+          detailedText: `Because the prefrontal cortex matures around age 25, alcohol severely impairs risk perception in young individuals [4, 5].`,
           citationIds: [1, 4, 5, 6]
         }
       ],
@@ -312,37 +432,37 @@
         {
           id: 'memory',
           title: 'Память и Гиппокамп',
-          subtitle: 'Как алкоголь блокирует сохранение воспоминаний',
+          subtitle: 'Блокировка сохранения воспоминаний',
           iconName: 'brain',
-          shortDesc: 'Алкоголь угнетает функцию гиппокампа, необходимого для консолидации информации из кратковременной памяти в долговременную.',
-          detailedText: `Алкоголь напрямую воздействует на гиппокамп — структуру мозга, отвечающую за обучение и формирование новых воспоминаний [3, 8]. При острой интоксикации этанол блокирует NMDA-рецепторы глутамата, нарушая долговременную потенциацию (LTP) [1, 3].\n\nЭто приводит к алкогольным блэкаутам (mälulünka), когда человек находится в сознании, но мозг физически не записывает происходящее в долговременную память [3].`,
+          shortDesc: 'Этанол угнетает функцию гиппокампа, нарушая консолидацию воспоминаний.',
+          detailedText: `Блокада NMDA-рецепторов глутамата в гиппокампе препятствует возникновению долговременной потенциации (LTP) [1, 3], вызывая блэкауты [3].`,
           citationIds: [1, 3, 4, 5, 8]
         },
         {
           id: 'attention',
           title: 'Внимание и Лобная Доля',
-          subtitle: 'Концентрация и управляющие функции',
+          subtitle: 'Концентрация и контроль',
           iconName: 'target',
-          shortDesc: 'Префронтальная кора теряет способность эффективно фильтровать раздражители и удерживать фокус.',
-          detailedText: `Префронтальная кора — командный центр мозга, отвечающий за контроль и внимание [5, 9]. Алкоголь усиливает тормозящее действие ГАМК-А рецепторов, замедляя передачу импульсов [8].\n\nВ результате снижается избирательное внимание и объем рабочей памяти [6].`,
+          shortDesc: 'Префронтальная кора теряет способность фильтровать фоновые раздражители.',
+          detailedText: `Усиление тормозного действия ГАМК-А рецепторов замедляет передачу сигналов в управляющих сетях мозга [5, 8].`,
           citationIds: [5, 6, 8, 9]
         },
         {
           id: 'reaction',
           title: 'Скорость Реакции и Мозжечок',
-          subtitle: 'Замедление сигналов и координация',
+          subtitle: 'Замедление и координация',
           iconName: 'activity',
-          shortDesc: 'Затормаживание мозжечка и моторной системы увеличивает время реакции и ухудшает координацию.',
-          detailedText: `Время реакции зависит от скорости прохождения нейронного сигнала через синапсы [6]. Алкоголь удлиняет эту задержку.\n\nПодавление мозжечка нарушает моторику, баланс и способность быстро принимать решения за доли секунды [6].`,
+          shortDesc: 'Подавление мозжечка увеличивает время реакции на внешние стимулы.',
+          detailedText: `Алкоголь задерживает прохождение синаптических импульсов к моторным центрам [1, 6].`,
           citationIds: [1, 6]
         },
         {
           id: 'decision',
-          title: 'Принятие Решений и Контроль Импульсов',
-          subtitle: 'Сбои в оценке рисков',
+          title: 'Принятие Решений и Контроль',
+          subtitle: 'Сбои оценки рисков',
           iconName: 'shield-alert',
-          shortDesc: 'Снижение торможения ведет к ухудшению критического мышления и склонности к риску.',
-          detailedText: `Префронтальная кора полностью созревает только к 25 годам [4, 5]. Алкоголь подавляет функцию контроля импульсов (response inhibition) [6], что приводит к недооценке рисков и необдуманным поступкам [1, 5, 6].`,
+          shortDesc: 'Снижение самоконтроля ведет к необдуманным рискам.',
+          detailedText: `Развивающаяся до 25 лет префронтальная кора теряет способность сдерживать импульсивные порывы [4, 5].`,
           citationIds: [1, 4, 5, 6]
         }
       ]
@@ -353,7 +473,7 @@
       { id: 2, authors: "Nutt, D. J., King, L. A., & Phillips, L. D.", title: "Drug harms in the UK: a multicriteria decision analysis", year: "2010", publisher: "The Lancet, 376(9752), 1558-1565" },
       { id: 3, authors: "White, A. M.", title: "What happened? Memory blackout, and the brain", year: "2003", publisher: "Alcohol Research & Health, 27(2), 186-196" },
       { id: 4, authors: "Lees, B., et al.", title: "Effect on the adolescent brain and behavior", year: "2020", publisher: "Neuropharmacology, 177, 108218" },
-      { id: 5, authors: "Carbia, C., et al.", title: "Binge drinking during adolescence/young adulthood and executive functioning: A systematic review", year: "2018", publisher: "Neuroscience & Biobehavioral Reviews, 89, 54-71" },
+      { id: 5, authors: "Carbia, C., et al.", title: "Binge drinking during adolescence/young adulthood and executive functioning", year: "2018", publisher: "Neuroscience & Biobehavioral Reviews, 89, 54-71" },
       { id: 6, authors: "Fillmore, M. T.", title: "Acute impairment of cognitive functions: past and present findings", year: "2007", publisher: "Int. Journal of Disability and Human Development, 6(2), 115-126" },
       { id: 7, authors: "Millwood, I. Y., et al.", title: "Conventional and genetic evidence on vascular disease etiology", year: "2019", publisher: "The Lancet, 393(10183), 1831-1842" },
       { id: 8, authors: "Stahl, S. M.", title: "Stahl's Essential Psychopharmacology (5th ed.)", year: "2021", publisher: "Cambridge University Press" },
@@ -368,16 +488,16 @@
         { id: 4, statement: "Väikeses koguses alkoholi tarvitamine on südame-veresoonkonnale kasulik.", isFact: false, explanation: "MÜÜT! Kaasaegsed Mendeli randomiseerimise uuringud näitavad, et igasugune alkoholitarvitamine suurendab vererõhu- ja insuldiriski [7]." }
       ],
       en: [
-        { id: 1, statement: "A cup of strong coffee or a cold shower helps you sober up faster.", isFact: false, explanation: "MYTH! Coffee or cold showers do not speed up ethanol metabolism in the liver. The liver breaks down alcohol at a constant rate [1]." },
+        { id: 1, statement: "A cup of strong coffee or a cold shower helps you sober up faster.", isFact: false, explanation: "MYTH! Coffee or cold showers do not speed up ethanol metabolism in the liver [1]." },
         { id: 2, statement: "An adolescent brain is more vulnerable to alcohol than an adult brain.", isFact: true, explanation: "FACT! Because the prefrontal cortex develops until around age 25, young brains are structurally more sensitive to neurotoxic damage [4, 5]." },
-        { id: 3, statement: "An alcohol blackout just means you forgot what happened later.", isFact: false, explanation: "MYTH! During a blackout, information was NEVER saved to long-term memory due to NMDA receptor blockade [3]." },
-        { id: 4, statement: "Moderate alcohol consumption is good for cardiovascular health.", isFact: false, explanation: "MYTH! Recent genetic studies (Mendelian randomization) show that any alcohol intake linearly increases hypertension and stroke risks [7]." }
+        { id: 3, statement: "An alcohol blackout just means you forgot what happened later.", isFact: false, explanation: "MYTH! Information was NEVER saved to long-term memory due to NMDA receptor blockade [3]." },
+        { id: 4, statement: "Moderate alcohol consumption is good for cardiovascular health.", isFact: false, explanation: "MYTH! Genetic studies show that any alcohol intake increases hypertension and stroke risks [7]." }
       ],
       ru: [
-        { id: 1, statement: "Чашка крепкого кофе или холодный душ помогают быстрее протрезветь.", isFact: false, explanation: "МИФ! Кофе и душ не ускоряют расщепление этанола печенью. Печень метаболизирует алкоголь с постоянной скоростью [1]." },
-        { id: 2, statement: "Мозг подростка более уязвим к алкоголю, чем мозг взрослого.", isFact: true, explanation: "ФАКТ! Так как префронтальная кора созревает примерно до 25 лет, развивающийся мозг более чувствителен к нейротоксичным повреждениям [4, 5]." },
-        { id: 3, statement: "Алкогольный блэкаут означает, что человек просто забыл события позже.", isFact: false, explanation: "МИФ! Во время блэкаута информация ВООБЩЕ НЕ ЗАПИСЫВАЛАСЬ в долговременную память из-за блокады NMDA-рецепторов [3]." },
-        { id: 4, statement: "Употребление алкоголя в малых дозах полезно для сердца и сосудов.", isFact: false, explanation: "МИФ! Современные генетические исследования показывают, что любые дозы алкоголя повышают риск гипертонии и инсульта [7]." }
+        { id: 1, statement: "Чашка крепкого кофе или холодный душ помогают быстрее протрезветь.", isFact: false, explanation: "МИФ! Кофе и душ не ускоряют расщепление этанола печенью [1]." },
+        { id: 2, statement: "Мозг подростка более уязвим к алкоголю, чем мозг взрослого.", isFact: true, explanation: "ФАКТ! Так как префронтальная кора созревает примерно до 25 лет, развивающийся мозг более чувствителен к повреждениям [4, 5]." },
+        { id: 3, statement: "Алкогольный блэкаут означает, что человек просто забыл события позже.", isFact: false, explanation: "МИФ! Во время блэкаута информация ВООБЩЕ НЕ ЗАПИСЫВАЛАСЬ в долговременную память [3]." },
+        { id: 4, statement: "Употребление алкоголя в малых дозах полезно для сердца и сосудов.", isFact: false, explanation: "МИФ! Генетические исследования показывают, что любые дозы алкоголя повышают риск гипертонии [7]." }
       ]
     };
 
@@ -431,7 +551,6 @@
           <header className="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
               
-              {/* Logo */}
               <div className="flex items-center space-x-3 cursor-pointer select-none" onClick={() => scrollTo('hero')}>
                 <div className="p-2 bg-indigo-600/20 rounded-lg border border-indigo-500/30">
                   <LucideIcon name="brain" className="w-6 h-6 text-indigo-400" />
@@ -441,7 +560,6 @@
                 </span>
               </div>
 
-              {/* Desktop Nav */}
               <nav className="hidden lg:flex items-center space-x-1 text-xs xl:text-sm font-medium text-slate-300">
                 {[
                   { id: 'hero', label: t.nav.hero },
@@ -466,9 +584,7 @@
                 ))}
               </nav>
 
-              {/* Controls (Lang + Mobile toggle) */}
               <div className="flex items-center space-x-3">
-                {/* Language Switcher */}
                 <div className="flex items-center space-x-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700 text-xs font-semibold">
                   {['et', 'en', 'ru'].map((code) => (
                     <button 
@@ -481,7 +597,6 @@
                   ))}
                 </div>
 
-                {/* Mobile Menu Button */}
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                   className="lg:hidden p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white border border-slate-700 focus:outline-none"
@@ -492,7 +607,6 @@
               </div>
             </div>
 
-            {/* Mobile Dropdown Nav */}
             {isMobileMenuOpen && (
               <div className="lg:hidden bg-slate-900 border-b border-slate-800 px-4 py-4 space-y-2 animate-fadeIn">
                 {[
@@ -520,45 +634,54 @@
             )}
           </header>
 
-          {/* MAIN CONTENT CONTAINERS */}
+          {/* MAIN CONTENT */}
           <main className="max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 space-y-16 sm:space-y-24">
 
-            {/* HERO SECTION */}
-            <section id="hero" className="pt-6 sm:pt-12 pb-8 sm:pb-12 text-center relative overflow-hidden">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/60 border border-indigo-800/50 text-indigo-300 text-xs font-semibold uppercase tracking-wider mb-6">
-                <LucideIcon name="sparkles" className="w-3.5 h-3.5" />
-                <span>{t.subtitle}</span>
-              </div>
+            {/* HERO SECTION WITH CANVAS & VISUAL */}
+            <section id="hero" className="pt-6 sm:pt-12 pb-8 sm:pb-12 text-center relative overflow-hidden rounded-3xl border border-slate-800/80 bg-slate-900/40 p-6 sm:p-10">
+              <NeuralCanvas />
+              
+              <div className="relative z-10 space-y-6">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-950/80 border border-indigo-700/50 text-indigo-300 text-xs font-semibold uppercase tracking-wider">
+                  <LucideIcon name="sparkles" className="w-3.5 h-3.5" />
+                  <span>{t.subtitle}</span>
+                </div>
 
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
-                {t.heroTitle} <br className="hidden sm:inline" />
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400">
-                  {t.heroTitleColored}
-                </span>
-              </h1>
+                <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+                  {t.heroTitle} <br className="hidden sm:inline" />
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400">
+                    {t.heroTitleColored}
+                  </span>
+                </h1>
 
-              <p className="max-w-2xl mx-auto text-base sm:text-lg text-slate-300 mb-8 sm:mb-10 leading-relaxed px-2">
-                {t.heroDesc}
-              </p>
+                <p className="max-w-2xl mx-auto text-base sm:text-lg text-slate-300 leading-relaxed">
+                  {t.heroDesc}
+                </p>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto sm:max-w-none">
-                <button 
-                  onClick={() => scrollTo('brain')}
-                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold flex items-center justify-center gap-2 transition shadow-xl shadow-indigo-600/25 active:scale-95"
-                >
-                  <span>{t.btnStart}</span>
-                  <LucideIcon name="arrow-right" className="w-4 h-4" />
-                </button>
-                <button 
-                  onClick={() => scrollTo('memory-task')}
-                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold border border-slate-700 transition active:scale-95"
-                >
-                  {t.btnTryTests}
-                </button>
+                {/* VISUAL ILLUSTRATION */}
+                <div className="pt-4 pb-2">
+                  <BrainIllustration />
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto sm:max-w-none">
+                  <button 
+                    onClick={() => scrollTo('brain')}
+                    className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold flex items-center justify-center gap-2 transition shadow-xl shadow-indigo-600/25 active:scale-95"
+                  >
+                    <span>{t.btnStart}</span>
+                    <LucideIcon name="arrow-right" className="w-4 h-4" />
+                  </button>
+                  <button 
+                    onClick={() => scrollTo('memory-task')}
+                    className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold border border-slate-700 transition active:scale-95"
+                  >
+                    {t.btnTryTests}
+                  </button>
+                </div>
               </div>
             </section>
 
-            {/* MIS TOIMUB AJUS SECTION */}
+            {/* BRAIN REGIONS SECTION */}
             <section id="brain" className="space-y-8 scroll-mt-20">
               <div className="text-center space-y-3">
                 <h2 className="text-2xl sm:text-3xl font-bold text-white">{t.brainSectionTitle}</h2>
@@ -572,10 +695,8 @@
                   return (
                     <div 
                       key={area.id}
-                      className={`p-5 sm:p-6 rounded-2xl border transition-all duration-300 flex flex-col justify-between ${
-                        isExpanded 
-                          ? 'bg-slate-800/90 border-indigo-500/50 shadow-2xl shadow-indigo-950/50' 
-                          : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900'
+                      className={`p-5 sm:p-6 rounded-2xl border transition-all duration-300 flex flex-col justify-between glass-card glass-card-hover ${
+                        isExpanded ? 'border-indigo-500/60 shadow-2xl shadow-indigo-950/50' : 'border-slate-800'
                       }`}
                     >
                       <div>
@@ -605,7 +726,7 @@
 
                       <button
                         onClick={() => setExpandedCard(isExpanded ? null : area.id)}
-                        className="mt-6 w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700/80 text-xs font-semibold text-slate-200 border border-slate-700 flex items-center justify-center gap-2 transition active:scale-98"
+                        className="mt-6 w-full py-2.5 px-4 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 flex items-center justify-center gap-2 transition active:scale-98"
                       >
                         <span>{isExpanded ? t.btnClose : t.btnReadMore}</span>
                         <LucideIcon name="chevron-down" className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
@@ -616,7 +737,7 @@
               </div>
             </section>
 
-            {/* INTERACTIVE MEMORY TASK */}
+            {/* MEMORY TASK */}
             <section id="memory-task" className="p-5 sm:p-8 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-8 scroll-mt-20">
               <div className="max-w-2xl">
                 <h2 className="text-2xl sm:text-3xl font-bold text-white">{t.memoryTitle}</h2>
@@ -643,7 +764,7 @@
               <MythFactQuiz quizData={mythQuiz} />
             </section>
 
-            {/* TELEGRAM QUESTIONNAIRE MODULE */}
+            {/* QUESTIONNAIRE WITH EXTENDED BLOCKS */}
             <section id="feedback-form" className="p-5 sm:p-8 rounded-3xl bg-slate-900/90 border border-indigo-500/40 space-y-8 relative overflow-hidden scroll-mt-20">
               <div className="max-w-2xl">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/80 border border-indigo-800/50 text-indigo-300 text-xs font-semibold uppercase mb-3">
@@ -656,7 +777,7 @@
               <TelegramFeedbackForm t={t} lang={lang} />
             </section>
 
-            {/* SOURCES SECTION */}
+            {/* SOURCES */}
             <section id="sources" className="p-5 sm:p-8 rounded-3xl bg-slate-900/50 border border-slate-800 space-y-6 scroll-mt-20">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-slate-800 rounded-lg text-slate-300">
@@ -679,7 +800,7 @@
               </div>
             </section>
 
-            {/* ABOUT PROJECT SECTION */}
+            {/* ABOUT */}
             <section className="p-6 sm:p-8 rounded-3xl bg-slate-900/30 border border-slate-800/60 text-center space-y-4">
               <h3 className="text-base sm:text-lg font-bold text-white">{t.aboutTitle}</h3>
               <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">{t.aboutDesc}</p>
@@ -695,7 +816,6 @@
 
           </main>
 
-          {/* FOOTER */}
           <footer className="border-t border-slate-800 py-6 text-center text-xs text-slate-500 px-4">
             <p>© 2026 Alkohol ja aju. Praktiline töö. Kõik õigused kaitstud.</p>
           </footer>
@@ -705,7 +825,7 @@
     }
 
     // ==========================================
-    // TELEGRAM FEEDBACK FORM
+    // EXTENDED FEEDBACK FORM COMPONENT
     // ==========================================
     function TelegramFeedbackForm({ t, lang }) {
       const [formData, setFormData] = useState({
@@ -713,20 +833,23 @@
         grade: '',
         preKnowledge: '3',
         qAge: t.optsQ1[2],
-        qMemory: t.optsQ2[1],
         qCoffee: t.optsQ3[1],
         qClarity: '5',
         qInteractive: t.optsQ5[0],
-        qMythReflect: ''
+        qMythReflect: '',
+        qSoc1: t.optsSoc1[1],
+        qSoc2: t.optsSoc2[0],
+        qSoc3: '3'
       });
 
       useEffect(() => {
         setFormData(prev => ({
           ...prev,
           qAge: t.optsQ1[2],
-          qMemory: t.optsQ2[1],
           qCoffee: t.optsQ3[1],
-          qInteractive: t.optsQ5[0]
+          qInteractive: t.optsQ5[0],
+          qSoc1: t.optsSoc1[1],
+          qSoc2: t.optsSoc2[0]
         }));
       }, [lang]);
 
@@ -743,8 +866,11 @@
           `📊 *Enesehinnang enne (1-5):* ${formData.preKnowledge}\n\n` +
           `*TEADMISTE KONTROLL:*\n` +
           `1️⃣ *Aju küpsemise iga:* ${formData.qAge}\n` +
-          `2️⃣ *Mälulünk (blackout):* ${formData.qMemory}\n` +
-          `3️⃣ *Kohv ja kainedus:* ${formData.qCoffee}\n\n` +
+          `2️⃣ *Kohv ja kainedus:* ${formData.qCoffee}\n\n` +
+          `*SOTSIAALNE KOGEMUS / VAATLUSED:*\n` +
+          `👥 *Teadlikkus tutvusringkonnas:* ${formData.qSoc1}\n` +
+          `🧠 *Mälulüngad знакомых:* ${formData.qSoc2}\n` +
+          `⚡ *Peer pressure (1-5):* ${formData.qSoc3}\n\n` +
           `*LEHE HINDAMINE:*\n` +
           `⭐ *Arusaadavus (1-5):* ${formData.qClarity}\n` +
           `💡 *Parim element:* ${formData.qInteractive}\n` +
@@ -772,8 +898,6 @@
 
       return (
         <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
-          
-          {/* BLOCK 1 */}
           <div className="space-y-4 bg-slate-950/60 p-4 sm:p-5 rounded-2xl border border-slate-800">
             <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">{t.block1}</h3>
             
@@ -823,7 +947,6 @@
             </div>
           </div>
 
-          {/* BLOCK 2 */}
           <div className="space-y-4">
             <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">{t.block2}</h3>
 
@@ -835,19 +958,6 @@
                 className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
               >
                 {t.optsQ1.map((opt, idx) => (
-                  <option key={idx} value={opt}>{opt}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
-              <label className="block text-xs font-semibold text-white">{t.q2Label}</label>
-              <select 
-                value={formData.qMemory}
-                onChange={(e) => setFormData({...formData, qMemory: e.target.value})}
-                className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
-              >
-                {t.optsQ2.map((opt, idx) => (
                   <option key={idx} value={opt}>{opt}</option>
                 ))}
               </select>
@@ -867,7 +977,56 @@
             </div>
           </div>
 
-          {/* BLOCK 3 */}
+          <div className="space-y-4">
+            <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">{t.block4}</h3>
+
+            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
+              <label className="block text-xs font-semibold text-white">{t.qSoc1Label}</label>
+              <select 
+                value={formData.qSoc1}
+                onChange={(e) => setFormData({...formData, qSoc1: e.target.value})}
+                className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
+              >
+                {t.optsSoc1.map((opt, idx) => (
+                  <option key={idx} value={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
+              <label className="block text-xs font-semibold text-white">{t.qSoc2Label}</label>
+              <select 
+                value={formData.qSoc2}
+                onChange={(e) => setFormData({...formData, qSoc2: e.target.value})}
+                className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
+              >
+                {t.optsSoc2.map((opt, idx) => (
+                  <option key={idx} value={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
+              <label className="block text-xs font-semibold text-white">{t.qSoc3Label}</label>
+              <div className="flex items-center justify-between gap-2 max-w-xs pt-1">
+                {[1, 2, 3, 4, 5].map((num) => (
+                  <button
+                    key={num}
+                    type="button"
+                    onClick={() => setFormData({...formData, qSoc3: String(num)})}
+                    className={`flex-1 py-2 rounded-xl text-xs font-bold border transition ${
+                      formData.qSoc3 === String(num)
+                        ? 'bg-purple-600 text-white border-purple-500'
+                        : 'bg-slate-900 text-slate-400 border-slate-700 hover:bg-slate-800'
+                    }`}
+                  >
+                    {num}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
           <div className="space-y-4">
             <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">{t.block3}</h3>
 
@@ -939,9 +1098,7 @@
       );
     }
 
-    // ==========================================
-    // MEMORY GAME SUB-COMPONENT
-    // ==========================================
+    // MEMORY GAME
     function MemoryGame({ lang }) {
       const [gameState, setGameState] = useState('idle');
       const [currentWords, setCurrentWords] = useState([]);
@@ -1090,9 +1247,7 @@
       );
     }
 
-    // ==========================================
-    // ATTENTION GAME SUB-COMPONENT
-    // ==========================================
+    // ATTENTION GAME
     function AttentionGame() {
       const [gameState, setGameState] = useState('idle');
       const [grid, setGrid] = useState([]);
@@ -1190,9 +1345,7 @@
       );
     }
 
-    // ==========================================
-    // MYTH VS FACT SUB-COMPONENT
-    // ==========================================
+    // MYTH VS FACT
     function MythFactQuiz({ quizData }) {
       const [currentIndex, setCurrentIndex] = useState(0);
       const [userAnswers, setUserAnswers] = useState({});
@@ -1272,7 +1425,6 @@
       );
     }
 
-    // RENDER APPLICATION
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>
