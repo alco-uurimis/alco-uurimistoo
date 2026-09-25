@@ -1,12 +1,30 @@
 <!DOCTYPE html>
-<html lang="et">
+<html lang="et" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alkohol ja aju — Praktiline töö</title>
+  <title>Alkohol ja aju — Interaktiivne Teadusportaal</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              900: '#312e81',
+              950: '#0f172a'
+            }
+          }
+        }
+      }
+    }
+  </script>
   
   <!-- React and React-DOM CDNs -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -18,44 +36,59 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
+  <!-- Canvas Confetti for rewards -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
   <style>
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .animate-fadeIn {
-      animation: fadeIn 0.25s ease-out forwards;
+      animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     .glass-card {
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(12px);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%);
+      backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
     }
     .glass-card-hover:hover {
-      border-color: rgba(99, 102, 241, 0.4);
-      box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.2);
+      border-color: rgba(99, 102, 241, 0.5);
+      box-shadow: 0 25px 50px -12px rgba(79, 70, 229, 0.25);
+      transform: translateY(-2px);
+      transition: all 0.3s ease;
     }
-    /* Дополнительные стили для анимаций бутылок */
     @keyframes pulseGlow {
-      0%, 100% { filter: drop-shadow(0 0 8px rgba(244, 63, 94, 0.4)); }
-      50% { filter: drop-shadow(0 0 20px rgba(244, 63, 94, 0.8)); }
+      0%, 100% { filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.3)); }
+      50% { filter: drop-shadow(0 0 25px rgba(244, 63, 94, 0.6)); }
     }
-    .glow-bottle {
-      animation: pulseGlow 3s infinite ease-in-out;
+    .glow-container {
+      animation: pulseGlow 4s infinite ease-in-out;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090d16;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white min-h-screen">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white min-h-screen flex flex-col justify-between">
 
   <div id="root"></div>
 
   <script type="text/babel">
     const { useState, useEffect, useRef, useLayoutEffect } = React;
 
-    // ==========================================
-    // HELPER COMPONENTS & UTILS
-    // ==========================================
-    
     function LucideIcon({ name, className = "w-5 h-5", ...props }) {
       const iconRef = useRef(null);
 
@@ -72,7 +105,6 @@
       return <span ref={iconRef} className="inline-flex items-center justify-center" {...props} />;
     }
 
-    // Interactive Neural Canvas Background
     function NeuralCanvas() {
       const canvasRef = useRef(null);
 
@@ -91,12 +123,12 @@
         resize();
         window.addEventListener('resize', resize);
 
-        const particles = Array.from({ length: 45 }).map(() => ({
+        const particles = Array.from({ length: 60 }).map(() => ({
           x: Math.random() * (canvas.width || 800),
           y: Math.random() * (canvas.height || 400),
-          vx: (Math.random() - 0.5) * 0.6,
-          vy: (Math.random() - 0.5) * 0.6,
-          radius: Math.random() * 2 + 1.5
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+          radius: Math.random() * 2 + 1
         }));
 
         const draw = () => {
@@ -108,11 +140,11 @@
               const dy = particles[i].y - particles[j].y;
               const dist = Math.sqrt(dx * dx + dy * dy);
 
-              if (dist < 110) {
+              if (dist < 120) {
                 ctx.beginPath();
                 ctx.moveTo(particles[i].x, particles[i].y);
                 ctx.lineTo(particles[j].x, particles[j].y);
-                ctx.strokeStyle = `rgba(99, 102, 241, ${0.25 * (1 - dist / 110)})`;
+                ctx.strokeStyle = `rgba(99, 102, 241, ${0.3 * (1 - dist / 120)})`;
                 ctx.lineWidth = 1;
                 ctx.stroke();
               }
@@ -143,30 +175,82 @@
         };
       }, []);
 
-      return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none opacity-40" />;
+      return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none opacity-50" />;
     }
 
-    // ==========================================
-    // НОВЫЙ ИНТЕРАКТИВНЫЙ МОДУЛЬ: 3D-ПОДОБНЫЙ МОЗГ С КЛИКАБЕЛЬНЫМИ ЗОНАМИ
-    // ==========================================
     function InteractiveBrainModel({ lang }) {
       const [selectedRegion, setSelectedRegion] = useState('hippocampus');
+      const [activeTabSub, setActiveTabSub] = useState('anatomy');
 
       const regions = {
         et: {
-          hippocampus: { name: "Hippokampus (Mälu)", desc: "Vastutab uute mälestuste eest. Alkohol blokeerib NMDA retseptoreid, põhjustades mälulünki (blackouts) [1].", color: "from-purple-500 to-indigo-600" },
-          cortex: { name: "Prefrontaalne korteks (Otsustamine)", desc: "Juhib kontrolli ja loogikat. Alkohol pärsib seda ala, suurendades impulsiivsust ja riskeerimist [1].", color: "from-blue-500 to-cyan-600" },
-          cerebellum: { name: "Väikeaju (Koordinatsioon)", desc: "Reguleerib tasakaalu ja reaktsiooni. Mõjutamisel tekib kohmakus ja aeglasem reageerimine [1].", color: "from-pink-500 to-rose-600" }
+          hippocampus: { 
+            name: "Hippokampus (Mälu keskus)", 
+            desc: "Vastutab uute mälestuste vormimise ja salvestamise eest. Alkohol blokeerib NMDA retseptoreid, takistades informatsiooni üleminekut lühimälust pikaajalisse mällu, mis tekitab mälulünki (blackouts)[cite: 1].", 
+            color: "from-purple-600 to-indigo-600",
+            icon: "brain",
+            stats: "Mälu salvestusvõime langeb kuni 80%"
+          },
+          cortex: { 
+            name: "Prefrontaalne korteks (Otsustamine)", 
+            desc: "Juhib loogikat, enesekontrolli ja riski analüüsi. Alkohol pärsib seda ala esimesena, vabastades pidurid ning suurendades impulsiivsust ja ohtlikku käitumist[cite: 1].", 
+            color: "from-blue-600 to-cyan-600",
+            icon: "target",
+            stats: "Kriitiline mõtlemine ja pidurdusprotsessid pärsitud"
+          },
+          cerebellum: { 
+            name: "Väikeaju (Koordinatsioon)", 
+            desc: "Reguleerib tasakaalu, lihaste tööd ja reaktsioonikiirust. Kahjustusel tekib kohmakus, ebakindel kõnnak ja aeglustunud motoorne reaktsioon[cite: 1].", 
+            color: "from-pink-600 to-rose-600",
+            icon: "activity",
+            stats: "Reaktsiooniaeg pikeneb märgatavalt"
+          }
         },
         en: {
-          hippocampus: { name: "Hippocampus (Memory)", desc: "Responsible for new memories. Alcohol blocks NMDA receptors, causing blackouts [1].", color: "from-purple-500 to-indigo-600" },
-          cortex: { name: "Prefrontal Cortex (Decision Making)", desc: "Controls logic and restraint. Alcohol impairs this area, increasing impulsivity [1].", color: "from-blue-500 to-cyan-600" },
-          cerebellum: { name: "Cerebellum (Coordination)", desc: "Regulates balance and reaction time. Impairment leads to clumsiness and slowed responses [1].", color: "from-pink-500 to-rose-600" }
+          hippocampus: { 
+            name: "Hippocampus (Memory Center)", 
+            desc: "Responsible for forming and encoding new memories. Alcohol blocks NMDA receptors, preventing transfer from short-term to long-term memory, leading to blackouts[cite: 1].", 
+            color: "from-purple-600 to-indigo-600",
+            icon: "brain",
+            stats: "Memory encoding drops by up to 80%"
+          },
+          cortex: { 
+            name: "Prefrontal Cortex (Decision Making)", 
+            desc: "Controls logic, self-control, and risk analysis. Alcohol impairs this area first, removing inhibitions and increasing impulsivity[cite: 1].", 
+            color: "from-blue-600 to-cyan-600",
+            icon: "target",
+            stats: "Critical thinking and inhibitory control impaired"
+          },
+          cerebellum: { 
+            name: "Cerebellum (Coordination)", 
+            desc: "Regulates balance, muscle movement, and reaction speed. Impairment causes clumsiness, unsteady gait, and slowed motor response[cite: 1].", 
+            color: "from-pink-600 to-rose-600",
+            icon: "activity",
+            stats: "Motor reaction time significantly delayed"
+          }
         },
         ru: {
-          hippocampus: { name: "Гиппокамп (Память)", desc: "Отвечает за формирование воспоминаний. Этанол блокирует рецепторы, вызывая провалы в памяти (блэкауты) [1].", color: "from-purple-500 to-indigo-600" },
-          cortex: { name: "Префронтальная кора (Решения)", desc: "Контролирует логику и поведение. Алкоголь угнетает её, повышая импульсивность и тягу к риску [1].", color: "from-blue-500 to-cyan-600" },
-          cerebellum: { name: "Мозжечок (Координация)", desc: "Отвечает за равновесие и скорость реакции. При угнетении нарушается координация движений [1].", color: "from-pink-500 to-rose-600" }
+          hippocampus: { 
+            name: "Гиппокамп (Центр памяти)", 
+            desc: "Отвечает за формирование и кодирование новых воспоминаний. Этанол блокирует NMDA-рецепторы, препятствуя переходу информации из кратковременной памяти в долговременную, вызывая провалы (блэкауты)[cite: 1].", 
+            color: "from-purple-600 to-indigo-600",
+            icon: "brain",
+            stats: "Снижение функции кодирования памяти до 80%"
+          },
+          cortex: { 
+            name: "Префронтальная кора (Принятие решений)", 
+            desc: "Управляет логикой, самоконтролем и анализом рисков. Алкоголь угнетает её в первую очередь, снимая тормоможение и повышая импульсивность[cite: 1].", 
+            color: "from-blue-600 to-cyan-600",
+            icon: "target",
+            stats: "Критическое мышление и самоконтроль подавлены"
+          },
+          cerebellum: { 
+            name: "Мозжечок (Координация движений)", 
+            desc: "Регулирует равновесие, мышечную точность и скорость реакции. При угнетении возникают неуверенная походка, нарушение моторики и замедление реакций[cite: 1].", 
+            color: "from-pink-600 to-rose-600",
+            icon: "activity",
+            stats: "Время моторной реакции существенно увеличено"
+          }
         }
       };
 
@@ -174,321 +258,363 @@
       const current = tData[selectedRegion];
 
       return (
-        <div className="p-6 rounded-3xl bg-slate-900/90 border border-indigo-500/30 space-y-6 shadow-2xl">
-          <div className="text-center space-y-2">
-            <span className="px-3 py-1 bg-indigo-950 border border-indigo-700/50 text-indigo-300 rounded-full text-xs font-bold uppercase tracking-wider">
-              {lang === 'et' ? 'Interaktiivne aju mudel' : lang === 'en' ? 'Interactive Brain Model' : 'Интерактивная модель мозга'}
-            </span>
-            <h3 className="text-xl sm:text-2xl font-bold text-white">
-              {lang === 'et' ? 'Klõpsake aju osadel, et näha toimet' : lang === 'en' ? 'Click brain parts to see effects' : 'Нажмите на зоны мозга для изучения'}
-            </h3>
+        <div className="p-6 sm:p-8 rounded-3xl glass-card border border-indigo-500/30 space-y-6 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-800 pb-6">
+            <div className="space-y-1 text-center sm:text-left">
+              <span className="px-3 py-1 bg-indigo-950 border border-indigo-700/50 text-indigo-300 rounded-full text-xs font-bold uppercase tracking-wider">
+                {lang === 'et' ? '3D Ajupiirkondade Simulaator' : lang === 'en' ? '3D Brain Region Simulator' : '3D Симулятор зон мозга'}
+              </span>
+              <h3 className="text-xl sm:text-2xl font-bold text-white">
+                {lang === 'et' ? 'Vali aju struktuur ja analüüsi toimet' : lang === 'en' ? 'Select brain structure & analyze effects' : 'Выберите структуру мозга и изучите эффекты'}
+              </h3>
+            </div>
+
+            <div className="flex bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800">
+              {Object.keys(tData).map((key) => (
+                <button
+                  key={key}
+                  onClick={() => setSelectedRegion(key)}
+                  className={`px-4 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 ${
+                    selectedRegion === key 
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30 scale-105' 
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                  }`}
+                >
+                  {tData[key].name.split(' ')[0]}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-3">
-            {Object.keys(tData).map((key) => (
-              <button
-                key={key}
-                onClick={() => setSelectedRegion(key)}
-                className={`px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm border transition shadow-lg ${
-                  selectedRegion === key 
-                    ? 'bg-indigo-600 text-white border-indigo-400 scale-105' 
-                    : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
-                }`}
-              >
-                {tData[key].name.split(' ')[0]}
-              </button>
-            ))}
-          </div>
-
-          {/* Визуальная интерактивная схема мозга */}
-          <div className="relative max-w-sm mx-auto h-48 bg-slate-950/80 rounded-2xl border border-slate-800 flex items-center justify-center p-4 overflow-hidden">
-            <div className={`absolute inset-0 bg-gradient-to-r ${current.color} opacity-20 transition-all duration-500 animate-pulse`}></div>
-            
-            <div className="relative z-10 text-center space-y-2 animate-fadeIn">
-              <div className="p-3 bg-slate-900/90 rounded-2xl border border-indigo-500/40 inline-block shadow-inner">
-                <LucideIcon name="brain" className="w-10 h-10 text-indigo-400 mx-auto" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <div className="lg:col-span-5 relative h-64 sm:h-72 bg-slate-950/80 rounded-2xl border border-slate-800/80 flex items-center justify-center p-6 overflow-hidden group">
+              <div className={`absolute inset-0 bg-gradient-to-br ${current.color} opacity-25 transition-all duration-700 animate-pulse`}></div>
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15)_0,transparent_70%)]"></div>
+              
+              <div className="relative z-10 text-center space-y-4 animate-fadeIn">
+                <div className="p-4 bg-slate-900/90 rounded-2xl border border-indigo-500/40 inline-block shadow-2xl group-hover:scale-110 transition-transform duration-300">
+                  <LucideIcon name={current.icon} className="w-12 h-12 text-indigo-400 mx-auto" />
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-white text-lg">{current.name}</h4>
+                  <span className="inline-block mt-2 px-3 py-1 bg-rose-950/80 border border-rose-800/60 text-rose-300 rounded-lg text-xs font-semibold">
+                    {current.stats}
+                  </span>
+                </div>
               </div>
-              <h4 className="font-bold text-white text-base">{current.name}</h4>
-              <p className="text-xs text-slate-300 max-w-xs mx-auto leading-relaxed">{current.desc}</p>
+            </div>
+
+            <div className="lg:col-span-7 space-y-4 bg-slate-950/40 p-6 rounded-2xl border border-slate-800/80">
+              <div className="flex items-center gap-2 text-indigo-400 font-semibold text-sm">
+                <LucideIcon name="info" className="w-4 h-4" />
+                <span>{lang === 'et' ? 'Närvisüsteemi ja etanooli interaktsioon' : lang === 'en' ? 'Neural system & ethanol interaction' : 'Взаимодействие этанола с нервной системой'}</span>
+              </div>
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                {current.desc}
+              </p>
+              <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-xs text-slate-400">
+                <span>{lang === 'et' ? 'Mõju tase: Kriitiline' : lang === 'en' ? 'Impact level: Critical' : 'Уровень воздействия: Критический'}</span>
+                <span className="text-indigo-400 font-medium">Teaduspõhine analüüs[cite: 1]</span>
+              </div>
             </div>
           </div>
         </div>
       );
     }
 
-    // ==========================================
-    // НОВЫЙ ИНТЕРАКТИВНЫЙ МОДУЛЬ: СИМУЛЯТОР АЛКОГОЛЬНЫХ БУТЫЛОК (БАР)
-    // ==========================================
     function AlcoholBarSimulator({ lang }) {
       const [drinksCount, setDrinksCount] = useState(0);
-      const [bloodAlcohol, setBloodAlcohol] = useState(0.0); // промилле
+      const [bloodAlcohol, setBloodAlcohol] = useState(0.0);
+      const [drinkHistory, setDrinkHistory] = useState([]);
 
-      const addDrink = (promilleAdd) => {
+      const addDrink = (name, promilleAdd, emoji) => {
         setDrinksCount(prev => prev + 1);
         setBloodAlcohol(prev => Number((prev + promilleAdd).toFixed(2)));
+        setDrinkHistory(prev => [...prev, { name, emoji, promille: promilleAdd }]);
       };
 
       const resetBar = () => {
         setDrinksCount(0);
         setBloodAlcohol(0.0);
+        setDrinkHistory([]);
       };
 
-      const getStatusText = () => {
-        if (bloodAlcohol === 0) return lang === 'et' ? 'Kaine / Selge meel' : lang === 'en' ? 'Sober / Clear minded' : 'Трезв / Ясный ум';
-        if (bloodAlcohol < 0.5) return lang === 'et' ? 'Kerge lõõgastus, tähelepanu hajub' : lang === 'en' ? 'Mild relaxation, slight attention drop' : 'Лёгкое расслабление, рассеянность внимания';
-        if (bloodAlcohol < 1.2) return lang === 'et' ? 'Koordinatsiooni langus, reaktsioon aeglustub' : lang === 'en' ? 'Coordination loss, slowed reaction' : 'Снижение координации, замедленная реакция';
-        return lang === 'et' ? 'Tugev joove, ohtlik mälulünkade ja kontrolli kaotuse risk!' : lang === 'en' ? 'Heavy intoxication, severe risk of blackouts!' : 'Сильное опьянение, риск провалов в памяти и потери контроля!';
+      const getStatusDetails = () => {
+        if (bloodAlcohol === 0) return { title: lang === 'et' ? 'Kaine / Täielik kontroll' : lang === 'en' ? 'Sober / Full Control' : 'Трезв / Полный контроль', color: 'text-emerald-400 bg-emerald-950/50 border-emerald-800/50' };
+        if (bloodAlcohol < 0.5) return { title: lang === 'et' ? 'Kerge lõõgastus, tähelepanu hajub' : lang === 'en' ? 'Mild relaxation, attention drop' : 'Лёгкое расслабление, рассеянность внимания', color: 'text-amber-400 bg-amber-950/50 border-amber-800/50' };
+        if (bloodAlcohol < 1.2) return { title: lang === 'et' ? 'Koordinatsiooni langus, reaktsioon aeglustub' : lang === 'en' ? 'Coordination loss, slowed reaction' : 'Снижение координации, замедленная реакция', color: 'text-orange-400 bg-orange-950/50 border-orange-800/50' };
+        return { title: lang === 'et' ? 'Tugev joove, ohtlik mälulünkade risk!' : lang === 'en' ? 'Heavy intoxication, blackout risk!' : 'Сильное опьянение, риск блэкаутов!', color: 'text-rose-400 bg-rose-950/50 border-rose-800/50' };
       };
+
+      const status = getStatusDetails();
 
       return (
-        <div className="p-6 rounded-3xl bg-slate-900/90 border border-rose-500/30 space-y-6 shadow-2xl glow-bottle">
+        <div className="p-6 sm:p-8 rounded-3xl glass-card border border-rose-500/30 space-y-6 shadow-2xl glow-container">
           <div className="text-center space-y-2">
             <span className="px-3 py-1 bg-rose-950 border border-rose-700/50 text-rose-300 rounded-full text-xs font-bold uppercase tracking-wider">
-              {lang === 'et' ? 'Interaktiivne baar / Alkohol' : lang === 'en' ? 'Interactive Bar / Alcohol' : 'Интерактивный бар / Алкоголь'}
+              {lang === 'et' ? 'Interaktiivne Doosi ja Efekti Simulaator' : lang === 'en' ? 'Interactive Dose & Effect Simulator' : 'Интерактивный симулятор дозировки и эффекта'}
             </span>
             <h3 className="text-xl sm:text-2xl font-bold text-white">
-              {lang === 'et' ? 'Katseta virtuaalsete pudelitega' : lang === 'en' ? 'Test with virtual bottles' : 'Симулятор дозировки и эффекта'}
+              {lang === 'et' ? 'Virtuaalne baar ja etanooli akumulatsioon' : lang === 'en' ? 'Virtual bar & ethanol accumulation' : 'Виртуальный бар и накопление этанола'}
             </h3>
-            <p className="text-xs text-slate-400 max-w-md mx-auto">
-              {lang === 'et' ? 'Vali jook, et näha, kuidas etanool koguneb ja mõjutab aju toimimist.' : lang === 'en' ? 'Choose a drink to see how ethanol accumulates and affects brain function.' : 'Нажимайте на бутылки, чтобы увидеть рост промилле и влияние на мозг.'}
+            <p className="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto">
+              {lang === 'et' ? 'Valige joogid, et näha reaalajas promillitõusu ja selle mõju aju kognitiivsetele funktsioonidele.' : lang === 'en' ? 'Select drinks to see real-time BAC increase and its cognitive impact.' : 'Выберите напитки, чтобы увидеть рост промилле в реальном времени.'}
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 max-w-md mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl mx-auto">
             <button 
-              onClick={() => addDrink(0.2)}
-              className="p-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-2xl flex flex-col items-center gap-2 transition active:scale-95 group"
+              onClick={() => addDrink('Õlu / Beer', 0.2, '🍺')}
+              className="p-4 bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 rounded-2xl flex flex-col items-center gap-2 transition-all hover:scale-105 active:scale-95 group shadow-lg"
             >
-              <span className="text-2xl group-hover:scale-110 transition-transform">🍺</span>
-              <span className="text-xs font-bold text-slate-200">Õlu / Beer</span>
-              <span className="text-[10px] text-rose-400 font-semibold">+0.2‰</span>
+              <span className="text-3xl group-hover:scale-125 transition-transform">🍺</span>
+              <span className="text-xs font-bold text-slate-200">Õlu (0.33l) / Beer</span>
+              <span className="text-xs text-rose-400 font-extrabold bg-rose-950/80 px-2 py-0.5 rounded-md">+0.2‰</span>
             </button>
 
             <button 
-              onClick={() => addDrink(0.35)}
-              className="p-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-2xl flex flex-col items-center gap-2 transition active:scale-95 group"
+              onClick={() => addDrink('Vein / Wine', 0.35, '🍷')}
+              className="p-4 bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 rounded-2xl flex flex-col items-center gap-2 transition-all hover:scale-105 active:scale-95 group shadow-lg"
             >
-              <span className="text-2xl group-hover:scale-110 transition-transform">🍷</span>
-              <span className="text-xs font-bold text-slate-200">Vein / Wine</span>
-              <span className="text-[10px] text-rose-400 font-semibold">+0.35‰</span>
+              <span className="text-3xl group-hover:scale-125 transition-transform">🍷</span>
+              <span className="text-xs font-bold text-slate-200">Vein (15cl) / Wine</span>
+              <span className="text-xs text-rose-400 font-extrabold bg-rose-950/80 px-2 py-0.5 rounded-md">+0.35‰</span>
             </button>
 
             <button 
-              onClick={() => addDrink(0.6)}
-              className="p-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-2xl flex flex-col items-center gap-2 transition active:scale-95 group"
+              onClick={() => addDrink('Viin / Spirit', 0.6, '🥃')}
+              className="p-4 bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 rounded-2xl flex flex-col items-center gap-2 transition-all hover:scale-105 active:scale-95 group shadow-lg"
             >
-              <span className="text-2xl group-hover:scale-110 transition-transform">🥃</span>
-              <span className="text-xs font-bold text-slate-200">Viin / Spirit</span>
-              <span className="text-[10px] text-rose-400 font-semibold">+0.6‰</span>
+              <span className="text-3xl group-hover:scale-125 transition-transform">🥃</span>
+              <span className="text-xs font-bold text-slate-200">Kange (4cl) / Spirit</span>
+              <span className="text-xs text-rose-400 font-extrabold bg-rose-950/80 px-2 py-0.5 rounded-md">+0.6‰</span>
             </button>
           </div>
 
-          {/* Панель статуса */}
-          <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 max-w-md mx-auto text-center space-y-2">
-            <div className="flex justify-between items-center text-xs text-slate-400 font-medium px-2">
-              <span>{lang === 'et' ? 'Jooke kokku:' : lang === 'en' ? 'Total drinks:' : 'Всего порций:'} <strong className="text-white">{drinksCount}</strong></span>
-              <span>{lang === 'et' ? 'Hinnanguline tase:' : lang === 'en' ? 'Estimated level:' : 'Уровень:'} <strong className="text-rose-400 text-sm">{bloodAlcohol} ‰</strong></span>
+          <div className="bg-slate-950/80 p-5 rounded-2xl border border-slate-800 max-w-xl mx-auto space-y-4 shadow-xl">
+            <div className="flex justify-between items-center text-xs sm:text-sm text-slate-300 font-medium px-2">
+              <span>{lang === 'et' ? 'Joogid kokku:' : lang === 'en' ? 'Total drinks:' : 'Всего порций:'} <strong className="text-white text-base">{drinksCount}</strong></span>
+              <span>{lang === 'et' ? 'Hinnanguline tase:' : lang === 'en' ? 'Estimated level:' : 'Уровень BAC:'} <strong className="text-rose-400 text-lg">{bloodAlcohol} ‰</strong></span>
             </div>
-            <div className="p-3 bg-slate-900 rounded-xl border border-rose-500/20 text-xs font-bold text-rose-200">
-              {getStatusText()}
+
+            {/* Visual meter bar */}
+            <div className="w-full bg-slate-900 h-3 rounded-full overflow-hidden border border-slate-800 p-0.5">
+              <div 
+                className="bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-600 h-full rounded-full transition-all duration-500"
+                style={{ width: `${Math.min((bloodAlcohol / 2.5) * 100, 100)}%` }}
+              ></div>
             </div>
+
+            <div className={`p-3 rounded-xl border text-xs sm:text-sm font-bold text-center ${status.color}`}>
+              {status.title}
+            </div>
+
+            {drinkHistory.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 pt-2 justify-center">
+                {drinkHistory.map((d, idx) => (
+                  <span key={idx} className="px-2.5 py-1 bg-slate-900 border border-slate-800 rounded-lg text-xs flex items-center gap-1 text-slate-300">
+                    <span>{d.emoji}</span>
+                    <span>+{d.promille}‰</span>
+                  </span>
+                ))}
+              </div>
+            )}
+
             {drinksCount > 0 && (
-              <button 
-                onClick={resetBar}
-                className="mt-2 text-[11px] text-indigo-400 hover:underline font-semibold"
-              >
-                {lang === 'et' ? 'Nulli tulemus (kainene)' : lang === 'en' ? 'Reset bar' : 'Сбросить (протрезветь)'}
-              </button>
+              <div className="text-center pt-2">
+                <button 
+                  onClick={resetBar}
+                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-indigo-400 border border-slate-700 rounded-xl text-xs font-semibold transition active:scale-95"
+                >
+                  {lang === 'et' ? 'Nulli tulemus (kainene)' : lang === 'en' ? 'Reset bar' : 'Сбросить симуляцию'}
+                </button>
+              </div>
             )}
           </div>
         </div>
       );
     }
 
-    // ==========================================
-    // MULTILINGUAL DICTIONARY
-    // ==========================================
     const TRANSLATIONS = {
       et: {
         title: "Alkohol ja aju",
-        subtitle: "Gümnaasiumi praktiline töö • Hariduslik veebikeskkond",
+        subtitle: "Gümnaasiumi praktiline töö • Hariduslik teadusportaal",
         nav: {
           hero: "Avaleht",
-          brain: "Mis toimub ajus?",
+          brain: "Aju mehhhanismid",
           bar: "Virtuaalne baar",
           memory: "Mälutest",
           attention: "Tähelepanutest",
-          quiz: "Müüt või fakt?",
+          quiz: "Müüt või fakt",
           feedback: "Küsimustik",
           sources: "Allikad"
         },
         heroTitle: "Mis toimub mälu ja tähelepanuga",
         heroTitleColored: "alkoholi tarvitamisel?",
-        heroDesc: "Teaduspõhine ja interaktiivne ülevaade sellest, kuidas etanool mõjutab noore, alles areneva aju funktsioone: lühimälu, tähelepanu koondamist, reageerimiskiirust ja otsustamisprotsesse.",
+        heroDesc: "Teaduspõhine ja interaktiivne ülevaade sellest, kuidas etanool mõjutab noore, alles areneva aju funktsioone: lühimälu, tähelepanu koondamist, reageerimiskiirust ja otsustamisprotsesse[cite: 1].",
         btnStart: "Alusta uurimist",
-        btnTryTests: "Proovi interaktiivseid teste",
-        brainSectionTitle: "2. Mis toimub ajus?",
-        brainSectionDesc: "Klõpsa valdkonnal, et näha lähemat selgitust etanooli mõju kohta konkreetses ajuosas.",
-        btnReadMore: "Loe rohkem teaduslikku tausta",
+        brainSectionTitle: "2. Neurobioloogilised mehhanismid ajus",
+        brainSectionDesc: "Interaktiivsed kaardid ja teaduslikud selgitused etanooli mõju kohta spetsiifilistele ajuosadele[cite: 1].",
+        btnReadMore: "Loe teaduslikku tausta",
         btnClose: "Sulge selgitus",
-        memoryTitle: "4. Pane oma mälu proovile",
-        memoryDesc: "See on üldine lühimälu harjutus teabe säilitamise demonstreerimiseks. See EI SIMULEERI ega diagnoosi alkoholijoovet.",
-        attentionTitle: "5. Kui tähelepanelik sa oled?",
-        attentionDesc: "Leia ruudustikust üles kõik märgitud sihtsümbolid nii kiiresti ja täpselt kui võimalik.",
-        quizTitle: "6. Müüt või fakt?",
-        quizDesc: "KONTROLLI OMA TEADMISI: Vali, kas esitatud väide on tõene fakt või levinud müüt.",
-        sourcesTitle: "8. Allikad ja viited (Teaduskirjandus)",
-        aboutTitle: "Projektist",
-        aboutDesc: "See veebikeskkond on loodud 11. klassi praktilise töö raames gümnaasiumiõpilastele hariduslikul eesmärgil.",
+        memoryTitle: "4. Lühimälu ja teabe säilitamise test",
+        memoryDesc: "Testi oma lühimälu mahtu ja vaimset vastupidavust segavate tegurite tingimustes. See harjutus on haridusliku iseloomuga ega diagnoosi joovet.",
+        attentionTitle: "5. Tähelepanu ja fookuse ruudustik",
+        attentionDesc: "Leia ja märgi üles kõik sihtsümbolid nii kiiresti ja täpselt kui võimalik, et hinnata reaktsioonikiirust.",
+        quizTitle: "6. Müüt või fakt viktoriin",
+        quizDesc: "KONTROLLI OMA TEADMISI: Erista teaduslikud faktid levinud eksiarvamustest ja mappidest.",
+        sourcesTitle: "8. Teaduslikud allikad ja kirjandus",
+        aboutTitle: "Projektist ja autorist",
+        aboutDesc: "See veebikeskkond on loodud 11. klassi praktilise uurimistöö raames gümnaasiumiõpilastele hariduslikul eesmärgil[cite: 1].",
         authorLabel: "Autor:",
         schoolLabel: "Kool:",
         yearLabel: "Aasta:",
         surveyTitle: "7. Osale uurimuses ja anna tagasisidet",
-        surveyDesc: "Palun vasta järgmistele küsimustele. Sinu vastused aitavad täiendada praktilise töö analüüsi ja saadetakse otse uurimistöö autorile.",
+        surveyDesc: "Teie vastused on väärtuslik sisend praktilise töö analüüsile ja aitavad kaasa teadlikkuse tõstmisele noorte seas.",
         block1: "Plokk 1: Demograafia ja algseis",
         schoolInput: "Kool:",
         gradeInput: "Klass:",
-        preKnowledgeLabel: "Kuidas hindasid oma teadmisi alkoholi mõjust ajule ENNE selle lehe külastamist? (1 - väga madalad, 5 - väga põhjalikud)",
+        preKnowledgeLabel: "Kuidas hindasid oma teadmisi alkoholi mõjust ajule ENNE lehe külastamist? (1 - väga madalad, 5 - väga põhjalikud)",
         block2: "Plokk 2: Teadmiste kontroll",
         q1Label: "1. Mis vanuseni jätkub teaduslikult inimese aju (eriti prefrontaalse korteksi) aktiivne areng?",
         q3Label: "3. Kas kohv või külm dušš kiirendavad etanooli lagundamist maksas?",
         block3: "Plokk 3: Veebikeskkonna ja interaktiivsuse hindamine",
-        q4Label: "4. Kuivõrd arusaadavalt olid keerulised neurobioloogilised protsessid lehel lahti seletatud? (1 - keeruline, 5 - väga selge)",
+        q4Label: "4. Kuivõrd arusaadavalt olid keerulised neurobioloogilised protsessid lahti seletatud? (1 - keeruline, 5 - väga selge)",
         q5Label: "5. Milline interaktiivne element aitas materjali kõige paremini mõista?",
         q6Label: "6. Kas see veebileht pani Sind ümber mõtlema mõnda alkoholiga seotud müüti? Kui jah, siis millist?",
         block4: "Plokk 4: Sotsiaalne kogemus ja vaatlused (Anonüümne)",
-        qSoc1Label: "1. Kui tihti oled oma tutvusringkonnas või üritustel märganud, et noored ei tea alkoholi tegelikku mõju mälule?",
+        qSoc1Label: "1. Kui tihti oled märganud, et noored ei tea alkoholi tegelikku mõju mälule?",
         qSoc2Label: "2. Kas oled oma tuttavate seas näinud või kuulnud mälulünkadest (blackout) pärast pidusid?",
         qSoc3Label: "3. Kui suur on Sinu hinnangul eakaaslaste surve (peer pressure) alkoholi tarvitamiseks noorte pidudel? (1 - puudub, 5 - väga suur)",
         btnSend: "Saada vastused uurijale",
         sending: "Saadab vastuseid...",
-        sendSuccess: "Suur tänu! Sinu vastused on edukalt saadetud.",
-        sendError: "Viga saatmisel. Kontrolli, kas oled botile ( /start ) kirjutanud ja proovi uuesti.",
-        optsQ1: ["Umbes kuni 14. eluaastani", "Umbes kuni 18. eluaastani", "Umbes kuni 25. eluaastani"],
-        optsQ3: ["Jah, umbes poole võrra", "Ei, need tekitavad vaid pettealuse ärksuse, maksamolekulide kiirus ei muutu"],
-        optsQ5: ["Aju piirkondade ja funktsioonide kaardid", "Lühimälu harjutus (Memory Task)", "Tähelepanu ja fookuse ruudustik (Attention Grid)", "Müüt või fakt viktoriin"],
+        sendSuccess: "Suur tänu! Sinu vastused on edukalt Telegrami saadetud.",
+        sendError: "Viga saatmisel. Veenduge, et bot on aktiveeritud ja proovige uuesti.",
+        optsQ1: ["Umbes kuni 14. eluaastani", "Umbes kuni 18. eluaastani", "Umbes kuni 25. eluaastani[cite: 1]"],
+        optsQ3: ["Jah, umbes poole võrra", "Ei, need tekitavad vaid pettealuse ärksuse, maksamolekulide kiirus ei muutu[cite: 1]"],
+        optsQ5: ["Aju piirkondade 3D mudel", "Lühimälu test", "Tähelepanu ruudustik", "Müüt või fakt viktoriin"],
         optsSoc1: ["Pidevalt / Väga tihti", "Mõnikord", "Harva või mitte kunagi"],
         optsSoc2: ["Jah, see on üsna tavaline nähtus", "Mõnel üksikul korral", "Ei ole kunagi märganud / kuulnud"]
       },
       en: {
         title: "Alcohol and Brain",
-        subtitle: "High School Practical Work • Educational Web Platform",
+        subtitle: "High School Practical Work • Educational Science Portal",
         nav: {
           hero: "Home",
           brain: "Brain Mechanisms",
           bar: "Virtual Bar",
           memory: "Memory Test",
           attention: "Attention Test",
-          quiz: "Myth or Fact?",
+          quiz: "Myth or Fact",
           feedback: "Survey",
           sources: "Sources"
         },
         heroTitle: "What happens to memory and attention",
         heroTitleColored: "under the influence of alcohol?",
-        heroDesc: "A science-based interactive overview of how ethanol affects developing brain functions: short-term memory, attention focus, reaction time, and decision-making.",
+        heroDesc: "A science-based interactive overview of how ethanol affects developing brain functions: short-term memory, attention focus, reaction time, and decision-making[cite: 1].",
         btnStart: "Start Exploring",
-        btnTryTests: "Try Interactive Tests",
-        brainSectionTitle: "2. What happens in the brain?",
-        brainSectionDesc: "Click on a domain to read a detailed explanation of ethanol's effects on specific brain regions.",
+        brainSectionTitle: "2. Neurobiological Mechanisms in the Brain",
+        brainSectionDesc: "Interactive cards and scientific explanations of ethanol's impact on specific brain regions[cite: 1].",
         btnReadMore: "Read scientific background",
         btnClose: "Close explanation",
-        memoryTitle: "4. Test your memory",
-        memoryDesc: "This is a general short-term memory exercise. It DOES NOT simulate or diagnose alcohol intoxication.",
-        attentionTitle: "5. How attentive are you?",
-        attentionDesc: "Find and click all target symbols in the grid as quickly and accurately as possible.",
-        quizTitle: "6. Myth or Fact?",
-        quizDesc: "TEST YOUR KNOWLEDGE: Choose whether the statement is a true fact or a common myth.",
-        sourcesTitle: "8. Sources & References (Scientific Literature)",
-        aboutTitle: "About the Project",
-        aboutDesc: "This web environment was developed for educational purposes as part of an 11th-grade research project.",
+        memoryTitle: "4. Short-term Memory & Retention Test",
+        memoryDesc: "Test your short-term memory capacity under distraction conditions. Educational exercise, not a medical diagnosis.",
+        attentionTitle: "5. Attention & Focus Grid Test",
+        attentionDesc: "Find and click all target symbols as quickly and accurately as possible to evaluate reaction speed.",
+        quizTitle: "6. Myth or Fact Quiz",
+        quizDesc: "TEST YOUR KNOWLEDGE: Distinguish scientific facts from common misconceptions.",
+        sourcesTitle: "8. Scientific Sources & Literature",
+        aboutTitle: "About the Project & Author",
+        aboutDesc: "This web platform was developed for educational purposes as part of an 11th-grade high school research project[cite: 1].",
         authorLabel: "Author:",
         schoolLabel: "School:",
         yearLabel: "Year:",
-        surveyTitle: "7. Participate in the study & give feedback",
-        surveyDesc: "Please answer the following questions. Your responses will help complement the research analysis and will be sent directly to the author.",
+        surveyTitle: "7. Participate in Study & Give Feedback",
+        surveyDesc: "Your responses contribute directly to the practical research analysis and youth awareness initiatives.",
         block1: "Block 1: Demographics & Initial Knowledge",
         schoolInput: "School:",
-        gradeInput: "Grade / Class:",
+        gradeInput: "Grade:",
         preKnowledgeLabel: "How would you rate your knowledge about alcohol's effect on the brain BEFORE visiting this site? (1 - Very low, 5 - Very high)",
         block2: "Block 2: Knowledge Check",
-        q1Label: "1. Until what age does human brain (especially prefrontal cortex) active development continue?",
+        q1Label: "1. Until what age does active human brain development (especially prefrontal cortex) continue?",
         q3Label: "3. Does coffee or a cold shower speed up ethanol breakdown in the liver?",
         block3: "Block 3: Web Platform Evaluation",
         q4Label: "4. How clearly were complex neurobiological processes explained? (1 - Confusing, 5 - Very clear)",
         q5Label: "5. Which interactive element helped you understand the material best?",
         q6Label: "6. Did this site make you reconsider any myths about alcohol? If yes, which one?",
         block4: "Block 4: Social Perception & Experience (Anonymous)",
-        qSoc1Label: "1. How often have you observed peers lacking awareness about alcohol's real impact on memory?",
+        qSoc1Label: "1. How often have you noticed peers lacking awareness about alcohol's real impact on memory?",
         qSoc2Label: "2. Have you witnessed or heard about blackouts among acquaintances after social gatherings?",
         qSoc3Label: "3. In your opinion, how strong is peer pressure regarding alcohol consumption among youth? (1 - Non-existent, 5 - Very strong)",
         btnSend: "Submit answers to researcher",
         sending: "Submitting...",
-        sendSuccess: "Thank you! Your responses have been sent successfully.",
-        sendError: "Error sending data. Please make sure you started the bot via /start and try again.",
-        optsQ1: ["Until about 14 years old", "Until about 18 years old", "Until about 25 years old"],
-        optsQ3: ["Yes, by about half", "No, they only create a false sense of alertness; liver enzyme activity remains unchanged"],
-        optsQ5: ["Brain region & function cards", "Short-term memory exercise", "Attention grid exercise", "Myth or Fact quiz"],
+        sendSuccess: "Thank you! Your responses have been successfully sent via Telegram.",
+        sendError: "Error sending data. Please check bot activation and try again.",
+        optsQ1: ["Until about 14 years old", "Until about 18 years old", "Until about 25 years old[cite: 1]"],
+        optsQ3: ["Yes, by about half", "No, they only create a false sense of alertness; liver enzyme activity remains unchanged[cite: 1]"],
+        optsQ5: ["3D Brain region simulator", "Short-term memory test", "Attention grid test", "Myth or Fact quiz"],
         optsSoc1: ["Constantly / Very often", "Sometimes", "Rarely or never"],
         optsSoc2: ["Yes, it is quite common", "On a few occasions", "Never observed / heard"]
       },
       ru: {
         title: "Алкоголь и мозг",
-        subtitle: "Практическая работа 11 класса • Обучающая веб-платформа",
+        subtitle: "Практическая работа 11 класса • Научно-образовательный портал",
         nav: {
           hero: "Главная",
-          brain: "Мозг",
+          brain: "Механизмы мозга",
           bar: "Вирт. Бар",
           memory: "Память",
           attention: "Внимание",
-          quiz: "Миф/Факт",
+          quiz: "Миф или факт",
           feedback: "Опросник",
           sources: "Источники"
         },
         heroTitle: "Что происходит с памятью и вниманием",
         heroTitleColored: "при употреблении алкоголя?",
-        heroDesc: "Научно обоснованный интерактивный обзор того, как этанол влияет на функции развивающегося мозга: кратковременную память, концентрацию внимания, скорость реакции и принятие решений.",
+        heroDesc: "Научно обоснованный интерактивный обзор влияния этанола на функции развивающегося мозга: кратковременную память, концентрацию, скорость реакции и принятие решений[cite: 1].",
         btnStart: "Начать изучение",
-        btnTryTests: "Пройти интерактивные тесты",
-        brainSectionTitle: "2. Что происходит в мозге?",
-        brainSectionDesc: "Нажмите на нужную область, чтобы прочитать подробное объяснение воздействия этанола.",
+        brainSectionTitle: "2. Нейробиологические механизмы в мозге",
+        brainSectionDesc: "Интерактивные зоны и научные объяснения влияния этанола на конкретные области мозга[cite: 1].",
         btnReadMore: "Читать научное обоснование",
         btnClose: "Закрыть описание",
-        memoryTitle: "4. Проверьте свою память",
-        memoryDesc: "Это упражнение для проверки кратковременной памяти. Оно НЕ СИМУЛИРУЕТ и не диагностирует состояние алкогольного опьянения.",
-        attentionTitle: "5. Насколько вы внимательны?",
-        attentionDesc: "Найдите и нажмите все отмеченные символы в сетке как можно быстрее и точнее.",
-        quizTitle: "6. Миф или факт?",
-        quizDesc: "ПРОВЕРЬТЕ СВОИ ЗНАНИЯ: Выберите, является ли утверждение достоверным фактом или распространенным мифом.",
-        sourcesTitle: "8. Источники и литература (Научные публикации)",
-        aboutTitle: "О проекте",
-        aboutDesc: "Этот веб-ресурс создан в образовательных целях в рамках практической исследовательской работы 11 класса.",
+        memoryTitle: "4. Тест кратковременной памяти и удержания",
+        memoryDesc: "Проверьте объём кратковременной памяти в условиях когнитивной отвлекающей задачи. Упражнение носит образовательный характер.",
+        attentionTitle: "5. Тест сетки внимания и концентрации",
+        attentionDesc: "Найдите и нажмите все целевые символы как можно быстрее и точнее для оценки скорости реакции.",
+        quizTitle: "6. Викторина «Миф или факт»",
+        quizDesc: "ПРОВЕРЬТЕ ЗНАНИЯ: Отделите достоверные научные факты от распространенных заблуждений.",
+        sourcesTitle: "8. Научные источники и литература",
+        aboutTitle: "О проекте и авторе",
+        aboutDesc: "Этот веб-ресурс создан в образовательных целях в рамках исследовательской практической работы ученицы 11 класса[cite: 1].",
         authorLabel: "Автор:",
         schoolLabel: "Школа:",
         yearLabel: "Год:",
         surveyTitle: "7. Примите участие в исследовании и оставьте отзыв",
-        surveyDesc: "Пожалуйста, ответьте на вопросы ниже. Ваши ответы помогут дополнить анализ практической работы и будут отправлены напрямую автору.",
-        block1: "Блок 1: Демография и начальный уровень",
+        surveyDesc: "Ваши ответы станут ценным дополнением к анализу практической работы и помогут повысить осведомленность молодежи.",
+        block1: "Блок 1: Демография и исходный уровень",
         schoolInput: "Школа:",
         gradeInput: "Класс:",
-        preKnowledgeLabel: "Как вы оценивали свои знания о влиянии алкоголя на мозг ДО посещения этого сайта? (1 - очень низкие, 5 - очень глубокие)",
-        block2: "Блок 2: Проверка усвоенных знаний",
-        q1Label: "1. До какого возраста научно продолжается активное созревание мозга (особенно префронтальной коры)?",
+        preKnowledgeLabel: "Как вы оценивали свои знания о влиянии алкоголя на мозг ДО посещения сайта? (1 - очень низкие, 5 - очень высокие)",
+        block2: "Блок 2: Проверка знаний",
+        q1Label: "1. До какого возраста научно продолжается активное развитие мозга (особенно префронтальной коры)?",
         q3Label: "3. Ускоряет ли кофе или холодный душ расщепление этанола печенью?",
-        block3: "Блок 3: Оценка сайта и интерактивности",
-        q4Label: "4. Насколько понятно на сайте объяснены сложные нейробиологические процессы? (1 - сложно, 5 - очень понятно)",
-        q5Label: "5. Какой интерактивный элемент помог вам лучше всего усвоить материал?",
-        q6Label: "6. Заставил ли этот сайт вас пересмотреть какой-либо миф об алкоголе? Если да, то какой?",
+        block3: "Блок 3: Оценка веб-портала и интерактивности",
+        q4Label: "4. Насколько понятно были объяснены сложные нейробиологические процессы? (1 - сложно, 5 - очень понятно)",
+        q5Label: "5. Какой интерактивный элемент помог лучше всего усвоить материал?",
+        q6Label: "6. Заставил ли сайт пересмотреть какой-либо миф об алкоголе? Если да, то какой?",
         block4: "Блок 4: Социальный опыт и наблюдения (Анонимно)",
-        qSoc1Label: "1. Как часто в своем окружении вы замечаете, что молодежь не осознает реальное влияние алкоголя на память?",
+        qSoc1Label: "1. Как часто вы замечали, что молодежь не осознает реальное влияние алкоголя на память?",
         qSoc2Label: "2. Слышали ли вы или замечали проявления блэкаутов (провалов в памяти) у знакомых после вечеринок?",
-        qSoc3Label: "3. Насколько велико, по вашей оценке, давление сверстников (peer pressure) в вопросе алкоголя? (1 - отсутствует, 5 - очень высокое)",
-        btnSend: "Отправить ответы автору",
+        qSoc3Label: "3. Насколько велико давление сверстников (peer pressure) в вопросе употребления алкоголя? (1 - отсутствует, 5 - очень высокое)",
+        btnSend: "Отправить ответы исследователю",
         sending: "Отправка...",
-        sendSuccess: "Большое спасибо! Ваши ответы успешно отправлены.",
-        sendError: "Ошибка при отправке. Убедитесь, что вы нажали /start в боте, и попробуйте снова.",
-        optsQ1: ["Примерно до 14 лет", "Примерно до 18 лет", "Примерно до 25 лет"],
-        optsQ3: ["Да, примерно в два раза", "Нет, они лишь создают иллюзию бодрости, скорость ферментов печени не меняется"],
-        optsQ5: ["Карточки областей мозга и их функций", "Упражнение на кратковременную память", "Сетка внимания и концентрации", "Викторина «Миф или факт»"],
+        sendSuccess: "Большое спасибо! Ваши ответы успешно отправлены через Telegram.",
+        sendError: "Ошибка отправки. Убедитесь в активации бота и повторите попытку.",
+        optsQ1: ["Примерно до 14 лет", "Примерно до 18 лет", "Примерно до 25 лет[cite: 1]"],
+        optsQ3: ["Да, примерно в два раза", "Нет, они лишь создают иллюзию бодрости, скорость ферментов печени не меняется[cite: 1]"],
+        optsQ5: ["3D Симулятор зон мозга", "Тест кратковременной памяти", "Сетка внимания", "Викторина «Миф или факт»"],
         optsSoc1: ["Постоянно / Очень часто", "Иногда", "Редко или никогда"],
         optsSoc2: ["Да, это достаточно распространенное явление", "В единичных случаях", "Никогда не замечал(а) / не слышал(а)"]
       }
@@ -511,7 +637,7 @@
           subtitle: 'Keskendumisvõime ja tähelepanu jaotamine',
           iconName: 'target',
           shortDesc: 'Prefrontaalne korteks ehk otsmikusagar kaotab võime tõhusalt filtreerida stiimuleid ja hoida fookust.',
-          detailedText: `Prefrontaalne korteks (otsmikusagar) on aju juhtimiskeskus[cite: 1]. Alkohol tugevdab GABA-A retseptorite pärssivat mõju, mis aeglustab närviimpulsside edastamist tähelepanukeskustes[cite: 1].\n\nTulemuseks on selektiivse tähelepanu nõrgenemine ja raskused fookuse hoidmisel[cite: 1].`,
+          detailedText: `Prefrontaalne korteks on aju juhtimiskeskus[cite: 1]. Alkohol tugevdab GABA-A retseptorite pärssivat mõju, mis aeglustab närviimpulsside edastamist[cite: 1].\n\nTulemuseks on selektiivse tähelepanu nõrgenemine ja raskused fookuse hoidmisel[cite: 1].`,
           citationIds: [1]
         },
         {
@@ -520,7 +646,7 @@
           subtitle: 'Signaalide aeglustumine ja koordinatsioon',
           iconName: 'activity',
           shortDesc: 'Väikeaju (cerebellum) pärssimine pikendab reageerimisaega ja halvendab tasakaalu.',
-          detailedText: `Reaktsiooniaeg sõltub visuaalse signaali töötlemisest ja mootorsignaali edastamisest[cite: 1]. Alkohol pärsib väikeaju (cerebellum), mis halvendab peenmotoorikat ja pikendab reageerimisaega ohtudele.`,
+          detailedText: `Reaktsiooniaeg sõltub visuaalse signaali töötlemisest ja motoorsest edastamisest[cite: 1]. Alkohol pärsib väikeaju, mis halvendab peenmotoorikat ja pikendab reageerimisaega.`,
           citationIds: [1]
         },
         {
@@ -529,7 +655,7 @@
           subtitle: 'Raskused riskide hindamisel',
           iconName: 'shield-alert',
           shortDesc: 'Inhibitsioonide vähenemine viib kriitilise mõtlemise halvenemiseni ja riskantsuse suurenemiseni.',
-          detailedText: `Prefrontaalne korteks areneb täielikult umbes 25. eluaastaks[cite: 1]. Alkohol pärsib ihade ja impulsside pidurdamist (response inhibition), suurendades riskeerivat käitumist[cite: 1].`,
+          detailedText: `Prefrontaalne korteks areneb täielikult umbes 25. eluaastaks[cite: 1]. Alkohol pärsib impulsside pidurdamist, suurendades riskeerivat käitumist noortel[cite: 1].`,
           citationIds: [1]
         }
       ],
@@ -616,18 +742,14 @@
       { id: 2, authors: "Nutt, D. J., King, L. A., & Phillips, L. D.", title: "Drug harms in the UK: a multicriteria decision analysis", year: "2010", publisher: "The Lancet, 376(9752), 1558-1565" },
       { id: 3, authors: "White, A. M.", title: "What happened? Memory blackout, and the brain", year: "2003", publisher: "Alcohol Research & Health, 27(2), 186-196" },
       { id: 4, authors: "Lees, B., et al.", title: "Effect on the adolescent brain and behavior", year: "2020", publisher: "Neuropharmacology, 177, 108218" },
-      { id: 5, authors: "Carbia, C., et al.", title: "Binge drinking during adolescence/young adulthood and executive functioning", year: "2018", publisher: "Neuroscience & Biobehavioral Reviews, 89, 54-71" },
-      { id: 6, authors: "Fillmore, M. T.", title: "Acute impairment of cognitive functions: past and present findings", year: "2007", publisher: "Int. Journal of Disability and Human Development, 6(2), 115-126" },
-      { id: 7, authors: "Millwood, I. Y., et al.", title: "Conventional and genetic evidence on vascular disease etiology", year: "2019", publisher: "The Lancet, 393(10183), 1831-1842" },
-      { id: 8, authors: "Stahl, S. M.", title: "Stahl's Essential Psychopharmacology (5th ed.)", year: "2021", publisher: "Cambridge University Press" },
-      { id: 9, authors: "Luria, A. R.", title: "The Working Brain: An Introduction to Neuropsychology", year: "1973", publisher: "Basic Books" }
+      { id: 5, authors: "Carbia, C., et al.", title: "Binge drinking during adolescence/young adulthood and executive functioning", year: "2018", publisher: "Neuroscience & Biobehavioral Reviews, 89, 54-71" }
     ];
 
     const MYTH_FACT_QUIZ_I18N = {
       et: [
         { id: 1, statement: "Tass kanget kohvi või külm dušš aitavad alkoholist kiiremini kaineda.", isFact: false, explanation: "MÜÜT! Kohv ega külm dušš ei kiirenda maksas etanooli lagundamist. Maks lagundab alkoholi keskmiselt umbes 0.1–0.15 promilli tunnis[cite: 1]." },
         { id: 2, statement: "Nooruki aju on alkoholi mõjude suhtes tundlikum kui täiskasvanu aju.", isFact: true, explanation: "FAKT! Kuna prefrontaalne korteks ja müeliniseerumine jätkuvad kuni umbes 25. eluaastani, on nooruki aju vastuvõtlikum neurotoksilistele mõjudele[cite: 1]." },
-        { id: 3, statement: "Alkoholile järgnev mälulünk (blackout) tähendab lihtsalt seda, et asjad ununesid hiljem ära.", isFact: false, explanation: "MÜÜT! Mälulünga ajal teave EI SALVESTUNUDKI pikaajalisse mällu NMDA-retseptorite pärssimise tõttu[cite: 1]." },
+        { id: 3, statement: "Alkoholile järgnev mälulünk (blackout) tähendab lihtsalt seda, et asjad ununesid hiljem ära.", isFact: false, explanation: "MÜÜT! Mälulünga ajal teave EI SALVESTUNUDki pikaajalisse mällu NMDA-retseptorite pärssimise tõttu[cite: 1]." },
         { id: 4, statement: "Väikeses koguses alkoholi tarvitamine on südame-veresoonkonnale kasulik.", isFact: false, explanation: "MÜÜT! Kaasaegsed Mendeli randomiseerimise uuringud näitavad, et igasugune alkoholitarvitamine suurendab vererõhu- ja insuldiriski[cite: 1]." }
       ],
       en: [
@@ -665,9 +787,6 @@
       ru: ["Клетка", "Волна", "Нерв", "Сон", "Эффект", "Причина", "Печень", "Уровень"]
     };
 
-    // ==========================================
-    // MAIN APP COMPONENT
-    // ==========================================
     function App() {
       const [lang, setLang] = useState('et');
       const [activeTab, setActiveTab] = useState('hero');
@@ -690,20 +809,22 @@
       return (
         <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased flex flex-col justify-between">
           
-          {/* HEADER / NAVIGATION */}
-          <header className="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <header className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/80">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
               
-              <div className="flex items-center space-x-3 cursor-pointer select-none" onClick={() => scrollTo('hero')}>
-                <div className="p-2 bg-indigo-600/20 rounded-lg border border-indigo-500/30">
-                  <LucideIcon name="brain" className="w-6 h-6 text-indigo-400" />
+              <div className="flex items-center space-x-3 cursor-pointer select-none group" onClick={() => scrollTo('hero')}>
+                <div className="p-2.5 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+                  <LucideIcon name="brain" className="w-6 h-6 text-white" />
                 </div>
-                <span className="font-bold text-base sm:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white to-purple-300">
-                  {t.title}
-                </span>
+                <div>
+                  <span className="font-extrabold text-lg sm:text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white to-purple-300">
+                    {t.title}
+                  </span>
+                  <span className="block text-[10px] text-indigo-400 font-medium tracking-wider uppercase">Teadusportaal</span>
+                </div>
               </div>
 
-              <nav className="hidden lg:flex items-center space-x-1 text-xs xl:text-sm font-medium text-slate-300">
+              <nav className="hidden lg:flex items-center space-x-1 text-xs xl:text-sm font-medium text-slate-300 bg-slate-950/60 p-1.5 rounded-2xl border border-slate-800/80">
                 {[
                   { id: 'hero', label: t.nav.hero },
                   { id: 'brain', label: t.nav.brain },
@@ -717,9 +838,9 @@
                   <button
                     key={item.id}
                     onClick={() => scrollTo(item.id)}
-                    className={`px-2.5 py-1.5 rounded-md transition-colors ${
+                    className={`px-3 py-2 rounded-xl transition-all duration-200 ${
                       activeTab === item.id 
-                        ? 'bg-slate-800 text-indigo-400 border border-slate-700' 
+                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-semibold' 
                         : 'hover:bg-slate-800/50 hover:text-white'
                     }`}
                   >
@@ -729,12 +850,12 @@
               </nav>
 
               <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700 text-xs font-semibold">
+                <div className="flex items-center space-x-1 bg-slate-900/90 p-1 rounded-2xl border border-slate-800 text-xs font-semibold shadow-inner">
                   {['et', 'en', 'ru'].map((code) => (
                     <button 
                       key={code}
                       onClick={() => setLang(code)}
-                      className={`px-2 py-1 rounded-lg transition uppercase ${lang === code ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'}`}
+                      className={`px-2.5 py-1.5 rounded-xl transition-all uppercase ${lang === code ? 'bg-indigo-600 text-white shadow-sm font-bold' : 'text-slate-400 hover:text-white'}`}
                     >
                       {code}
                     </button>
@@ -743,7 +864,7 @@
 
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="lg:hidden p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white border border-slate-700 focus:outline-none"
+                  className="lg:hidden p-2.5 rounded-2xl bg-slate-900 text-slate-300 hover:text-white border border-slate-800 focus:outline-none shadow-md"
                   aria-label="Toggle Menu"
                 >
                   <LucideIcon name={isMobileMenuOpen ? "x" : "menu"} className="w-5 h-5" />
@@ -752,7 +873,7 @@
             </div>
 
             {isMobileMenuOpen && (
-              <div className="lg:hidden bg-slate-900 border-b border-slate-800 px-4 py-4 space-y-2 animate-fadeIn">
+              <div className="lg:hidden bg-slate-900/95 backdrop-blur-2xl border-b border-slate-800 px-4 py-6 space-y-2 animate-fadeIn shadow-2xl">
                 {[
                   { id: 'hero', label: t.nav.hero },
                   { id: 'brain', label: t.nav.brain },
@@ -766,10 +887,10 @@
                   <button
                     key={item.id}
                     onClick={() => scrollTo(item.id)}
-                    className={`block w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition ${
+                    className={`block w-full text-left px-4 py-3 rounded-xl text-sm font-semibold transition ${
                       activeTab === item.id 
-                        ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' 
-                        : 'text-slate-300 hover:bg-slate-800'
+                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' 
+                        : 'text-slate-300 hover:bg-slate-800/80'
                     }`}
                   >
                     {item.label}
@@ -779,57 +900,53 @@
             )}
           </header>
 
-          {/* MAIN CONTENT */}
-          <main className="max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 space-y-16 sm:space-y-24">
+          <main className="max-w-6xl w-full mx-auto px-4 sm:px-6 py-12 space-y-20 sm:space-y-32">
 
-            {/* HERO SECTION WITH CANVAS & VISUAL */}
-            <section id="hero" className="pt-6 sm:pt-12 pb-8 sm:pb-12 text-center relative overflow-hidden rounded-3xl border border-slate-800/80 bg-slate-900/40 p-6 sm:p-10">
+            <section id="hero" className="pt-8 sm:pt-16 pb-12 text-center relative overflow-hidden rounded-3xl border border-slate-800/80 glass-card p-6 sm:p-14 shadow-2xl">
               <NeuralCanvas />
               
-              <div className="relative z-10 space-y-6">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-950/80 border border-indigo-700/50 text-indigo-300 text-xs font-semibold uppercase tracking-wider">
-                  <LucideIcon name="sparkles" className="w-3.5 h-3.5" />
+              <div className="relative z-10 space-y-8 max-w-4xl mx-auto">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-950/90 border border-indigo-700/50 text-indigo-300 text-xs font-semibold uppercase tracking-wider shadow-lg">
+                  <LucideIcon name="sparkles" className="w-4 h-4 text-indigo-400" />
                   <span>{t.subtitle}</span>
                 </div>
 
-                <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+                <h1 className="text-3xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-tight">
                   {t.heroTitle} <br className="hidden sm:inline" />
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400">
                     {t.heroTitleColored}
                   </span>
                 </h1>
 
-                <p className="max-w-2xl mx-auto text-base sm:text-lg text-slate-300 leading-relaxed">
+                <p className="max-w-2xl mx-auto text-base sm:text-xl text-slate-300 leading-relaxed font-normal">
                   {t.heroDesc}
                 </p>
 
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto sm:max-w-none pt-4">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                   <button 
                     onClick={() => scrollTo('brain')}
-                    className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold flex items-center justify-center gap-2 transition shadow-xl shadow-indigo-600/25 active:scale-95"
+                    className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold flex items-center justify-center gap-3 transition-all shadow-xl shadow-indigo-600/30 hover:scale-105 active:scale-95"
                   >
                     <span>{t.btnStart}</span>
-                    <LucideIcon name="arrow-right" className="w-4 h-4" />
+                    <LucideIcon name="arrow-right" className="w-5 h-5" />
                   </button>
                   <button 
                     onClick={() => scrollTo('bar-sim')}
-                    className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-rose-600/80 hover:bg-rose-500 text-white font-semibold flex items-center justify-center gap-2 transition shadow-xl shadow-rose-600/20 active:scale-95"
+                    className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-200 font-bold border border-slate-700 flex items-center justify-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-xl"
                   >
                     <span>{lang === 'et' ? 'Virtuaalne baar' : lang === 'en' ? 'Virtual Bar' : 'Симулятор бара'}</span>
-                    <span className="text-lg">🍺</span>
+                    <span className="text-xl">🍺</span>
                   </button>
                 </div>
               </div>
             </section>
 
-            {/* BRAIN REGIONS SECTION */}
-            <section id="brain" className="space-y-8 scroll-mt-20">
-              <div className="text-center space-y-3">
-                <h2 className="text-2xl sm:text-3xl font-bold text-white">{t.brainSectionTitle}</h2>
-                <p className="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base">{t.brainSectionDesc}</p>
+            <section id="brain" className="space-y-10 scroll-mt-24">
+              <div className="text-center space-y-3 max-w-2xl mx-auto">
+                <h2 className="text-2xl sm:text-4xl font-extrabold text-white">{t.brainSectionTitle}</h2>
+                <p className="text-slate-400 text-sm sm:text-base">{t.brainSectionDesc}</p>
               </div>
 
-              {/* Интерактивная 3D-модель мозга */}
               <InteractiveBrainModel lang={lang} />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
@@ -839,30 +956,30 @@
                   return (
                     <div 
                       key={area.id}
-                      className={`p-5 sm:p-6 rounded-2xl border transition-all duration-300 flex flex-col justify-between glass-card glass-card-hover ${
-                        isExpanded ? 'border-indigo-500/60 shadow-2xl shadow-indigo-950/50' : 'border-slate-800'
+                      className={`p-6 sm:p-8 rounded-3xl transition-all duration-300 flex flex-col justify-between glass-card glass-card-hover ${
+                        isExpanded ? 'border-indigo-500/60 shadow-2xl shadow-indigo-950/80 ring-1 ring-indigo-500/50' : 'border-slate-800/80'
                       }`}
                     >
                       <div>
                         <div className="flex items-start space-x-4">
-                          <div className="p-3 bg-indigo-600/20 border border-indigo-500/30 rounded-xl text-indigo-400 flex-shrink-0">
-                            <LucideIcon name={area.iconName} className="w-6 h-6" />
+                          <div className="p-3.5 bg-indigo-600/20 border border-indigo-500/40 rounded-2xl text-indigo-400 flex-shrink-0 shadow-lg">
+                            <LucideIcon name={area.iconName} className="w-7 h-7" />
                           </div>
                           <div>
                             <h3 className="text-lg sm:text-xl font-bold text-white leading-snug">{area.title}</h3>
-                            <p className="text-xs text-indigo-300 font-medium mt-0.5">{area.subtitle}</p>
+                            <p className="text-xs text-indigo-300 font-semibold mt-1">{area.subtitle}</p>
                           </div>
                         </div>
 
-                        <p className="mt-4 text-slate-300 text-sm leading-relaxed">
+                        <p className="mt-4 text-slate-300 text-sm sm:text-base leading-relaxed">
                           {area.shortDesc}
                         </p>
 
                         {isExpanded && (
-                          <div className="mt-6 pt-4 border-t border-slate-700/60 text-sm text-slate-300 space-y-3 whitespace-pre-line animate-fadeIn">
+                          <div className="mt-6 pt-6 border-t border-slate-700/80 text-sm text-slate-300 space-y-3 whitespace-pre-line animate-fadeIn">
                             {area.detailedText}
-                            <div className="pt-2 text-xs text-slate-500 italic">
-                              Viited: {area.citationIds.map(id => `[${id}]`).join(', ')}
+                            <div className="pt-3 text-xs text-indigo-400 font-bold">
+                              Viited / Allikad: {area.citationIds.map(id => `[${id}]`).join(', ')}
                             </div>
                           </div>
                         )}
@@ -870,10 +987,10 @@
 
                       <button
                         onClick={() => setExpandedCard(isExpanded ? null : area.id)}
-                        className="mt-6 w-full py-2.5 px-4 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 flex items-center justify-center gap-2 transition active:scale-98"
+                        className="mt-6 w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs sm:text-sm font-bold text-slate-200 border border-slate-700/80 flex items-center justify-center gap-2 transition-all active:scale-98 shadow-md"
                       >
                         <span>{isExpanded ? t.btnClose : t.btnReadMore}</span>
-                        <LucideIcon name="chevron-down" className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                        <LucideIcon name="chevron-down" className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                       </button>
                     </div>
                   );
@@ -881,91 +998,95 @@
               </div>
             </section>
 
-            {/* BAR SIMULATOR SECTION */}
-            <section id="bar-sim" className="space-y-8 scroll-mt-20">
+            <section id="bar-sim" className="space-y-10 scroll-mt-24">
               <AlcoholBarSimulator lang={lang} />
             </section>
 
-            {/* MEMORY TASK */}
-            <section id="memory-task" className="p-5 sm:p-8 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-8 scroll-mt-20">
+            <section id="memory-task" className="p-6 sm:p-10 rounded-3xl glass-card border border-slate-800 space-y-8 shadow-2xl scroll-mt-24">
               <div className="max-w-2xl">
-                <h2 className="text-2xl sm:text-3xl font-bold text-white">{t.memoryTitle}</h2>
-                <p className="text-slate-400 text-xs sm:text-sm mt-2">{t.memoryDesc}</p>
+                <span className="px-3.5 py-1 bg-indigo-950 border border-indigo-700/50 text-indigo-300 rounded-full text-xs font-bold uppercase tracking-wider">
+                  {lang === 'et' ? 'Interaktiivne Test' : lang === 'en' ? 'Interactive Test' : 'Интерактивный тест'}
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-white mt-3">{t.memoryTitle}</h2>
+                <p className="text-slate-400 text-sm mt-2">{t.memoryDesc}</p>
               </div>
               <MemoryGame lang={lang} />
             </section>
 
-            {/* ATTENTION TASK */}
-            <section id="attention-task" className="p-5 sm:p-8 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-8 scroll-mt-20">
+            <section id="attention-task" className="p-6 sm:p-10 rounded-3xl glass-card border border-slate-800 space-y-8 shadow-2xl scroll-mt-24">
               <div className="max-w-2xl">
-                <h2 className="text-2xl sm:text-3xl font-bold text-white">{t.attentionTitle}</h2>
-                <p className="text-slate-400 text-xs sm:text-sm mt-2">{t.attentionDesc}</p>
+                <span className="px-3.5 py-1 bg-emerald-950 border border-emerald-700/50 text-emerald-300 rounded-full text-xs font-bold uppercase tracking-wider">
+                  {lang === 'et' ? 'Koordinatsioon & Reaktsioon' : lang === 'en' ? 'Coordination & Reaction' : 'Координация и реакция'}
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-white mt-3">{t.attentionTitle}</h2>
+                <p className="text-slate-400 text-sm mt-2">{t.attentionDesc}</p>
               </div>
-              <AttentionGame />
+              <AttentionGame lang={lang} />
             </section>
 
-            {/* MYTH VS FACT QUIZ */}
-            <section id="quiz" className="space-y-8 scroll-mt-20">
-              <div className="text-center space-y-3">
-                <h2 className="text-2xl sm:text-3xl font-bold text-white">{t.quizTitle}</h2>
-                <p className="text-slate-400 max-w-xl mx-auto text-xs sm:text-sm">{t.quizDesc}</p>
+            <section id="quiz" className="space-y-10 scroll-mt-24">
+              <div className="text-center space-y-3 max-w-2xl mx-auto">
+                <span className="px-3.5 py-1 bg-purple-950 border border-purple-700/50 text-purple-300 rounded-full text-xs font-bold uppercase tracking-wider">
+                  {lang === 'et' ? 'Teadmiste Kontroll' : lang === 'en' ? 'Knowledge Check' : 'Проверка знаний'}
+                </span>
+                <h2 className="text-2xl sm:text-4xl font-extrabold text-white">{t.quizTitle}</h2>
+                <p className="text-slate-400 text-sm sm:text-base">{t.quizDesc}</p>
               </div>
-              <MythFactQuiz quizData={mythQuiz} />
+              <MythFactQuiz quizData={mythQuiz} lang={lang} />
             </section>
 
-            {/* QUESTIONNAIRE WITH EXTENDED BLOCKS */}
-            <section id="feedback-form" className="p-5 sm:p-8 rounded-3xl bg-slate-900/90 border border-indigo-500/40 space-y-8 relative overflow-hidden scroll-mt-20">
+            <section id="feedback-form" className="p-6 sm:p-10 rounded-3xl glass-card border border-indigo-500/40 space-y-8 relative overflow-hidden shadow-2xl scroll-mt-24">
+              <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+              
               <div className="max-w-2xl">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/80 border border-indigo-800/50 text-indigo-300 text-xs font-semibold uppercase mb-3">
-                  Uurimistöö Küsimustik
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-indigo-950/80 border border-indigo-800/50 text-indigo-300 text-xs font-semibold uppercase mb-3">
+                  Uurimistöö Tagasiside
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-white">{t.surveyTitle}</h2>
-                <p className="text-slate-400 text-xs sm:text-sm mt-2">{t.surveyDesc}</p>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-white">{t.surveyTitle}</h2>
+                <p className="text-slate-400 text-sm mt-2">{t.surveyDesc}</p>
               </div>
 
               <TelegramFeedbackForm t={t} lang={lang} />
             </section>
 
-            {/* SOURCES */}
-            <section id="sources" className="p-5 sm:p-8 rounded-3xl bg-slate-900/50 border border-slate-800 space-y-6 scroll-mt-20">
+            <section id="sources" className="p-6 sm:p-10 rounded-3xl glass-card border border-slate-800 space-y-8 shadow-2xl scroll-mt-24">
               <div className="flex items-center space-x-3">
-                <div className="p-2 bg-slate-800 rounded-lg text-slate-300">
-                  <LucideIcon name="book-open" className="w-5 h-5" />
+                <div className="p-3 bg-slate-900 rounded-2xl border border-slate-700 text-indigo-400 shadow-lg">
+                  <LucideIcon name="book-open" className="w-6 h-6" />
                 </div>
-                <h2 className="text-xl sm:text-2xl font-bold text-white">{t.sourcesTitle}</h2>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-white">{t.sourcesTitle}</h2>
               </div>
 
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 gap-4">
                 {SCIENTIFIC_SOURCES.map((source) => (
-                  <div key={source.id} className="p-3.5 sm:p-4 rounded-xl bg-slate-800/40 border border-slate-700/40 text-xs sm:text-sm space-y-1">
+                  <div key={source.id} className="p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs sm:text-sm space-y-1.5 shadow-md">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-indigo-400">[{source.id}]</span>
+                      <span className="font-bold text-indigo-400 bg-indigo-950 px-2 py-0.5 rounded-lg border border-indigo-800/50">[{source.id}]</span>
                       <span className="font-semibold text-slate-200">{source.authors} ({source.year}).</span>
                     </div>
-                    <div className="text-slate-300 italic">{source.title}.</div>
-                    <div className="text-xs text-slate-400">{source.publisher}</div>
+                    <div className="text-slate-300 italic font-medium">{source.title}.</div>
+                    <div className="text-xs text-slate-400 font-mono">{source.publisher}</div>
                   </div>
                 ))}
               </div>
             </section>
 
-            {/* ABOUT */}
-            <section className="p-6 sm:p-8 rounded-3xl bg-slate-900/30 border border-slate-800/60 text-center space-y-4">
-              <h3 className="text-base sm:text-lg font-bold text-white">{t.aboutTitle}</h3>
-              <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">{t.aboutDesc}</p>
+            <section className="p-8 sm:p-12 rounded-3xl glass-card border border-slate-800/80 text-center space-y-6 shadow-2xl">
+              <h3 className="text-lg sm:text-xl font-extrabold text-white">{t.aboutTitle}</h3>
+              <p className="text-sm text-slate-400 max-w-2xl mx-auto leading-relaxed">{t.aboutDesc}</p>
               
-              <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-xs text-slate-400 border-t border-slate-800/80 max-w-md mx-auto">
-                <div><strong className="text-slate-300">{t.authorLabel}</strong> Sofija Tsaika</div>
-                <div className="hidden sm:inline">•</div>
-                <div><strong className="text-slate-300">{t.schoolLabel}</strong> Tallinna Laagna Gümnaasium</div>
-                <div className="hidden sm:inline">•</div>
-                <div><strong className="text-slate-300">{t.yearLabel}</strong> 2026</div>
+              <div className="pt-6 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-slate-300 border-t border-slate-800/80 max-w-xl mx-auto font-medium">
+                <div><strong className="text-indigo-400">{t.authorLabel}</strong> Sofija Tsaika</div>
+                <div className="hidden sm:inline text-slate-600">•</div>
+                <div><strong className="text-indigo-400">{t.schoolLabel}</strong> Tallinna Laagna Gümnaasium</div>
+                <div className="hidden sm:inline text-slate-600">•</div>
+                <div><strong className="text-indigo-400">{t.yearLabel}</strong> 2026</div>
               </div>
             </section>
 
           </main>
 
-          <footer className="border-t border-slate-800 py-6 text-center text-xs text-slate-500 px-4">
+          <footer className="border-t border-slate-800 bg-slate-950/80 py-8 text-center text-xs text-slate-400 px-4">
             <p>© 2026 Alkohol ja aju. Praktiline töö. Kõik õigused kaitstud.</p>
           </footer>
 
@@ -973,9 +1094,6 @@
       );
     }
 
-    // ==========================================
-    // EXTENDED FEEDBACK FORM COMPONENT
-    // ==========================================
     function TelegramFeedbackForm({ t, lang }) {
       const [formData, setFormData] = useState({
         school: '',
@@ -1018,7 +1136,7 @@
           `2️⃣ *Kohv ja kainedus:* ${formData.qCoffee}\n\n` +
           `*SOTSIAALNE KOGEMUS / VAATLUSED:*\n` +
           `👥 *Teadlikkus tutvusringkonnas:* ${formData.qSoc1}\n` +
-          `🧠 *Mälulüngad знакомых:* ${formData.qSoc2}\n` +
+          `🧠 *Mälulüngad tuttavatel:* ${formData.qSoc2}\n` +
           `⚡ *Peer pressure (1-5):* ${formData.qSoc3}\n\n` +
           `*LEHE HINDAMINE:*\n` +
           `⭐ *Arusaadavus (1-5):* ${formData.qClarity}\n` +
@@ -1043,6 +1161,9 @@
 
           if (res.ok && data.ok) {
             setStatus({ loading: false, success: true, error: false });
+            if (window.confetti) {
+              window.confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            }
           } else {
             throw new Error(data.description || "Telegram API Error");
           }
@@ -1053,46 +1174,46 @@
       };
 
       return (
-        <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
-          <div className="space-y-4 bg-slate-950/60 p-4 sm:p-5 rounded-2xl border border-slate-800">
-            <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">{t.block1}</h3>
+        <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl">
+          <div className="space-y-4 bg-slate-950/60 p-6 rounded-2xl border border-slate-800">
+            <h3 className="text-xs font-extrabold text-indigo-400 uppercase tracking-wider">{t.block1}</h3>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">{t.schoolInput}</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">{t.schoolInput}</label>
                 <input 
                   type="text" 
                   required 
                   placeholder="Nt: Tallinna Laagna Gümnaasium"
                   value={formData.school}
                   onChange={(e) => setFormData({...formData, school: e.target.value})}
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-indigo-500"
+                  className="w-full px-4 py-3 bg-slate-900 border border-slate-700/80 rounded-xl text-white text-sm focus:outline-none focus:border-indigo-500 shadow-inner"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">{t.gradeInput}</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">{t.gradeInput}</label>
                 <input 
                   type="text" 
                   required 
-                  placeholder="Nt: 11TH"
+                  placeholder="Nt: 11H"
                   value={formData.grade}
                   onChange={(e) => setFormData({...formData, grade: e.target.value})}
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-indigo-500"
+                  className="w-full px-4 py-3 bg-slate-900 border border-slate-700/80 rounded-xl text-white text-sm focus:outline-none focus:border-indigo-500 shadow-inner"
                 />
               </div>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-2">{t.preKnowledgeLabel}</label>
-              <div className="flex items-center justify-between gap-2 max-w-xs">
+              <div className="flex items-center justify-between gap-2 max-w-md">
                 {[1, 2, 3, 4, 5].map((num) => (
                   <button
                     key={num}
                     type="button"
                     onClick={() => setFormData({...formData, preKnowledge: String(num)})}
-                    className={`flex-1 py-2 rounded-xl text-xs font-bold border transition ${
+                    className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all ${
                       formData.preKnowledge === String(num)
-                        ? 'bg-indigo-600 text-white border-indigo-500'
+                        ? 'bg-indigo-600 text-white border-indigo-500 shadow-lg shadow-indigo-600/30 scale-105'
                         : 'bg-slate-900 text-slate-400 border-slate-700 hover:bg-slate-800'
                     }`}
                   >
@@ -1104,14 +1225,14 @@
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">{t.block2}</h3>
+            <h3 className="text-xs font-extrabold text-indigo-400 uppercase tracking-wider">{t.block2}</h3>
 
-            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
+            <div className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2.5">
               <label className="block text-xs font-semibold text-white">{t.q1Label}</label>
               <select 
                 value={formData.qAge}
                 onChange={(e) => setFormData({...formData, qAge: e.target.value})}
-                className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
+                className="w-full p-3 bg-slate-900 border border-slate-700/80 rounded-xl text-slate-200 text-xs sm:text-sm focus:outline-none focus:border-indigo-500"
               >
                 {t.optsQ1.map((opt, idx) => (
                   <option key={idx} value={opt}>{opt}</option>
@@ -1119,12 +1240,12 @@
               </select>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
+            <div className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2.5">
               <label className="block text-xs font-semibold text-white">{t.q3Label}</label>
               <select 
                 value={formData.qCoffee}
                 onChange={(e) => setFormData({...formData, qCoffee: e.target.value})}
-                className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
+                className="w-full p-3 bg-slate-900 border border-slate-700/80 rounded-xl text-slate-200 text-xs sm:text-sm focus:outline-none focus:border-indigo-500"
               >
                 {t.optsQ3.map((opt, idx) => (
                   <option key={idx} value={opt}>{opt}</option>
@@ -1134,14 +1255,14 @@
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">{t.block4}</h3>
+            <h3 className="text-xs font-extrabold text-indigo-400 uppercase tracking-wider">{t.block4}</h3>
 
-            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
+            <div className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2.5">
               <label className="block text-xs font-semibold text-white">{t.qSoc1Label}</label>
               <select 
                 value={formData.qSoc1}
                 onChange={(e) => setFormData({...formData, qSoc1: e.target.value})}
-                className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
+                className="w-full p-3 bg-slate-900 border border-slate-700/80 rounded-xl text-slate-200 text-xs sm:text-sm focus:outline-none focus:border-indigo-500"
               >
                 {t.optsSoc1.map((opt, idx) => (
                   <option key={idx} value={opt}>{opt}</option>
@@ -1149,12 +1270,12 @@
               </select>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
+            <div className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2.5">
               <label className="block text-xs font-semibold text-white">{t.qSoc2Label}</label>
               <select 
                 value={formData.qSoc2}
                 onChange={(e) => setFormData({...formData, qSoc2: e.target.value})}
-                className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
+                className="w-full p-3 bg-slate-900 border border-slate-700/80 rounded-xl text-slate-200 text-xs sm:text-sm focus:outline-none focus:border-indigo-500"
               >
                 {t.optsSoc2.map((opt, idx) => (
                   <option key={idx} value={opt}>{opt}</option>
@@ -1162,17 +1283,17 @@
               </select>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
+            <div className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2.5">
               <label className="block text-xs font-semibold text-white">{t.qSoc3Label}</label>
-              <div className="flex items-center justify-between gap-2 max-w-xs pt-1">
+              <div className="flex items-center justify-between gap-2 max-w-md pt-1">
                 {[1, 2, 3, 4, 5].map((num) => (
                   <button
                     key={num}
                     type="button"
                     onClick={() => setFormData({...formData, qSoc3: String(num)})}
-                    className={`flex-1 py-2 rounded-xl text-xs font-bold border transition ${
+                    className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all ${
                       formData.qSoc3 === String(num)
-                        ? 'bg-purple-600 text-white border-purple-500'
+                        ? 'bg-purple-600 text-white border-purple-500 shadow-lg shadow-purple-600/30 scale-105'
                         : 'bg-slate-900 text-slate-400 border-slate-700 hover:bg-slate-800'
                     }`}
                   >
@@ -1184,19 +1305,19 @@
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">{t.block3}</h3>
+            <h3 className="text-xs font-extrabold text-indigo-400 uppercase tracking-wider">{t.block3}</h3>
 
-            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
+            <div className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2.5">
               <label className="block text-xs font-semibold text-white">{t.q4Label}</label>
-              <div className="flex items-center justify-between gap-2 max-w-xs pt-1">
+              <div className="flex items-center justify-between gap-2 max-w-md pt-1">
                 {[1, 2, 3, 4, 5].map((num) => (
                   <button
                     key={num}
                     type="button"
                     onClick={() => setFormData({...formData, qClarity: String(num)})}
-                    className={`flex-1 py-2 rounded-xl text-xs font-bold border transition ${
+                    className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all ${
                       formData.qClarity === String(num)
-                        ? 'bg-emerald-600 text-white border-emerald-500'
+                        ? 'bg-emerald-600 text-white border-emerald-500 shadow-lg shadow-emerald-600/30 scale-105'
                         : 'bg-slate-900 text-slate-400 border-slate-700 hover:bg-slate-800'
                     }`}
                   >
@@ -1206,12 +1327,12 @@
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
+            <div className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2.5">
               <label className="block text-xs font-semibold text-white">{t.q5Label}</label>
               <select 
                 value={formData.qInteractive}
                 onChange={(e) => setFormData({...formData, qInteractive: e.target.value})}
-                className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
+                className="w-full p-3 bg-slate-900 border border-slate-700/80 rounded-xl text-slate-200 text-xs sm:text-sm focus:outline-none focus:border-indigo-500"
               >
                 {t.optsQ5.map((opt, idx) => (
                   <option key={idx} value={opt}>{opt}</option>
@@ -1219,14 +1340,14 @@
               </select>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
+            <div className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2.5">
               <label className="block text-xs font-semibold text-white">{t.q6Label}</label>
               <textarea 
                 rows="3"
                 placeholder="..."
                 value={formData.qMythReflect}
                 onChange={(e) => setFormData({...formData, qMythReflect: e.target.value})}
-                className="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500 resize-none"
+                className="w-full p-3.5 bg-slate-900 border border-slate-700/80 rounded-xl text-white text-xs sm:text-sm focus:outline-none focus:border-indigo-500 resize-none shadow-inner"
               ></textarea>
             </div>
           </div>
@@ -1234,19 +1355,19 @@
           <button
             type="submit"
             disabled={status.loading}
-            className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-semibold rounded-xl text-sm transition shadow-lg shadow-indigo-600/20 active:scale-98"
+            className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-extrabold rounded-2xl text-sm transition-all shadow-xl shadow-indigo-600/30 hover:scale-[1.01] active:scale-98"
           >
             {status.loading ? t.sending : t.btnSend}
           </button>
 
           {status.success && (
-            <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-600 text-emerald-200 text-xs text-center font-medium animate-fadeIn">
+            <div className="p-4 rounded-xl bg-emerald-950/80 border border-emerald-600 text-emerald-200 text-xs text-center font-semibold animate-fadeIn shadow-lg">
               {t.sendSuccess}
             </div>
           )}
 
           {status.error && (
-            <div className="p-4 rounded-xl bg-rose-950/60 border border-rose-600 text-rose-200 text-xs text-center font-medium animate-fadeIn">
+            <div className="p-4 rounded-xl bg-rose-950/80 border border-rose-600 text-rose-200 text-xs text-center font-semibold animate-fadeIn shadow-lg">
               {t.sendError}
             </div>
           )}
@@ -1254,7 +1375,6 @@
       );
     }
 
-    // MEMORY GAME
     function MemoryGame({ lang }) {
       const [gameState, setGameState] = useState('idle');
       const [currentWords, setCurrentWords] = useState([]);
@@ -1308,30 +1428,33 @@
         selectedWords.forEach(w => {
           if (currentWords.includes(w)) score++;
         });
+        if (score === 8 && window.confetti) {
+          window.confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
+        }
         return score;
       };
 
       return (
         <div className="space-y-6">
           {gameState === 'idle' && (
-            <div className="text-center py-8 space-y-4 bg-slate-950/40 rounded-2xl border border-slate-800">
+            <div className="text-center py-10 space-y-4 bg-slate-950/50 rounded-2xl border border-slate-800">
               <button
                 onClick={startTask}
-                className="px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-semibold text-white text-sm transition shadow-lg shadow-indigo-600/20 active:scale-95"
+                className="px-8 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-bold text-white text-sm transition-all shadow-xl shadow-indigo-600/30 hover:scale-105 active:scale-95"
               >
-                Start Memory Task
+                {lang === 'et' ? 'Alusta mälu testi' : lang === 'en' ? 'Start Memory Test' : 'Начать тест памяти'}
               </button>
             </div>
           )}
 
           {gameState === 'memorizing' && (
-            <div className="text-center py-8 space-y-6 bg-slate-950/60 rounded-2xl border border-slate-800 px-4">
-              <div className="flex items-center justify-center space-x-2 text-indigo-400 font-bold text-lg">
-                <span>Timer: {timer}s</span>
+            <div className="text-center py-10 space-y-6 bg-slate-950/70 rounded-2xl border border-slate-800 px-4 animate-fadeIn">
+              <div className="inline-flex items-center space-x-2 px-4 py-1.5 bg-indigo-950 border border-indigo-700/50 text-indigo-300 rounded-full font-bold text-sm">
+                <span>Jäta meelde sõnad ({timer}s)</span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 max-w-lg mx-auto">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-xl mx-auto">
                 {currentWords.map((word, idx) => (
-                  <div key={idx} className="p-3 bg-slate-800 rounded-xl font-bold text-indigo-200 border border-slate-700 text-xs sm:text-sm">
+                  <div key={idx} className="p-4 bg-slate-900 rounded-2xl font-bold text-indigo-200 border border-indigo-500/30 text-sm shadow-md animate-pulse">
                     {word}
                   </div>
                 ))}
@@ -1340,9 +1463,10 @@
           )}
 
           {gameState === 'distraction' && (
-            <div className="text-center py-8 space-y-4 bg-slate-950/60 rounded-2xl border border-slate-800 max-w-md mx-auto px-4">
+            <div className="text-center py-10 space-y-5 bg-slate-950/70 rounded-2xl border border-slate-800 max-w-md mx-auto px-6 animate-fadeIn">
               <form onSubmit={(e) => { e.preventDefault(); setGameState('recall'); }} className="space-y-4">
-                <div className="text-2xl font-extrabold text-indigo-300">
+                <div className="text-xs text-indigo-400 font-semibold uppercase tracking-wider">Häiriv ülesanne / Kognitiivne test</div>
+                <div className="text-3xl font-black text-white">
                   {distractionMath.a} + {distractionMath.b} = ?
                 </div>
                 <input
@@ -1351,11 +1475,11 @@
                   onChange={(e) => setDistractionAnswer(e.target.value)}
                   required
                   autoFocus
-                  className="px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-center text-white font-bold w-32 focus:outline-none text-base"
+                  className="px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-center text-white font-bold w-40 focus:outline-none focus:border-indigo-500 text-lg shadow-inner"
                 />
                 <div>
-                  <button type="submit" className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-semibold text-white text-xs sm:text-sm transition">
-                    Next
+                  <button type="submit" className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold text-white text-sm transition-all shadow-lg shadow-indigo-600/30">
+                    Jätka (Esita)
                   </button>
                 </div>
               </form>
@@ -1363,16 +1487,17 @@
           )}
 
           {gameState === 'recall' && (
-            <div className="space-y-6 bg-slate-950/60 p-4 sm:p-6 rounded-2xl border border-slate-800">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+            <div className="space-y-6 bg-slate-950/70 p-6 rounded-2xl border border-slate-800 animate-fadeIn">
+              <div className="text-center text-xs font-semibold text-slate-400">Vali ülesjäänud 8 õiget sõna:</div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {optionsGrid.map((word, idx) => (
                   <button
                     key={idx}
                     onClick={() => toggleWordSelect(word)}
-                    className={`p-3 rounded-xl text-xs sm:text-sm font-semibold border transition ${
+                    className={`p-4 rounded-2xl text-xs sm:text-sm font-bold border transition-all ${
                       selectedWords.includes(word)
-                        ? 'bg-indigo-600 text-white border-indigo-400'
-                        : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+                        ? 'bg-indigo-600 text-white border-indigo-400 shadow-lg shadow-indigo-600/30 scale-105'
+                        : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800'
                     }`}
                   >
                     {word}
@@ -1383,19 +1508,20 @@
                 <button
                   onClick={() => setGameState('result')}
                   disabled={selectedWords.length === 0}
-                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-semibold rounded-xl text-xs sm:text-sm transition"
+                  className="px-8 py-3.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold rounded-2xl text-sm transition-all shadow-lg shadow-emerald-600/30"
                 >
-                  View Score ({selectedWords.length}/8)
+                  Vaata tulemust ({selectedWords.length}/8)
                 </button>
               </div>
             </div>
           )}
 
           {gameState === 'result' && (
-            <div className="p-6 bg-slate-950/80 rounded-2xl border border-slate-800 text-center space-y-4">
-              <h3 className="text-xl sm:text-2xl font-bold text-white">Score: {calculateScore()} / 8</h3>
-              <button onClick={startTask} className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs sm:text-sm font-semibold border border-slate-700 transition">
-                Retry
+            <div className="p-8 bg-slate-950/90 rounded-2xl border border-slate-800 text-center space-y-5 animate-fadeIn shadow-2xl">
+              <h3 className="text-2xl sm:text-3xl font-black text-white">Tulemus: {calculateScore()} / 8</h3>
+              <p className="text-sm text-slate-300">Suurepärane lühimälu harjutus! Harjuta uuesti, et parandada fookust.</p>
+              <button onClick={startTask} className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-slate-200 rounded-xl text-sm font-bold border border-slate-700 transition-all shadow-md">
+                Proovi uuesti
               </button>
             </div>
           )}
@@ -1403,8 +1529,7 @@
       );
     }
 
-    // ATTENTION GAME
-    function AttentionGame() {
+    function AttentionGame({ lang }) {
       const [gameState, setGameState] = useState('idle');
       const [grid, setGrid] = useState([]);
       const [foundCount, setFoundCount] = useState(0);
@@ -1442,7 +1567,17 @@
         const updated = [...grid];
         updated[index].clicked = true;
         setGrid(updated);
-        if (updated[index].isTarget) setFoundCount(prev => prev + 1);
+        if (updated[index].isTarget) {
+          const newFound = foundCount + 1;
+          setFoundCount(newFound);
+          if (newFound === totalTargets) {
+            if (timerRef.current) clearInterval(timerRef.current);
+            setGameState('result');
+            if (window.confetti) {
+              window.confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
+            }
+          }
+        }
       };
 
       const finishTask = () => {
@@ -1453,28 +1588,28 @@
       return (
         <div className="space-y-6">
           {gameState === 'idle' && (
-            <div className="text-center py-8 bg-slate-950/40 rounded-2xl border border-slate-800">
-              <button onClick={startAttentionTask} className="px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-semibold text-white text-sm transition shadow-lg shadow-emerald-600/20 active:scale-95">
-                Start Attention Test
+            <div className="text-center py-10 bg-slate-950/50 rounded-2xl border border-slate-800">
+              <button onClick={startAttentionTask} className="px-8 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-bold text-white text-sm transition-all shadow-xl shadow-emerald-600/30 hover:scale-105 active:scale-95">
+                {lang === 'et' ? 'Alusta tähelepanu testi' : lang === 'en' ? 'Start Attention Test' : 'Начать тест внимания'}
               </button>
             </div>
           )}
 
           {gameState === 'playing' && (
-            <div className="space-y-6 bg-slate-950/60 p-4 sm:p-6 rounded-2xl border border-slate-800">
-              <div className="flex justify-between items-center text-xs sm:text-sm font-medium">
-                <span>Find target: <strong className="text-amber-400 text-base">★</strong></span>
-                <span>Time: {time}s | Found: {foundCount}/{totalTargets}</span>
+            <div className="space-y-6 bg-slate-950/70 p-6 rounded-2xl border border-slate-800 animate-fadeIn">
+              <div className="flex justify-between items-center text-xs sm:text-sm font-bold bg-slate-900 px-4 py-3 rounded-xl border border-slate-800">
+                <span className="flex items-center gap-1.5">Sihtmärk: <strong className="text-amber-400 text-lg">★</strong></span>
+                <span>Aeg: <strong className="text-white">{time}s</strong> | Leitud: <strong className="text-emerald-400">{foundCount}/{totalTargets}</strong></span>
               </div>
-              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-3">
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
                 {grid.map((cell, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleCellClick(idx)}
-                    className={`h-12 sm:h-14 rounded-xl text-lg sm:text-xl font-bold border transition active:scale-95 flex items-center justify-center ${
+                    className={`h-14 sm:h-16 rounded-2xl text-xl sm:text-2xl font-bold border transition-all active:scale-95 flex items-center justify-center shadow-md ${
                       cell.clicked
-                        ? cell.isTarget ? 'bg-emerald-600/30 border-emerald-500 text-emerald-300' : 'bg-rose-900/30 border-rose-500 text-rose-300'
-                        : 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700'
+                        ? cell.isTarget ? 'bg-emerald-600/30 border-emerald-500 text-emerald-300 scale-95' : 'bg-rose-950/40 border-rose-600 text-rose-300 opacity-60 scale-95'
+                        : 'bg-slate-900 border-slate-700/80 text-slate-200 hover:bg-slate-800 hover:border-slate-600'
                     }`}
                   >
                     {cell.symbol}
@@ -1482,18 +1617,19 @@
                 ))}
               </div>
               <div className="text-right pt-2">
-                <button onClick={finishTask} className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs border border-slate-700 transition">
-                  Finish
+                <button onClick={finishTask} className="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-200 rounded-xl text-xs font-semibold border border-slate-700 transition-all shadow-md">
+                  Lõpeta test
                 </button>
               </div>
             </div>
           )}
 
           {gameState === 'result' && (
-            <div className="p-6 bg-slate-950/80 rounded-2xl border border-slate-800 text-center space-y-4">
-              <h3 className="text-xl sm:text-2xl font-bold text-white">Result: {foundCount} / {totalTargets} in {time}s</h3>
-              <button onClick={startAttentionTask} className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs sm:text-sm font-semibold border border-slate-700 transition">
-                Retry
+            <div className="p-8 bg-slate-950/90 rounded-2xl border border-slate-800 text-center space-y-5 animate-fadeIn shadow-2xl">
+              <h3 className="text-2xl sm:text-3xl font-black text-white">Tulemus: {foundCount} / {totalTargets} {time}s jooksul</h3>
+              <p className="text-sm text-slate-300">Tähelepanu kiirus ja fookus on kriitilised näitajad vaimses soorituses.</p>
+              <button onClick={startAttentionTask} className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-slate-200 rounded-xl text-sm font-bold border border-slate-700 transition-all shadow-md">
+                Proovi uuesti
               </button>
             </div>
           )}
@@ -1501,8 +1637,7 @@
       );
     }
 
-    // MYTH VS FACT
-    function MythFactQuiz({ quizData }) {
+    function MythFactQuiz({ quizData, lang }) {
       const [currentIndex, setCurrentIndex] = useState(0);
       const [userAnswers, setUserAnswers] = useState({});
       const [showExplanation, setShowExplanation] = useState(false);
@@ -1515,6 +1650,9 @@
         if (isAnswered) return;
         setUserAnswers({ ...userAnswers, [currentItem.id]: answerBool });
         setShowExplanation(true);
+        if (answerBool === currentItem.isFact && window.confetti) {
+          window.confetti({ particleCount: 50, spread: 50, origin: { y: 0.6 } });
+        }
       };
 
       const nextQuestion = () => {
@@ -1526,53 +1664,55 @@
 
       return (
         <div className="max-w-2xl mx-auto space-y-6">
-          <div className="p-5 sm:p-8 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-6">
-            <div className="text-xs text-indigo-400 font-bold uppercase tracking-wider">
-              {currentIndex + 1} / {quizData.length}
+          <div className="p-6 sm:p-10 rounded-3xl glass-card border border-slate-800 space-y-6 shadow-2xl animate-fadeIn">
+            <div className="flex items-center justify-between">
+              <span className="px-3 py-1 bg-purple-950 border border-purple-800 text-purple-300 rounded-full text-xs font-bold uppercase tracking-wider">
+                Küsimus {currentIndex + 1} / {quizData.length}
+              </span>
             </div>
 
-            <h3 className="text-lg sm:text-xl font-semibold text-white leading-snug">
+            <h3 className="text-lg sm:text-2xl font-bold text-white leading-snug">
               "{currentItem.statement}"
             </h3>
 
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <button
                 onClick={() => handleAnswer(false)}
                 disabled={isAnswered}
-                className={`py-3.5 px-3 rounded-xl font-bold text-xs sm:text-sm border transition ${
+                className={`py-4 px-4 rounded-2xl font-extrabold text-sm sm:text-base border transition-all shadow-lg ${
                   isAnswered && userAnswers[currentItem.id] === false
-                    ? 'bg-indigo-600 text-white border-indigo-500'
-                    : 'bg-slate-800 hover:bg-slate-700/80 border-slate-700 text-slate-200'
+                    ? 'bg-indigo-600 text-white border-indigo-400 scale-105'
+                    : 'bg-slate-900 hover:bg-slate-800 border-slate-700/80 text-slate-200'
                 }`}
               >
-                MYTH
+                {lang === 'et' ? 'MÜÜT' : lang === 'en' ? 'MYTH' : 'МИФ'}
               </button>
 
               <button
                 onClick={() => handleAnswer(true)}
                 disabled={isAnswered}
-                className={`py-3.5 px-3 rounded-xl font-bold text-xs sm:text-sm border transition ${
+                className={`py-4 px-4 rounded-2xl font-extrabold text-sm sm:text-base border transition-all shadow-lg ${
                   isAnswered && userAnswers[currentItem.id] === true
-                    ? 'bg-indigo-600 text-white border-indigo-500'
-                    : 'bg-slate-800 hover:bg-slate-700/80 border-slate-700 text-slate-200'
+                    ? 'bg-indigo-600 text-white border-indigo-400 scale-105'
+                    : 'bg-slate-900 hover:bg-slate-800 border-slate-700/80 text-slate-200'
                 }`}
               >
-                FACT
+                {lang === 'et' ? 'FAKT' : lang === 'en' ? 'FACT' : 'ФАКТ'}
               </button>
             </div>
 
             {showExplanation && (
-              <div className={`p-4 rounded-2xl border text-xs sm:text-sm space-y-2 animate-fadeIn ${
-                isCorrect ? 'bg-emerald-950/40 border-emerald-800/60 text-emerald-200' : 'bg-rose-950/40 border-rose-800/60 text-rose-200'
+              <div className={`p-5 rounded-2xl border text-sm sm:text-base space-y-2 animate-fadeIn shadow-xl ${
+                isCorrect ? 'bg-emerald-950/60 border-emerald-600 text-emerald-200' : 'bg-rose-950/60 border-rose-600 text-rose-200'
               }`}>
-                <p className="leading-relaxed">{currentItem.explanation}</p>
+                <p className="leading-relaxed font-medium">{currentItem.explanation}</p>
               </div>
             )}
 
             {isAnswered && currentIndex < quizData.length - 1 && (
               <div className="text-right pt-2">
-                <button onClick={nextQuestion} className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-xs sm:text-sm transition">
-                  Next Question
+                <button onClick={nextQuestion} className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30">
+                  {lang === 'et' ? 'Järgmine küsimus' : lang === 'en' ? 'Next Question' : 'Следующий вопрос'}
                 </button>
               </div>
             )}
