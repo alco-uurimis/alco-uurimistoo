@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alkohol ja aju — Interaktiivne Teadusportaal</title>
-  
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -25,14 +25,14 @@
       }
     }
   </script>
-  
+
   <!-- React and React-DOM CDNs -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  
+
   <!-- Babel Standalone -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  
+
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -80,6 +80,75 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #334155;
     }
+
+    /* Embedded visual design: no additional image or font requests. */
+    :root { color-scheme: dark; }
+    body { margin:0; }
+    #root > div { background: radial-gradient(ellipse at 85% 8%, #172044 0, transparent 34%), #080d1b; }
+    button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+    button { touch-action: manipulation; min-height:44px; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline:3px solid #67e8f9; outline-offset:4px; }
+    section[id] { scroll-margin-top:112px; }
+    h1,h2,h3,h4 { text-wrap:balance; overflow-wrap:anywhere; }
+    p { text-wrap:pretty; }
+    .grid > *, .flex > * { min-width:0; }
+    .glass-card { background:linear-gradient(140deg,rgba(27,37,62,.85),rgba(12,19,36,.96)); box-shadow:0 14px 45px -30px #000; border-color:rgba(148,163,184,.18); }
+    .glow-container { animation:none; }
+    main { padding-top:32px !important; }
+    #hero { padding:clamp(24px,4vw,56px); text-align:left; border-radius:32px; }
+    .hero-layout { display:grid; grid-template-columns:1.15fr 1fr; align-items:center; gap:20px; position:relative; }
+    .hero-copy { margin:0; max-width:none; }
+    #hero h1 { font-size:clamp(34px,4.3vw,59px); line-height:1.09; letter-spacing:-.045em; }
+    #hero h1 br { display:none; }
+    #hero p { font-size:16px; line-height:1.8; margin-left:0; }
+    #hero .hero-actions { justify-content:flex-start; flex-wrap:wrap; gap:12px; }
+    #hero .hero-actions button { padding:14px 20px; font-size:14px; }
+    .brain-art { width:100%; height:auto; display:block; overflow:visible; }
+    .hero-art { position:relative; padding:12px; }
+    .hero-art::before { content:''; position:absolute; inset:12%; background:#6366f1; opacity:.14; filter:blur(65px); border-radius:50%; }
+    .art-caption { display:flex; flex-wrap:wrap; justify-content:center; gap:14px; color:#b4c4df; font-size:11px; letter-spacing:.05em; }
+    .art-caption span { display:flex; align-items:center; gap:6px; }
+    .art-caption i { width:6px; height:6px; border-radius:50%; background:#67e8f9; }
+    .art-caption span:nth-child(2) i { background:#a78bfa; }
+    .art-caption span:nth-child(3) i { background:#fda4af; }
+    .section-art { width:150px; height:70px; margin-bottom:18px; color:#a5b4fc; }
+    #attention-task .section-art { color:#6ee7b7; }
+    .region-art { width:200px; max-width:100%; margin:auto; }
+    .region-art .brain-art { max-height:150px; }
+    .brand-button { text-align:left; }
+    header > div:first-child { gap:16px; }
+    .mobile-menu { max-height:calc(100dvh - 90px); overflow:auto; }
+    @media(min-width:1024px) and (max-width:1279px) { header nav.hidden { display:none; } header button.lg\:hidden { display:inline-flex; } .mobile-menu.lg\:hidden { display:block; } }
+    @media(max-width:767px) {
+      main { padding-top:20px !important; }
+      main > :not([hidden]) ~ :not([hidden]) { margin-top:48px !important; }
+      .hero-layout { grid-template-columns:1fr; gap:24px; }
+      #hero { border-radius:24px; }
+      #hero .hero-copy > * + * { margin-top:22px; }
+      #hero h1 { font-size:clamp(32px,7.4vw,48px); }
+      #hero p { font-size:15px; }
+      .hero-art { max-width:360px; margin:auto; width:100%; padding:0; }
+      .hero-art .brain-art { max-height:265px; }
+      #hero .hero-actions { padding-top:0; }
+      .glass-card { backdrop-filter:none; }
+      .glass-card.p-6 { padding:20px; }
+      input,select,textarea { font-size:16px !important; }
+      .flex.bg-slate-900, .flex.bg-slate-900\/90 { flex-wrap:wrap; justify-content:center; max-width:100%; }
+      .flex.justify-between { gap:12px; flex-wrap:wrap; }
+      span.uppercase { display:inline-block; }
+      header > div:first-child { gap:8px; padding:10px 12px; height:auto; min-height:76px; }
+      .brand-button { gap:8px; }
+      .brand-button > div:first-child { padding:8px; }
+      .brand-button > div + div { margin-left:0; }
+      .brand-button span.font-extrabold { font-size:14px; display:block; max-width:115px; line-height:1.2; }
+      header .space-x-3 > :not([hidden]) ~ :not([hidden]) { margin-left:6px; }
+      .language-switch button { padding:8px; min-width:34px; }
+      .mobile-menu { padding:12px 16px; }
+      .section-art { width:130px; height:60px; }
+    }
+    @media(max-width:359px) { .brand-button > div:first-child { display:none; } .glass-card.p-6 { padding:16px; } }
+    @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
+
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white min-h-screen flex flex-col justify-between">
@@ -123,7 +192,7 @@
         resize();
         window.addEventListener('resize', resize);
 
-        const particles = Array.from({ length: 60 }).map(() => ({
+        const particles = Array.from({ length: window.innerWidth < 640 ? 24 : 45 }).map(() => ({
           x: Math.random() * (canvas.width || 800),
           y: Math.random() * (canvas.height || 400),
           vx: (Math.random() - 0.5) * 0.5,
@@ -133,7 +202,7 @@
 
         const draw = () => {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          
+
           for (let i = 0; i < particles.length; i++) {
             for (let j = i + 1; j < particles.length; j++) {
               const dx = particles[i].x - particles[j].x;
@@ -164,7 +233,7 @@
             ctx.fill();
           });
 
-          animationFrameId = requestAnimationFrame(draw);
+          if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) animationFrameId = requestAnimationFrame(draw);
         };
 
         draw();
@@ -196,7 +265,7 @@
       return (
         <div className="p-6 sm:p-8 rounded-3xl glass-card border border-indigo-500/40 space-y-6 shadow-2xl relative overflow-hidden">
           <div className="absolute -top-12 -left-12 w-64 h-64 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
-          
+
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-800 pb-4">
             <div>
               <span className="px-3 py-1 bg-indigo-950 border border-indigo-700/50 text-indigo-300 rounded-full text-xs font-bold uppercase tracking-wider">
@@ -227,7 +296,7 @@
                   <span className="text-3xl">🍷</span>
                 </div>
               </div>
-              
+
               <p className="text-xs text-slate-400 mt-4 text-center">
                 {lang === 'et' ? 'Etanool blokeerib signaali edastamist ja aeglustab sünapsi tööd.' : lang === 'en' ? 'Ethanol blocks signal transmission and slows down synapse activity.' : 'Этанол блокирует передачу сигналов и замедляет работу синапсов.'}
               </p>
@@ -285,7 +354,7 @@
                 {lang === 'et' ? 'Vali joogi kogus ja vaata mõju ajule' : lang === 'en' ? 'Select drink amount & view brain impact' : 'Выберите дозу и оцените воздействие'}
               </h3>
             </div>
-            
+
             <div className="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
               {[1, 2, 3].map((num) => (
                 <button
@@ -293,7 +362,7 @@
                   onClick={() => setLevel(num)}
                   className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${level === num ? 'bg-rose-600 text-white shadow-md' : 'text-slate-400 hover:text-white'}`}
                 >
-                  {num === 1 ? '🍺 Kerge' : num === 2 ? '🍷 Keskmine' : '🥃 Kõrge'}
+                  {(lang === 'et' ? ['Kerge', 'Keskmine', 'Kõrge'] : lang === 'en' ? ['Low', 'Medium', 'High'] : ['Низкий', 'Средний', 'Высокий'])[num - 1]}
                 </button>
               ))}
             </div>
@@ -423,13 +492,13 @@
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-            <div className="lg:col-span-5 relative h-64 sm:h-72 bg-slate-950/80 rounded-2xl border border-slate-800/80 flex items-center justify-center p-6 overflow-hidden group">
+            <div className="lg:col-span-5 relative min-h-[340px] bg-slate-950/80 rounded-2xl border border-slate-800/80 flex items-center justify-center p-6 overflow-hidden group">
               <div className={`absolute inset-0 bg-gradient-to-br ${current.color} opacity-25 transition-all duration-700 animate-pulse`}></div>
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15)_0,transparent_70%)]"></div>
-              
+
               <div className="relative z-10 text-center space-y-4 animate-fadeIn">
                 <div className="p-4 bg-slate-900/90 rounded-2xl border border-indigo-500/40 inline-block shadow-2xl group-hover:scale-110 transition-transform duration-300">
-                  <LucideIcon name={current.icon} className="w-12 h-12 text-indigo-400 mx-auto" />
+                  <div className="region-art"><BrainIllustration region={selectedRegion} /></div>
                 </div>
                 <div>
                   <h4 className="font-extrabold text-white text-lg">{current.name}</h4>
@@ -921,12 +990,42 @@
       ru: ["Клетка", "Волна", "Нерв", "Сон", "Эффект", "Причина", "Печень", "Уровень"]
     };
 
+
+    function BrainIllustration({ region = '' }) {
+      return <svg className="brain-art" viewBox="0 0 440 360" fill="none" aria-hidden="true" focusable="false">
+        <ellipse cx="223" cy="182" rx="187" ry="146" stroke="#334468" strokeDasharray="3 9" />
+        <ellipse cx="223" cy="182" rx="156" ry="122" stroke="#263854" />
+        <path d="M28 184H74M370 184H415M223 19V48M223 313V340" stroke="#64748b" />
+        <path d="M220 82C197 54 158 66 146 91C114 83 89 105 90 134C60 154 64 190 83 206C72 238 99 262 124 263C138 291 177 300 203 278L219 254Z" fill="#172d49" stroke="#67e8f9" strokeWidth="2" />
+        <path d="M222 82C245 54 284 66 296 91C328 83 353 105 352 134C382 154 378 190 359 206C370 238 343 262 318 263C304 291 265 300 239 278L223 254Z" fill="#2b244d" stroke="#a78bfa" strokeWidth="2" />
+        <g stroke="#689ac2" strokeWidth="2" strokeLinecap="round">
+          <path d="M145 93C137 115 154 128 174 124C194 119 209 134 203 153M91 135C115 125 130 141 125 158C121 177 140 187 157 180M85 207C108 192 131 210 125 234M127 261C128 243 151 235 166 246C178 255 197 244 198 227M166 85C184 92 173 111 184 123M91 171C108 158 123 175 119 189M151 146C164 132 184 145 180 161C174 182 192 188 205 179M148 202C159 192 176 202 173 218M154 278C169 263 188 279 199 259" />
+        </g>
+        <g stroke="#9784ce" strokeWidth="2" strokeLinecap="round">
+          <path d="M297 93C305 115 288 128 268 124C248 119 233 134 239 153M351 135C327 125 312 141 317 158C321 177 302 187 285 180M357 207C334 192 311 210 317 234M315 261C314 243 291 235 276 246C264 255 245 244 244 227M276 85C258 92 269 111 258 123M351 171C334 158 319 175 323 189M291 146C278 132 258 145 262 161C268 182 250 188 237 179M294 202C283 192 266 202 269 218M288 278C273 263 254 279 243 259" />
+        </g>
+        <path d="M210 252L212 297Q222 315 232 297L232 252" fill="#202d48" stroke="#93a4c7" strokeWidth="2" />
+        <g stroke="#6ee7e0" strokeWidth="1" opacity=".65"><path d="M120 152L174 124L184 206L271 156L314 216L276 246L184 206L125 234M271 156L268 124" /></g>
+        {[[120,152],[174,124],[184,206],[271,156],[314,216],[276,246]].map(([x,y],i)=><g key={i}><circle cx={x} cy={y} r="10" fill={i%2 ? '#a78bfa':'#67e8f9'} opacity=".14"/><circle cx={x} cy={y} r="3.5" fill={i%2 ? '#c4b5fd':'#a5f3fc'}/></g>)}
+        {region && <circle cx={region === 'cortex' ? 119 : region === 'cerebellum' ? 300 : 206} cy={region === 'cortex' ? 144 : region === 'cerebellum' ? 260 : 221} r="26" fill="#fda4af" fillOpacity=".22" stroke="#fda4af" strokeWidth="2" />}
+        <g stroke="#64748b"><path d="M119 152H62L45 127M314 216H384L398 238"/><circle cx="45" cy="124" r="4"/><circle cx="399" cy="243" r="4"/></g>
+        <path d="M160 326H184L193 316L203 336L215 319L224 326H282" stroke="#67e8f9" strokeWidth="2" strokeLinecap="round" />
+      </svg>;
+    }
+    function SectionIllustration({ attention = false }) {
+      return <svg className="section-art" viewBox="0 0 180 80" fill="none" aria-hidden="true" focusable="false">
+        {attention ? <><circle cx="90" cy="40" r="30" stroke="currentColor" opacity=".3"/><circle cx="90" cy="40" r="18" stroke="currentColor"/><circle cx="90" cy="40" r="5" fill="currentColor"/><path d="M90 3V18M90 62V77M53 40H68M112 40H127M14 40H35M145 40H166" stroke="currentColor" strokeWidth="2"/></> : <><rect x="20" y="22" width="47" height="48" rx="10" stroke="currentColor" opacity=".35"/><rect x="65" y="12" width="47" height="48" rx="10" stroke="currentColor" opacity=".65"/><rect x="110" y="22" width="47" height="48" rx="10" fill="#1d2947" stroke="currentColor"/><path d="M123 47L131 55L145 37" stroke="currentColor" strokeWidth="2"/><circle cx="88" cy="36" r="8" stroke="currentColor"/></>}
+      </svg>;
+    }
+
     function App() {
       const [lang, setLang] = useState('et');
       const [activeTab, setActiveTab] = useState('hero');
       const [expandedCard, setExpandedCard] = useState(null);
       const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+      useEffect(() => { document.documentElement.lang = lang; }, [lang]);
+      useEffect(() => { const close = e => { if(e.key === 'Escape') setIsMobileMenuOpen(false); }; window.addEventListener('keydown', close); return () => window.removeEventListener('keydown', close); }, []);
       const t = TRANSLATIONS[lang];
       const brainAreas = BRAIN_AREAS_I18N[lang];
       const mythQuiz = MYTH_FACT_QUIZ_I18N[lang];
@@ -936,17 +1035,17 @@
         setIsMobileMenuOpen(false);
         const element = document.getElementById(id);
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
+          element.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
         }
       };
 
       return (
         <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased flex flex-col justify-between">
-          
+
           <header className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/80">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
-              
-              <div className="flex items-center space-x-3 cursor-pointer select-none group" onClick={() => scrollTo('hero')}>
+
+              <button type="button" className="brand-button flex items-center space-x-3 cursor-pointer select-none group" onClick={() => scrollTo('hero')}>
                 <div className="p-2.5 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
                   <LucideIcon name="brain" className="w-6 h-6 text-white" />
                 </div>
@@ -954,9 +1053,9 @@
                   <span className="font-extrabold text-lg sm:text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white to-purple-300">
                     {t.title}
                   </span>
-                  <span className="block text-[10px] text-indigo-400 font-medium tracking-wider uppercase">Teadusportaal</span>
+                  <span className="block text-[10px] text-indigo-400 font-medium tracking-wider uppercase">{lang === 'et' ? 'Teadusportaal' : lang === 'en' ? 'Science portal' : 'Научный портал'}</span>
                 </div>
-              </div>
+              </button>
 
               <nav className="hidden lg:flex items-center space-x-1 text-xs xl:text-sm font-medium text-slate-300 bg-slate-950/60 p-1.5 rounded-2xl border border-slate-800/80">
                 {[
@@ -984,11 +1083,13 @@
               </nav>
 
               <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-1 bg-slate-900/90 p-1 rounded-2xl border border-slate-800 text-xs font-semibold shadow-inner">
+                <div className="language-switch flex items-center space-x-1 bg-slate-900/90 p-1 rounded-2xl border border-slate-800 text-xs font-semibold shadow-inner">
                   {['et', 'en', 'ru'].map((code) => (
                     <button 
                       key={code}
                       onClick={() => setLang(code)}
+                      aria-pressed={lang === code}
+                      aria-label={{et: 'Eesti', en: 'English', ru: 'Русский'}[code]}
                       className={`px-2.5 py-1.5 rounded-xl transition-all uppercase ${lang === code ? 'bg-indigo-600 text-white shadow-sm font-bold' : 'text-slate-400 hover:text-white'}`}
                     >
                       {code}
@@ -999,7 +1100,9 @@
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                   className="lg:hidden p-2.5 rounded-2xl bg-slate-900 text-slate-300 hover:text-white border border-slate-800 focus:outline-none shadow-md"
-                  aria-label="Toggle Menu"
+                  aria-expanded={isMobileMenuOpen}
+                  aria-controls="mobile-menu"
+                  aria-label={lang === 'et' ? 'Menüü' : lang === 'en' ? 'Menu' : 'Меню'}
                 >
                   <LucideIcon name={isMobileMenuOpen ? "x" : "menu"} className="w-5 h-5" />
                 </button>
@@ -1007,7 +1110,7 @@
             </div>
 
             {isMobileMenuOpen && (
-              <div className="lg:hidden bg-slate-900/95 backdrop-blur-2xl border-b border-slate-800 px-4 py-6 space-y-2 animate-fadeIn shadow-2xl">
+              <div id="mobile-menu" className="mobile-menu lg:hidden bg-slate-900/95 backdrop-blur-2xl border-b border-slate-800 px-4 py-6 space-y-2 animate-fadeIn shadow-2xl">
                 {[
                   { id: 'hero', label: t.nav.hero },
                   { id: 'brain', label: t.nav.brain },
@@ -1038,8 +1141,9 @@
 
             <section id="hero" className="pt-8 sm:pt-16 pb-12 text-center relative overflow-hidden rounded-3xl border border-slate-800/80 glass-card p-6 sm:p-14 shadow-2xl">
               <NeuralCanvas />
-              
-              <div className="relative z-10 space-y-8 max-w-4xl mx-auto">
+
+              <div className="hero-layout">
+              <div className="hero-copy relative z-10 space-y-8 max-w-4xl mx-auto">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-950/90 border border-indigo-700/50 text-indigo-300 text-xs font-semibold uppercase tracking-wider shadow-lg">
                   <LucideIcon name="sparkles" className="w-4 h-4 text-indigo-400" />
                   <span>{t.subtitle}</span>
@@ -1056,7 +1160,7 @@
                   {t.heroDesc}
                 </p>
 
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                <div className="hero-actions flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                   <button 
                     onClick={() => scrollTo('brain')}
                     className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold flex items-center justify-center gap-3 transition-all shadow-xl shadow-indigo-600/30 hover:scale-105 active:scale-95"
@@ -1072,6 +1176,8 @@
                     <span className="text-xl">🍺</span>
                   </button>
                 </div>
+              </div>
+              <div className="hero-art"><BrainIllustration /><div className="art-caption">{(lang === 'et' ? ['Mälu','Tähelepanu','Reaktsioon'] : lang === 'en' ? ['Memory','Attention','Reaction'] : ['Память','Внимание','Реакция']).map(label => <span key={label}><i />{label}</span>)}</div></div>
               </div>
             </section>
 
@@ -1147,7 +1253,7 @@
             </section>
 
             <section id="memory-task" className="p-6 sm:p-10 rounded-3xl glass-card border border-slate-800 space-y-8 shadow-2xl scroll-mt-24">
-              <div className="max-w-2xl">
+              <div className="max-w-2xl"><SectionIllustration />
                 <span className="px-3.5 py-1 bg-indigo-950 border border-indigo-700/50 text-indigo-300 rounded-full text-xs font-bold uppercase tracking-wider">
                   {lang === 'et' ? 'Interaktiivne Test' : lang === 'en' ? 'Interactive Test' : 'Интерактивный тест'}
                 </span>
@@ -1158,7 +1264,7 @@
             </section>
 
             <section id="attention-task" className="p-6 sm:p-10 rounded-3xl glass-card border border-slate-800 space-y-8 shadow-2xl scroll-mt-24">
-              <div className="max-w-2xl">
+              <div className="max-w-2xl"><SectionIllustration attention />
                 <span className="px-3.5 py-1 bg-emerald-950 border border-emerald-700/50 text-emerald-300 rounded-full text-xs font-bold uppercase tracking-wider">
                   {lang === 'et' ? 'Koordinatsioon & Reaktsioon' : lang === 'en' ? 'Coordination & Reaction' : 'Координация и реакция'}
                 </span>
@@ -1181,7 +1287,7 @@
 
             <section id="feedback-form" className="p-6 sm:p-10 rounded-3xl glass-card border border-indigo-500/40 space-y-8 relative overflow-hidden shadow-2xl scroll-mt-24">
               <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
-              
+
               <div className="max-w-2xl">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-indigo-950/80 border border-indigo-800/50 text-indigo-300 text-xs font-semibold uppercase mb-3">
                   Uurimistöö Tagasiside
@@ -1218,7 +1324,7 @@
             <section className="p-8 sm:p-12 rounded-3xl glass-card border border-slate-800/80 text-center space-y-6 shadow-2xl">
               <h3 className="text-lg sm:text-xl font-extrabold text-white">{t.aboutTitle}</h3>
               <p className="text-sm text-slate-400 max-w-2xl mx-auto leading-relaxed">{t.aboutDesc}</p>
-              
+
               <div className="pt-6 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-slate-300 border-t border-slate-800/80 max-w-xl mx-auto font-medium">
                 <div><strong className="text-indigo-400">{t.authorLabel}</strong> Sofija Tsaika</div>
                 <div className="hidden sm:inline text-slate-600">•</div>
@@ -1321,7 +1427,7 @@
         <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl">
           <div className="space-y-4 bg-slate-950/60 p-6 rounded-2xl border border-slate-800">
             <h3 className="text-xs font-extrabold text-indigo-400 uppercase tracking-wider">{t.block1}</h3>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">{t.schoolInput}</label>
