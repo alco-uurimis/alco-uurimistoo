@@ -685,9 +685,9 @@
               <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">{t.aboutDesc}</p>
               
               <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-xs text-slate-400 border-t border-slate-800/80 max-w-md mx-auto">
-                <div><strong className="text-slate-300">{t.authorLabel}</strong> Mihail Žiljajev</div>
+                <div><strong className="text-slate-300">{t.authorLabel}</strong> Sofija Tsaika</div>
                 <div className="hidden sm:inline">•</div>
-                <div><strong className="text-slate-300">{t.schoolLabel}</strong> TLVL</div>
+                <div><strong className="text-slate-300">{t.schoolLabel}</strong> Tallinna Laagna Gümnaasium</div>
                 <div className="hidden sm:inline">•</div>
                 <div><strong className="text-slate-300">{t.yearLabel}</strong> 2026</div>
               </div>
@@ -783,7 +783,7 @@
                 <input 
                   type="text" 
                   required 
-                  placeholder="Nt: TLVL"
+                  placeholder="Nt: Tallinna Laagna Gümnaasium"
                   value={formData.school}
                   onChange={(e) => setFormData({...formData, school: e.target.value})}
                   className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-indigo-500"
@@ -794,7 +794,7 @@
                 <input 
                   type="text" 
                   required 
-                  placeholder="Nt: 11A"
+                  placeholder="Nt: 11TH"
                   value={formData.grade}
                   onChange={(e) => setFormData({...formData, grade: e.target.value})}
                   className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-indigo-500"
@@ -1236,7 +1236,7 @@
                     : 'bg-slate-800 hover:bg-slate-700/80 border-slate-700 text-slate-200'
                 }`}
               >
-                MYTH / MÜÜT / МИФ
+                MYTH
               </button>
 
               <button
@@ -1248,7 +1248,7 @@
                     : 'bg-slate-800 hover:bg-slate-700/80 border-slate-700 text-slate-200'
                 }`}
               >
-                FACT / FAKT / ФАКТ
+                FACT
               </button>
             </div>
 
