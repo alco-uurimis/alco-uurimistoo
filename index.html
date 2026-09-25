@@ -4,15 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alkohol ja aju — Praktiline töö</title>
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
   <!-- React and React-DOM CDNs -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
   <!-- Babel Standalone -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(6px); }
@@ -23,18 +28,33 @@
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white min-h-screen">
 
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
+    const { useState, useEffect, useRef, useLayoutEffect } = React;
 
     // ==========================================
-    // TELEGRAM CONFIGURATION
+    // HELPER COMPONENTS & UTILS
     // ==========================================
-    const TELEGRAM_BOT_TOKEN = "8322607707:AAGg_C72l99Vh1rck5iE6uszzd9azRNlfB4";
-    const TELEGRAM_CHAT_ID = "1065529492";
+    
+    // Компонент иконки Lucide с динамическим обновлением DOM
+    function LucideIcon({ name, className = "w-5 h-5", ...props }) {
+      const iconRef = useRef(null);
+
+      useLayoutEffect(() => {
+        if (iconRef.current && window.lucide) {
+          iconRef.current.innerHTML = `<i data-lucide="${name}" class="${className}"></i>`;
+          window.lucide.createIcons({
+            nameAttr: 'data-lucide',
+            attrs: { class: className }
+          });
+        }
+      }, [name, className]);
+
+      return <span ref={iconRef} className="inline-flex items-center justify-center" {...props} />;
+    }
 
     // ==========================================
     // MULTILINGUAL DICTIONARY
@@ -57,7 +77,6 @@
         heroDesc: "Teaduspõhine ja interaktiivne ülevaade sellest, kuidas etanool mõjutab noore, alles areneva aju funktsioone: lühimälu, tähelepanu koondamist, reageerimiskiirust ja otsustamisprotsesse.",
         btnStart: "Alusta uurimist",
         btnTryTests: "Proovi interaktiivseid teste",
-        btnFillSurvey: "Täida küsimustik",
         brainSectionTitle: "2. Mis toimub ajus?",
         brainSectionDesc: "Klõpsa valdkonnal, et näha lähemat selgitust etanooli mõju kohta konkreetses ajuosas.",
         btnReadMore: "Loe rohkem teaduslikku tausta",
@@ -74,7 +93,6 @@
         authorLabel: "Autor:",
         schoolLabel: "Kool:",
         yearLabel: "Aasta:",
-        // Survey labels
         surveyTitle: "6. Osale uurimuses ja anna tagasisidet",
         surveyDesc: "Palun vasta järgmistele küsimustele. Sinu vastused aitavad täiendada praktilise töö analüüsi ja saadetakse otse uurimistöö autorile.",
         block1: "Plokk 1: Demograafia ja algseis",
@@ -92,7 +110,11 @@
         btnSend: "Saada vastused uurijale",
         sending: "Saadab vastuseid...",
         sendSuccess: "Suur tänu! Sinu vastused on edukalt saadetud.",
-        sendError: "Viga saatmisel. Kontrolli internetiühendust."
+        sendError: "Viga saatmisel. Kontrolli internetiühendust.",
+        optsQ1: ["Umbes kuni 14. eluaastani", "Umbes kuni 18. eluaastani", "Umbes kuni 25. eluaastani"],
+        optsQ2: ["Mälestused kustuvad ajust alles järgmisel päeval", "Teave ei salvestunudki pikaajalisse mällu NMDA-retseptorite pärssimise tõttu", "Inimene näeb lihtsalt unenägusid"],
+        optsQ3: ["Jah, umbes poole võrra", "Ei, need tekitavad vaid pettealuse ärksuse, maksamolekulide kiirus ei muutu"],
+        optsQ5: ["Aju piirkondade ja funktsioonide kaardid", "Lühimälu harjutus (Memory Task)", "Tähelepanu ja fookuse ruudustik (Attention Grid)", "Müüt või fakt viktoriin"]
       },
       en: {
         title: "Alcohol and Brain",
@@ -111,7 +133,6 @@
         heroDesc: "A science-based interactive overview of how ethanol affects developing brain functions: short-term memory, attention focus, reaction time, and decision-making.",
         btnStart: "Start Exploring",
         btnTryTests: "Try Interactive Tests",
-        btnFillSurvey: "Take the Survey",
         brainSectionTitle: "2. What happens in the brain?",
         brainSectionDesc: "Click on a domain to read a detailed explanation of ethanol's effects on specific brain regions.",
         btnReadMore: "Read scientific background",
@@ -128,7 +149,6 @@
         authorLabel: "Author:",
         schoolLabel: "School:",
         yearLabel: "Year:",
-        // Survey labels
         surveyTitle: "6. Participate in the study & give feedback",
         surveyDesc: "Please answer the following questions. Your responses will help complement the research analysis and will be sent directly to the author.",
         block1: "Block 1: Demographics & Initial Knowledge",
@@ -146,7 +166,11 @@
         btnSend: "Submit answers to researcher",
         sending: "Submitting...",
         sendSuccess: "Thank you! Your responses have been sent successfully.",
-        sendError: "Error sending data. Please check your internet connection."
+        sendError: "Error sending data. Please check your internet connection.",
+        optsQ1: ["Until about 14 years old", "Until about 18 years old", "Until about 25 years old"],
+        optsQ2: ["Memories fade from the brain only the next day", "Information was never consolidated into long-term memory due to NMDA inhibition", "The person is simply dreaming"],
+        optsQ3: ["Yes, by about half", "No, they only create a false sense of alertness; liver enzyme activity remains unchanged"],
+        optsQ5: ["Brain region & function cards", "Short-term memory exercise", "Attention grid exercise", "Myth or Fact quiz"]
       },
       ru: {
         title: "Алкоголь и мозг",
@@ -165,7 +189,6 @@
         heroDesc: "Научно обоснованный интерактивный обзор того, как этанол влияет на функции развивающегося мозга: кратковременную память, концентрацию внимания, скорость реакции и принятие решений.",
         btnStart: "Начать изучение",
         btnTryTests: "Пройти интерактивные тесты",
-        btnFillSurvey: "Заполнить опросник",
         brainSectionTitle: "2. Что происходит в мозге?",
         brainSectionDesc: "Нажмите на нужную область, чтобы прочитать подробное объяснение воздействия этанола.",
         btnReadMore: "Читать научное обоснование",
@@ -182,7 +205,6 @@
         authorLabel: "Автор:",
         schoolLabel: "Школа:",
         yearLabel: "Год:",
-        // Survey labels
         surveyTitle: "6. Примите участие в исследовании и оставьте отзыв",
         surveyDesc: "Пожалуйста, ответьте на вопросы ниже. Ваши ответы помогут дополнить анализ практической работы и будут отправлены напрямую автору.",
         block1: "Блок 1: Демография и начальный уровень",
@@ -200,7 +222,11 @@
         btnSend: "Отправить ответы автору",
         sending: "Отправка...",
         sendSuccess: "Большое спасибо! Ваши ответы успешно отправлены.",
-        sendError: "Ошибка при отправке. Проверьте подключение к интернету."
+        sendError: "Ошибка при отправке. Проверьте подключение к интернету.",
+        optsQ1: ["Примерно до 14 лет", "Примерно до 18 лет", "Примерно до 25 лет"],
+        optsQ2: ["Воспоминания стираются из мозга только на следующий день", "Информация вовсе не записалась в долговременную память из-за блокады NMDA-рецепторов", "Человек просто видит сны"],
+        optsQ3: ["Да, примерно в два раза", "Нет, они лишь создают иллюзию бодрости, скорость ферментов печени не меняется"],
+        optsQ5: ["Карточки областей мозга и их функций", "Упражнение на кратковременную память", "Сетка внимания и концентрации", "Викторина «Миф или факт»"]
       }
     };
 
@@ -323,13 +349,13 @@
     };
 
     const SCIENTIFIC_SOURCES = [
-      { id: 1, authors: "Žiljajev, M.", title: "A Comparative Analysis of Nicotine, Alcohol, and Cannabis: Harm, Addiction, Pharmacology, and Social Consequences", year: "2026", publisher: "Sõltumatu uurimisraport, Tallinn, Eesti" },
+      { id: 1, authors: "Žiljajev, M.", title: "A Comparative Analysis of Harm, Addiction, Pharmacology, and Social Consequences", year: "2026", publisher: "Sõltumatu uurimisraport, Tallinn, Eesti" },
       { id: 2, authors: "Nutt, D. J., King, L. A., & Phillips, L. D.", title: "Drug harms in the UK: a multicriteria decision analysis", year: "2010", publisher: "The Lancet, 376(9752), 1558-1565" },
-      { id: 3, authors: "White, A. M.", title: "What happened? Alcohol, memory blackout, and the brain", year: "2003", publisher: "Alcohol Research & Health, 27(2), 186-196" },
-      { id: 4, authors: "Lees, B., et al.", title: "Effect of alcohol use on the adolescent brain and behavior", year: "2020", publisher: "Neuropharmacology, 177, 108218" },
+      { id: 3, authors: "White, A. M.", title: "What happened? Memory blackout, and the brain", year: "2003", publisher: "Alcohol Research & Health, 27(2), 186-196" },
+      { id: 4, authors: "Lees, B., et al.", title: "Effect on the adolescent brain and behavior", year: "2020", publisher: "Neuropharmacology, 177, 108218" },
       { id: 5, authors: "Carbia, C., et al.", title: "Binge drinking during adolescence/young adulthood and executive functioning: A systematic review", year: "2018", publisher: "Neuroscience & Biobehavioral Reviews, 89, 54-71" },
-      { id: 6, authors: "Fillmore, M. T.", title: "Acute alcohol-induced impairment of cognitive functions: past and present findings", year: "2007", publisher: "Int. Journal of Disability and Human Development, 6(2), 115-126" },
-      { id: 7, authors: "Millwood, I. Y., et al.", title: "Conventional and genetic evidence on alcohol and vascular disease etiology", year: "2019", publisher: "The Lancet, 393(10183), 1831-1842" },
+      { id: 6, authors: "Fillmore, M. T.", title: "Acute impairment of cognitive functions: past and present findings", year: "2007", publisher: "Int. Journal of Disability and Human Development, 6(2), 115-126" },
+      { id: 7, authors: "Millwood, I. Y., et al.", title: "Conventional and genetic evidence on vascular disease etiology", year: "2019", publisher: "The Lancet, 393(10183), 1831-1842" },
       { id: 8, authors: "Stahl, S. M.", title: "Stahl's Essential Psychopharmacology (5th ed.)", year: "2021", publisher: "Cambridge University Press" },
       { id: 9, authors: "Luria, A. R.", title: "The Working Brain: An Introduction to Neuropsychology", year: "1973", publisher: "Basic Books" }
     ];
@@ -355,10 +381,26 @@
       ]
     };
 
-    const WORD_BANK = [
-      ["Aju", "Mälu", "Fookus", "Sünaps", "Uuring", "Neuroon", "Tähelepanu", "Impulss"],
-      ["Korteks", "Signaal", "Mõtlemine", "Reaktsioon", "Kognitsioon", "Tajumine", "Keskendumine", "Teadvus"]
-    ];
+    const WORD_BANK_I18N = {
+      et: [
+        ["Aju", "Mälu", "Fookus", "Sünaps", "Uuring", "Neuroon", "Tähelepanu", "Impulss"],
+        ["Korteks", "Signaal", "Mõtlemine", "Reaktsioon", "Kognitsioon", "Tajumine", "Keskendumine", "Teadvus"]
+      ],
+      en: [
+        ["Brain", "Memory", "Focus", "Synapse", "Study", "Neuron", "Attention", "Impulse"],
+        ["Cortex", "Signal", "Thinking", "Reaction", "Cognition", "Perception", "Concentration", "Awareness"]
+      ],
+      ru: [
+        ["Мозг", "Память", "Фокус", "Синапс", "Анализ", "Нейрон", "Внимание", "Импульс"],
+        ["Кора", "Сигнал", "Мышление", "Реакция", "Познание", "Восприятие", "Концентрация", "Сознание"]
+      ]
+    };
+
+    const DISTRACTORS_I18N = {
+      et: ["Aine", "Laine", "Närv", "Unetus", "Mõju", "Põhjus", "Maks", "Tase"],
+      en: ["Cell", "Wave", "Nerve", "Sleep", "Effect", "Reason", "Liver", "Level"],
+      ru: ["Клетка", "Волна", "Нерв", "Сон", "Эффект", "Причина", "Печень", "Уровень"]
+    };
 
     // ==========================================
     // MAIN APP COMPONENT
@@ -367,19 +409,15 @@
       const [lang, setLang] = useState('et');
       const [activeTab, setActiveTab] = useState('hero');
       const [expandedCard, setExpandedCard] = useState(null);
+      const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
       const t = TRANSLATIONS[lang];
       const brainAreas = BRAIN_AREAS_I18N[lang];
       const mythQuiz = MYTH_FACT_QUIZ_I18N[lang];
 
-      useEffect(() => {
-        if (window.lucide) {
-          window.lucide.createIcons();
-        }
-      }, [expandedCard, activeTab, lang]);
-
       const scrollTo = (id) => {
         setActiveTab(id);
+        setIsMobileMenuOpen(false);
         const element = document.getElementById(id);
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' });
@@ -387,21 +425,24 @@
       };
 
       return (
-        <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased">
+        <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased flex flex-col justify-between">
           
           {/* HEADER / NAVIGATION */}
-          <header className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
+          <header className="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-              <div className="flex items-center space-x-3 cursor-pointer" onClick={() => scrollTo('hero')}>
+              
+              {/* Logo */}
+              <div className="flex items-center space-x-3 cursor-pointer select-none" onClick={() => scrollTo('hero')}>
                 <div className="p-2 bg-indigo-600/20 rounded-lg border border-indigo-500/30">
-                  <i data-lucide="brain" class="w-6 h-6 text-indigo-400"></i>
+                  <LucideIcon name="brain" className="w-6 h-6 text-indigo-400" />
                 </div>
-                <span className="font-bold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white to-purple-300">
+                <span className="font-bold text-base sm:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white to-purple-300">
                   {t.title}
                 </span>
               </div>
 
-              <nav className="hidden md:flex items-center space-x-1 text-sm font-medium text-slate-300">
+              {/* Desktop Nav */}
+              <nav className="hidden lg:flex items-center space-x-1 text-xs xl:text-sm font-medium text-slate-300">
                 {[
                   { id: 'hero', label: t.nav.hero },
                   { id: 'brain', label: t.nav.brain },
@@ -414,7 +455,7 @@
                   <button
                     key={item.id}
                     onClick={() => scrollTo(item.id)}
-                    className={`px-3 py-1.5 rounded-md transition-colors ${
+                    className={`px-2.5 py-1.5 rounded-md transition-colors ${
                       activeTab === item.id 
                         ? 'bg-slate-800 text-indigo-400 border border-slate-700' 
                         : 'hover:bg-slate-800/50 hover:text-white'
@@ -425,61 +466,92 @@
                 ))}
               </nav>
 
-              {/* LANGUAGE SWITCHER */}
-              <div className="flex items-center space-x-2 bg-slate-800/80 p-1 rounded-xl border border-slate-700 text-xs font-semibold">
-                <button 
-                  onClick={() => setLang('et')}
-                  className={`px-2 py-1 rounded-lg transition ${lang === 'et' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
+              {/* Controls (Lang + Mobile toggle) */}
+              <div className="flex items-center space-x-3">
+                {/* Language Switcher */}
+                <div className="flex items-center space-x-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700 text-xs font-semibold">
+                  {['et', 'en', 'ru'].map((code) => (
+                    <button 
+                      key={code}
+                      onClick={() => setLang(code)}
+                      className={`px-2 py-1 rounded-lg transition uppercase ${lang === code ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'}`}
+                    >
+                      {code}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Mobile Menu Button */}
+                <button
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="lg:hidden p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white border border-slate-700 focus:outline-none"
+                  aria-label="Toggle Menu"
                 >
-                  ET
-                </button>
-                <button 
-                  onClick={() => setLang('en')}
-                  className={`px-2 py-1 rounded-lg transition ${lang === 'en' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
-                >
-                  EN
-                </button>
-                <button 
-                  onClick={() => setLang('ru')}
-                  className={`px-2 py-1 rounded-lg transition ${lang === 'ru' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
-                >
-                  RU
+                  <LucideIcon name={isMobileMenuOpen ? "x" : "menu"} className="w-5 h-5" />
                 </button>
               </div>
             </div>
+
+            {/* Mobile Dropdown Nav */}
+            {isMobileMenuOpen && (
+              <div className="lg:hidden bg-slate-900 border-b border-slate-800 px-4 py-4 space-y-2 animate-fadeIn">
+                {[
+                  { id: 'hero', label: t.nav.hero },
+                  { id: 'brain', label: t.nav.brain },
+                  { id: 'memory-task', label: t.nav.memory },
+                  { id: 'attention-task', label: t.nav.attention },
+                  { id: 'quiz', label: t.nav.quiz },
+                  { id: 'feedback-form', label: t.nav.feedback },
+                  { id: 'sources', label: t.nav.sources }
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => scrollTo(item.id)}
+                    className={`block w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition ${
+                      activeTab === item.id 
+                        ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' 
+                        : 'text-slate-300 hover:bg-slate-800'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </header>
 
           {/* MAIN CONTENT CONTAINERS */}
-          <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-24">
+          <main className="max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 space-y-16 sm:space-y-24">
 
             {/* HERO SECTION */}
-            <section id="hero" className="pt-8 pb-12 text-center relative overflow-hidden">
+            <section id="hero" className="pt-6 sm:pt-12 pb-8 sm:pb-12 text-center relative overflow-hidden">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/60 border border-indigo-800/50 text-indigo-300 text-xs font-semibold uppercase tracking-wider mb-6">
-                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                {t.subtitle}
+                <LucideIcon name="sparkles" className="w-3.5 h-3.5" />
+                <span>{t.subtitle}</span>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
-                {t.heroTitle} <br class="hidden sm:inline" />
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+                {t.heroTitle} <br className="hidden sm:inline" />
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400">
                   {t.heroTitleColored}
                 </span>
               </h1>
 
-              <p className="max-w-2xl mx-auto text-lg text-slate-300 mb-10 leading-relaxed">
+              <p className="max-w-2xl mx-auto text-base sm:text-lg text-slate-300 mb-8 sm:mb-10 leading-relaxed px-2">
                 {t.heroDesc}
               </p>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto sm:max-w-none">
                 <button 
                   onClick={() => scrollTo('brain')}
-                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold flex items-center justify-center gap-2 transition shadow-xl shadow-indigo-600/25"
+                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold flex items-center justify-center gap-2 transition shadow-xl shadow-indigo-600/25 active:scale-95"
                 >
-                  {t.btnStart} <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                  <span>{t.btnStart}</span>
+                  <LucideIcon name="arrow-right" className="w-4 h-4" />
                 </button>
                 <button 
                   onClick={() => scrollTo('memory-task')}
-                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold border border-slate-700 transition"
+                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold border border-slate-700 transition active:scale-95"
                 >
                   {t.btnTryTests}
                 </button>
@@ -487,10 +559,10 @@
             </section>
 
             {/* MIS TOIMUB AJUS SECTION */}
-            <section id="brain" className="space-y-8">
+            <section id="brain" className="space-y-8 scroll-mt-20">
               <div className="text-center space-y-3">
-                <h2 className="text-3xl font-bold text-white">{t.brainSectionTitle}</h2>
-                <p className="text-slate-400 max-w-2xl mx-auto">{t.brainSectionDesc}</p>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white">{t.brainSectionTitle}</h2>
+                <p className="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base">{t.brainSectionDesc}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -500,43 +572,43 @@
                   return (
                     <div 
                       key={area.id}
-                      className={`p-6 rounded-2xl border transition-all duration-300 ${
+                      className={`p-5 sm:p-6 rounded-2xl border transition-all duration-300 flex flex-col justify-between ${
                         isExpanded 
                           ? 'bg-slate-800/90 border-indigo-500/50 shadow-2xl shadow-indigo-950/50' 
                           : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900'
                       }`}
                     >
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className="p-3 bg-indigo-600/20 border border-indigo-500/30 rounded-xl text-indigo-400">
-                            <i data-lucide={area.iconName} class="w-6 h-6"></i>
+                      <div>
+                        <div className="flex items-start space-x-4">
+                          <div className="p-3 bg-indigo-600/20 border border-indigo-500/30 rounded-xl text-indigo-400 flex-shrink-0">
+                            <LucideIcon name={area.iconName} className="w-6 h-6" />
                           </div>
                           <div>
-                            <h3 className="text-xl font-bold text-white">{area.title}</h3>
-                            <p className="text-xs text-indigo-300 font-medium">{area.subtitle}</p>
+                            <h3 className="text-lg sm:text-xl font-bold text-white leading-snug">{area.title}</h3>
+                            <p className="text-xs text-indigo-300 font-medium mt-0.5">{area.subtitle}</p>
                           </div>
                         </div>
+
+                        <p className="mt-4 text-slate-300 text-sm leading-relaxed">
+                          {area.shortDesc}
+                        </p>
+
+                        {isExpanded && (
+                          <div className="mt-6 pt-4 border-t border-slate-700/60 text-sm text-slate-300 space-y-3 whitespace-pre-line animate-fadeIn">
+                            {area.detailedText}
+                            <div className="pt-2 text-xs text-slate-500 italic">
+                              Viited: {area.citationIds.map(id => `[${id}]`).join(', ')}
+                            </div>
+                          </div>
+                        )}
                       </div>
-
-                      <p className="mt-4 text-slate-300 text-sm leading-relaxed">
-                        {area.shortDesc}
-                      </p>
-
-                      {isExpanded && (
-                        <div className="mt-6 pt-4 border-t border-slate-700/60 text-sm text-slate-300 space-y-3 whitespace-pre-line animate-fadeIn">
-                          {area.detailedText}
-                          <div className="pt-2 text-xs text-slate-500 italic">
-                            Viited: {area.citationIds.map(id => `[${id}]`).join(', ')}
-                          </div>
-                        </div>
-                      )}
 
                       <button
                         onClick={() => setExpandedCard(isExpanded ? null : area.id)}
-                        className="mt-6 w-full py-2 px-4 rounded-xl bg-slate-800 hover:bg-slate-700/80 text-xs font-semibold text-slate-200 border border-slate-700 flex items-center justify-center gap-2 transition"
+                        className="mt-6 w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700/80 text-xs font-semibold text-slate-200 border border-slate-700 flex items-center justify-center gap-2 transition active:scale-98"
                       >
-                        {isExpanded ? t.btnClose : t.btnReadMore}
-                        <i data-lucide="chevron-down" class={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}></i>
+                        <span>{isExpanded ? t.btnClose : t.btnReadMore}</span>
+                        <LucideIcon name="chevron-down" className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                       </button>
                     </div>
                   );
@@ -545,58 +617,58 @@
             </section>
 
             {/* INTERACTIVE MEMORY TASK */}
-            <section id="memory-task" className="p-8 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-8">
+            <section id="memory-task" className="p-5 sm:p-8 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-8 scroll-mt-20">
               <div className="max-w-2xl">
-                <h2 className="text-3xl font-bold text-white">{t.memoryTitle}</h2>
-                <p className="text-slate-400 text-sm mt-2">{t.memoryDesc}</p>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white">{t.memoryTitle}</h2>
+                <p className="text-slate-400 text-xs sm:text-sm mt-2">{t.memoryDesc}</p>
               </div>
-              <MemoryGame />
+              <MemoryGame lang={lang} />
             </section>
 
             {/* ATTENTION TASK */}
-            <section id="attention-task" className="p-8 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-8">
+            <section id="attention-task" className="p-5 sm:p-8 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-8 scroll-mt-20">
               <div className="max-w-2xl">
-                <h2 className="text-3xl font-bold text-white">{t.attentionTitle}</h2>
-                <p className="text-slate-400 text-sm mt-2">{t.attentionDesc}</p>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white">{t.attentionTitle}</h2>
+                <p className="text-slate-400 text-xs sm:text-sm mt-2">{t.attentionDesc}</p>
               </div>
               <AttentionGame />
             </section>
 
             {/* MYTH VS FACT QUIZ */}
-            <section id="quiz" className="space-y-8">
+            <section id="quiz" className="space-y-8 scroll-mt-20">
               <div className="text-center space-y-3">
-                <h2 className="text-3xl font-bold text-white">{t.quizTitle}</h2>
-                <p className="text-slate-400 max-w-xl mx-auto text-sm">{t.quizDesc}</p>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white">{t.quizTitle}</h2>
+                <p className="text-slate-400 max-w-xl mx-auto text-xs sm:text-sm">{t.quizDesc}</p>
               </div>
               <MythFactQuiz quizData={mythQuiz} />
             </section>
 
             {/* TELEGRAM QUESTIONNAIRE MODULE */}
-            <section id="feedback-form" className="p-8 rounded-3xl bg-slate-900/90 border border-indigo-500/40 space-y-8 relative overflow-hidden">
+            <section id="feedback-form" className="p-5 sm:p-8 rounded-3xl bg-slate-900/90 border border-indigo-500/40 space-y-8 relative overflow-hidden scroll-mt-20">
               <div className="max-w-2xl">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/80 border border-indigo-800/50 text-indigo-300 text-xs font-semibold uppercase mb-3">
                   Uurimistöö Küsimustik
                 </div>
-                <h2 className="text-3xl font-bold text-white">{t.surveyTitle}</h2>
-                <p className="text-slate-400 text-sm mt-2">{t.surveyDesc}</p>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white">{t.surveyTitle}</h2>
+                <p className="text-slate-400 text-xs sm:text-sm mt-2">{t.surveyDesc}</p>
               </div>
 
-              <TelegramFeedbackForm t={t} />
+              <TelegramFeedbackForm t={t} lang={lang} />
             </section>
 
             {/* SOURCES SECTION */}
-            <section id="sources" className="p-8 rounded-3xl bg-slate-900/50 border border-slate-800 space-y-6">
+            <section id="sources" className="p-5 sm:p-8 rounded-3xl bg-slate-900/50 border border-slate-800 space-y-6 scroll-mt-20">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-slate-800 rounded-lg text-slate-300">
-                  <i data-lucide="book-open" class="w-5 h-5"></i>
+                  <LucideIcon name="book-open" className="w-5 h-5" />
                 </div>
-                <h2 className="text-2xl font-bold text-white">{t.sourcesTitle}</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-white">{t.sourcesTitle}</h2>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {SCIENTIFIC_SOURCES.map((source) => (
-                  <div key={source.id} className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/40 text-sm space-y-1">
-                    <div className="flex items-center gap-2">
+                  <div key={source.id} className="p-3.5 sm:p-4 rounded-xl bg-slate-800/40 border border-slate-700/40 text-xs sm:text-sm space-y-1">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-bold text-indigo-400">[{source.id}]</span>
                       <span className="font-semibold text-slate-200">{source.authors} ({source.year}).</span>
                     </div>
@@ -608,13 +680,15 @@
             </section>
 
             {/* ABOUT PROJECT SECTION */}
-            <section className="p-8 rounded-3xl bg-slate-900/30 border border-slate-800/60 text-center space-y-4">
-              <h3 className="text-lg font-bold text-white">{t.aboutTitle}</h3>
-              <p className="text-sm text-slate-400 max-w-xl mx-auto">{t.aboutDesc}</p>
+            <section className="p-6 sm:p-8 rounded-3xl bg-slate-900/30 border border-slate-800/60 text-center space-y-4">
+              <h3 className="text-base sm:text-lg font-bold text-white">{t.aboutTitle}</h3>
+              <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">{t.aboutDesc}</p>
               
-              <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400 border-t border-slate-800/80 max-w-md mx-auto">
+              <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-xs text-slate-400 border-t border-slate-800/80 max-w-md mx-auto">
                 <div><strong className="text-slate-300">{t.authorLabel}</strong> Mihail Žiljajev</div>
-                <div><strong className="text-slate-300">{t.schoolLabel}</strong> Tallinna Linnamäe Vene Lütseum</div>
+                <div className="hidden sm:inline">•</div>
+                <div><strong className="text-slate-300">{t.schoolLabel}</strong> TLVL</div>
+                <div className="hidden sm:inline">•</div>
                 <div><strong className="text-slate-300">{t.yearLabel}</strong> 2026</div>
               </div>
             </section>
@@ -622,7 +696,7 @@
           </main>
 
           {/* FOOTER */}
-          <footer className="border-t border-slate-800 py-8 text-center text-xs text-slate-400">
+          <footer className="border-t border-slate-800 py-6 text-center text-xs text-slate-500 px-4">
             <p>© 2026 Alkohol ja aju. Praktiline töö. Kõik õigused kaitstud.</p>
           </footer>
 
@@ -631,20 +705,30 @@
     }
 
     // ==========================================
-    // UPDATED TELEGRAM FEEDBACK FORM
+    // TELEGRAM FEEDBACK FORM
     // ==========================================
-    function TelegramFeedbackForm({ t }) {
+    function TelegramFeedbackForm({ t, lang }) {
       const [formData, setFormData] = useState({
         school: '',
         grade: '',
         preKnowledge: '3',
-        qAge: 'Umbes kuni 25. eluaastani',
-        qMemory: 'Teave ei salvestunudki pikaajalisse mällu NMDA-retseptorite pärssimise tõttu',
-        qCoffee: 'Ei, need tekitavad vaid pettealuse ärksuse, maksamolekulide kiirus ei muutu',
+        qAge: t.optsQ1[2],
+        qMemory: t.optsQ2[1],
+        qCoffee: t.optsQ3[1],
         qClarity: '5',
-        qInteractive: 'Aju piirkondade ja funktsioonide kaardid',
+        qInteractive: t.optsQ5[0],
         qMythReflect: ''
       });
+
+      useEffect(() => {
+        setFormData(prev => ({
+          ...prev,
+          qAge: t.optsQ1[2],
+          qMemory: t.optsQ2[1],
+          qCoffee: t.optsQ3[1],
+          qInteractive: t.optsQ5[0]
+        }));
+      }, [lang]);
 
       const [status, setStatus] = useState({ loading: false, success: false, error: false });
 
@@ -653,7 +737,7 @@
         setStatus({ loading: true, success: false, error: false });
 
         const messageText = 
-          `📩 *UUS UURIMISTÖÖ VASTUS! (Alkohol ja aju)*\n\n` +
+          `📩 *UUS UURIMISTÖÖ VASTUS! (${lang.toUpperCase()})*\n\n` +
           `🏫 *Kool:* ${formData.school || "Pole märgitud"}\n` +
           `📚 *Klass:* ${formData.grade || "Pole märgitud"}\n` +
           `📊 *Enesehinnang enne (1-5):* ${formData.preKnowledge}\n\n` +
@@ -664,14 +748,13 @@
           `*LEHE HINDAMINE:*\n` +
           `⭐ *Arusaadavus (1-5):* ${formData.qClarity}\n` +
           `💡 *Parim element:* ${formData.qInteractive}\n` +
-          `💬 *Ümbermõeldud müüdid / arvamus:* ${formData.qMythReflect || "Puudub"}`;
+          `💬 *Arvamus / Müüdid:* ${formData.qMythReflect || "Puudub"}`;
 
         try {
-          const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          const res = await fetch('/api/telegram', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              chat_id: TELEGRAM_CHAT_ID,
               text: messageText,
               parse_mode: 'Markdown'
             })
@@ -680,7 +763,7 @@
           if (res.ok) {
             setStatus({ loading: false, success: true, error: false });
           } else {
-            throw new Error("Telegram API error");
+            throw new Error("API Proxy Error");
           }
         } catch (err) {
           setStatus({ loading: false, success: false, error: true });
@@ -691,7 +774,7 @@
         <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
           
           {/* BLOCK 1 */}
-          <div className="space-y-4 bg-slate-950/60 p-5 rounded-2xl border border-slate-800">
+          <div className="space-y-4 bg-slate-950/60 p-4 sm:p-5 rounded-2xl border border-slate-800">
             <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">{t.block1}</h3>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -751,9 +834,9 @@
                 onChange={(e) => setFormData({...formData, qAge: e.target.value})}
                 className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
               >
-                <option>Umbes kuni 14. eluaastani</option>
-                <option>Umbes kuni 18. eluaastani</option>
-                <option>Umbes kuni 25. eluaastani</option>
+                {t.optsQ1.map((opt, idx) => (
+                  <option key={idx} value={opt}>{opt}</option>
+                ))}
               </select>
             </div>
 
@@ -764,9 +847,9 @@
                 onChange={(e) => setFormData({...formData, qMemory: e.target.value})}
                 className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
               >
-                <option>Mälestused kustuvad ajust alles järgmisel päeval</option>
-                <option>Teave ei salvestunudki pikaajalisse mällu NMDA-retseptorite pärssimise tõttu</option>
-                <option>Inimene näeb lihtsalt unenägusid</option>
+                {t.optsQ2.map((opt, idx) => (
+                  <option key={idx} value={opt}>{opt}</option>
+                ))}
               </select>
             </div>
 
@@ -777,8 +860,9 @@
                 onChange={(e) => setFormData({...formData, qCoffee: e.target.value})}
                 className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
               >
-                <option>Jah, umbes poole võrra</option>
-                <option>Ei, need tekitavad vaid pettealuse ärksuse, maksamolekulide kiirus ei muutu</option>
+                {t.optsQ3.map((opt, idx) => (
+                  <option key={idx} value={opt}>{opt}</option>
+                ))}
               </select>
             </div>
           </div>
@@ -814,10 +898,9 @@
                 onChange={(e) => setFormData({...formData, qInteractive: e.target.value})}
                 className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
               >
-                <option>Aju piirkondade ja funktsioonide kaardid</option>
-                <option>Lühimälu harjutus (Memory Task)</option>
-                <option>Tähelepanu ja fookuse ruudustik (Attention Grid)</option>
-                <option>Müüt või fakt viktoriin</option>
+                {t.optsQ5.map((opt, idx) => (
+                  <option key={idx} value={opt}>{opt}</option>
+                ))}
               </select>
             </div>
 
@@ -828,7 +911,7 @@
                 placeholder="..."
                 value={formData.qMythReflect}
                 onChange={(e) => setFormData({...formData, qMythReflect: e.target.value})}
-                className="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500"
+                className="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500 resize-none"
               ></textarea>
             </div>
           </div>
@@ -836,7 +919,7 @@
           <button
             type="submit"
             disabled={status.loading}
-            className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-semibold rounded-xl text-sm transition shadow-lg shadow-indigo-600/20"
+            className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-semibold rounded-xl text-sm transition shadow-lg shadow-indigo-600/20 active:scale-98"
           >
             {status.loading ? t.sending : t.btnSend}
           </button>
@@ -859,7 +942,7 @@
     // ==========================================
     // MEMORY GAME SUB-COMPONENT
     // ==========================================
-    function MemoryGame() {
+    function MemoryGame({ lang }) {
       const [gameState, setGameState] = useState('idle');
       const [currentWords, setCurrentWords] = useState([]);
       const [selectedWords, setSelectedWords] = useState([]);
@@ -869,7 +952,8 @@
       const [distractionMath, setDistractionMath] = useState({ a: 7, b: 8 });
 
       const startTask = () => {
-        const randomSet = WORD_BANK[Math.floor(Math.random() * WORD_BANK.length)];
+        const wordBank = WORD_BANK_I18N[lang] || WORD_BANK_I18N.et;
+        const randomSet = wordBank[Math.floor(Math.random() * wordBank.length)];
         setCurrentWords(randomSet);
 
         const num1 = Math.floor(Math.random() * 12) + 5;
@@ -877,8 +961,8 @@
         setDistractionMath({ a: num1, b: num2 });
         setDistractionAnswer('');
 
-        const distractorWords = ["Aine", "Laine", "Närv", "Unetus", "Mõju", "Põhjus", "Maks", "Tase"];
-        const combined = [...randomSet, ...distractorWords].sort(() => Math.random() - 0.5);
+        const distractors = DISTRACTORS_I18N[lang] || DISTRACTORS_I18N.et;
+        const combined = [...randomSet, ...distractors].sort(() => Math.random() - 0.5);
         setOptionsGrid(combined);
 
         setSelectedWords([]);
@@ -920,7 +1004,7 @@
             <div className="text-center py-8 space-y-4 bg-slate-950/40 rounded-2xl border border-slate-800">
               <button
                 onClick={startTask}
-                className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-semibold text-white transition shadow-lg shadow-indigo-600/20"
+                className="px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-semibold text-white text-sm transition shadow-lg shadow-indigo-600/20 active:scale-95"
               >
                 Start Memory Task
               </button>
@@ -928,13 +1012,13 @@
           )}
 
           {gameState === 'memorizing' && (
-            <div className="text-center py-8 space-y-6 bg-slate-950/60 rounded-2xl border border-slate-800">
+            <div className="text-center py-8 space-y-6 bg-slate-950/60 rounded-2xl border border-slate-800 px-4">
               <div className="flex items-center justify-center space-x-2 text-indigo-400 font-bold text-lg">
                 <span>Timer: {timer}s</span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-lg mx-auto">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 max-w-lg mx-auto">
                 {currentWords.map((word, idx) => (
-                  <div key={idx} className="p-3 bg-slate-800 rounded-xl font-bold text-indigo-200 border border-slate-700">
+                  <div key={idx} className="p-3 bg-slate-800 rounded-xl font-bold text-indigo-200 border border-slate-700 text-xs sm:text-sm">
                     {word}
                   </div>
                 ))}
@@ -943,7 +1027,7 @@
           )}
 
           {gameState === 'distraction' && (
-            <div className="text-center py-8 space-y-4 bg-slate-950/60 rounded-2xl border border-slate-800 max-w-md mx-auto">
+            <div className="text-center py-8 space-y-4 bg-slate-950/60 rounded-2xl border border-slate-800 max-w-md mx-auto px-4">
               <form onSubmit={(e) => { e.preventDefault(); setGameState('recall'); }} className="space-y-4">
                 <div className="text-2xl font-extrabold text-indigo-300">
                   {distractionMath.a} + {distractionMath.b} = ?
@@ -953,10 +1037,11 @@
                   value={distractionAnswer}
                   onChange={(e) => setDistractionAnswer(e.target.value)}
                   required
-                  className="px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-center text-white font-bold w-32 focus:outline-none"
+                  autoFocus
+                  className="px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-center text-white font-bold w-32 focus:outline-none text-base"
                 />
                 <div>
-                  <button type="submit" className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-semibold text-white text-sm">
+                  <button type="submit" className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-semibold text-white text-xs sm:text-sm transition">
                     Next
                   </button>
                 </div>
@@ -965,13 +1050,13 @@
           )}
 
           {gameState === 'recall' && (
-            <div className="space-y-6 bg-slate-950/60 p-6 rounded-2xl border border-slate-800">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="space-y-6 bg-slate-950/60 p-4 sm:p-6 rounded-2xl border border-slate-800">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
                 {optionsGrid.map((word, idx) => (
                   <button
                     key={idx}
                     onClick={() => toggleWordSelect(word)}
-                    className={`p-3 rounded-xl text-sm font-semibold border transition ${
+                    className={`p-3 rounded-xl text-xs sm:text-sm font-semibold border transition ${
                       selectedWords.includes(word)
                         ? 'bg-indigo-600 text-white border-indigo-400'
                         : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
@@ -981,13 +1066,13 @@
                   </button>
                 ))}
               </div>
-              <div className="text-center pt-4">
+              <div className="text-center pt-2">
                 <button
                   onClick={() => setGameState('result')}
                   disabled={selectedWords.length === 0}
-                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-sm transition"
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-semibold rounded-xl text-xs sm:text-sm transition"
                 >
-                  View Score
+                  View Score ({selectedWords.length}/8)
                 </button>
               </div>
             </div>
@@ -995,8 +1080,8 @@
 
           {gameState === 'result' && (
             <div className="p-6 bg-slate-950/80 rounded-2xl border border-slate-800 text-center space-y-4">
-              <h3 className="text-2xl font-bold text-white">Score: {calculateScore()} / 8</h3>
-              <button onClick={startTask} className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-sm font-semibold border border-slate-700">
+              <h3 className="text-xl sm:text-2xl font-bold text-white">Score: {calculateScore()} / 8</h3>
+              <button onClick={startTask} className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs sm:text-sm font-semibold border border-slate-700 transition">
                 Retry
               </button>
             </div>
@@ -1049,28 +1134,33 @@
         if (updated[index].isTarget) setFoundCount(prev => prev + 1);
       };
 
+      const finishTask = () => {
+        if (timerRef.current) clearInterval(timerRef.current);
+        setGameState('result');
+      };
+
       return (
         <div className="space-y-6">
           {gameState === 'idle' && (
             <div className="text-center py-8 bg-slate-950/40 rounded-2xl border border-slate-800">
-              <button onClick={startAttentionTask} className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-semibold text-white transition">
+              <button onClick={startAttentionTask} className="px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-semibold text-white text-sm transition shadow-lg shadow-emerald-600/20 active:scale-95">
                 Start Attention Test
               </button>
             </div>
           )}
 
           {gameState === 'playing' && (
-            <div className="space-y-6 bg-slate-950/60 p-6 rounded-2xl border border-slate-800">
-              <div className="flex justify-between text-sm">
-                <span>Find: <strong className="text-amber-400">★</strong></span>
+            <div className="space-y-6 bg-slate-950/60 p-4 sm:p-6 rounded-2xl border border-slate-800">
+              <div className="flex justify-between items-center text-xs sm:text-sm font-medium">
+                <span>Find target: <strong className="text-amber-400 text-base">★</strong></span>
                 <span>Time: {time}s | Found: {foundCount}/{totalTargets}</span>
               </div>
-              <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-3">
                 {grid.map((cell, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleCellClick(idx)}
-                    className={`h-14 rounded-xl text-xl font-bold border transition ${
+                    className={`h-12 sm:h-14 rounded-xl text-lg sm:text-xl font-bold border transition active:scale-95 flex items-center justify-center ${
                       cell.clicked
                         ? cell.isTarget ? 'bg-emerald-600/30 border-emerald-500 text-emerald-300' : 'bg-rose-900/30 border-rose-500 text-rose-300'
                         : 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700'
@@ -1080,16 +1170,18 @@
                   </button>
                 ))}
               </div>
-              <button onClick={() => { clearInterval(timerRef.current); setGameState('result'); }} className="px-5 py-2 bg-slate-800 text-slate-200 rounded-xl text-xs border border-slate-700">
-                Finish
-              </button>
+              <div className="text-right pt-2">
+                <button onClick={finishTask} className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs border border-slate-700 transition">
+                  Finish
+                </button>
+              </div>
             </div>
           )}
 
           {gameState === 'result' && (
             <div className="p-6 bg-slate-950/80 rounded-2xl border border-slate-800 text-center space-y-4">
-              <h3 className="text-2xl font-bold text-white">Result: {foundCount} / {totalTargets} in {time}s</h3>
-              <button onClick={startAttentionTask} className="px-5 py-2 bg-slate-800 text-slate-200 rounded-xl text-sm font-semibold border border-slate-700">
+              <h3 className="text-xl sm:text-2xl font-bold text-white">Result: {foundCount} / {totalTargets} in {time}s</h3>
+              <button onClick={startAttentionTask} className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs sm:text-sm font-semibold border border-slate-700 transition">
                 Retry
               </button>
             </div>
@@ -1125,16 +1217,24 @@
 
       return (
         <div className="max-w-2xl mx-auto space-y-6">
-          <div className="p-8 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-6">
-            <h3 className="text-xl font-semibold text-white leading-snug">
+          <div className="p-5 sm:p-8 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-6">
+            <div className="text-xs text-indigo-400 font-bold uppercase tracking-wider">
+              {currentIndex + 1} / {quizData.length}
+            </div>
+
+            <h3 className="text-lg sm:text-xl font-semibold text-white leading-snug">
               "{currentItem.statement}"
             </h3>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <button
                 onClick={() => handleAnswer(false)}
                 disabled={isAnswered}
-                className="py-3.5 px-4 rounded-xl font-bold text-sm bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-slate-200"
+                className={`py-3.5 px-3 rounded-xl font-bold text-xs sm:text-sm border transition ${
+                  isAnswered && userAnswers[currentItem.id] === false
+                    ? 'bg-indigo-600 text-white border-indigo-500'
+                    : 'bg-slate-800 hover:bg-slate-700/80 border-slate-700 text-slate-200'
+                }`}
               >
                 MYTH / MÜÜT / МИФ
               </button>
@@ -1142,23 +1242,27 @@
               <button
                 onClick={() => handleAnswer(true)}
                 disabled={isAnswered}
-                className="py-3.5 px-4 rounded-xl font-bold text-sm bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-slate-200"
+                className={`py-3.5 px-3 rounded-xl font-bold text-xs sm:text-sm border transition ${
+                  isAnswered && userAnswers[currentItem.id] === true
+                    ? 'bg-indigo-600 text-white border-indigo-500'
+                    : 'bg-slate-800 hover:bg-slate-700/80 border-slate-700 text-slate-200'
+                }`}
               >
                 FACT / FAKT / ФАКТ
               </button>
             </div>
 
             {showExplanation && (
-              <div className={`p-4 rounded-2xl border text-sm space-y-2 animate-fadeIn ${
+              <div className={`p-4 rounded-2xl border text-xs sm:text-sm space-y-2 animate-fadeIn ${
                 isCorrect ? 'bg-emerald-950/40 border-emerald-800/60 text-emerald-200' : 'bg-rose-950/40 border-rose-800/60 text-rose-200'
               }`}>
-                <p className="text-xs text-slate-300 leading-relaxed">{currentItem.explanation}</p>
+                <p className="leading-relaxed">{currentItem.explanation}</p>
               </div>
             )}
 
             {isAnswered && currentIndex < quizData.length - 1 && (
-              <div className="text-right">
-                <button onClick={nextQuestion} className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-xs">
+              <div className="text-right pt-2">
+                <button onClick={nextQuestion} className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-xs sm:text-sm transition">
                   Next Question
                 </button>
               </div>
