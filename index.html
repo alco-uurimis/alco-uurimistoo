@@ -35,6 +35,14 @@
       border-color: rgba(99, 102, 241, 0.4);
       box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.2);
     }
+    /* Дополнительные стили для анимаций бутылок */
+    @keyframes pulseGlow {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(244, 63, 94, 0.4)); }
+      50% { filter: drop-shadow(0 0 20px rgba(244, 63, 94, 0.8)); }
+    }
+    .glow-bottle {
+      animation: pulseGlow 3s infinite ease-in-out;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white min-h-screen">
@@ -138,30 +146,162 @@
       return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none opacity-40" />;
     }
 
-    // Custom SVG Visuals for Brain & Alcohol
-    function BrainIllustration() {
+    // ==========================================
+    // НОВЫЙ ИНТЕРАКТИВНЫЙ МОДУЛЬ: 3D-ПОДОБНЫЙ МОЗГ С КЛИКАБЕЛЬНЫМИ ЗОНАМИ
+    // ==========================================
+    function InteractiveBrainModel({ lang }) {
+      const [selectedRegion, setSelectedRegion] = useState('hippocampus');
+
+      const regions = {
+        et: {
+          hippocampus: { name: "Hippokampus (Mälu)", desc: "Vastutab uute mälestuste eest. Alkohol blokeerib NMDA retseptoreid, põhjustades mälulünki (blackouts) [1].", color: "from-purple-500 to-indigo-600" },
+          cortex: { name: "Prefrontaalne korteks (Otsustamine)", desc: "Juhib kontrolli ja loogikat. Alkohol pärsib seda ala, suurendades impulsiivsust ja riskeerimist [1].", color: "from-blue-500 to-cyan-600" },
+          cerebellum: { name: "Väikeaju (Koordinatsioon)", desc: "Reguleerib tasakaalu ja reaktsiooni. Mõjutamisel tekib kohmakus ja aeglasem reageerimine [1].", color: "from-pink-500 to-rose-600" }
+        },
+        en: {
+          hippocampus: { name: "Hippocampus (Memory)", desc: "Responsible for new memories. Alcohol blocks NMDA receptors, causing blackouts [1].", color: "from-purple-500 to-indigo-600" },
+          cortex: { name: "Prefrontal Cortex (Decision Making)", desc: "Controls logic and restraint. Alcohol impairs this area, increasing impulsivity [1].", color: "from-blue-500 to-cyan-600" },
+          cerebellum: { name: "Cerebellum (Coordination)", desc: "Regulates balance and reaction time. Impairment leads to clumsiness and slowed responses [1].", color: "from-pink-500 to-rose-600" }
+        },
+        ru: {
+          hippocampus: { name: "Гиппокамп (Память)", desc: "Отвечает за формирование воспоминаний. Этанол блокирует рецепторы, вызывая провалы в памяти (блэкауты) [1].", color: "from-purple-500 to-indigo-600" },
+          cortex: { name: "Префронтальная кора (Решения)", desc: "Контролирует логику и поведение. Алкоголь угнетает её, повышая импульсивность и тягу к риску [1].", color: "from-blue-500 to-cyan-600" },
+          cerebellum: { name: "Мозжечок (Координация)", desc: "Отвечает за равновесие и скорость реакции. При угнетении нарушается координация движений [1].", color: "from-pink-500 to-rose-600" }
+        }
+      };
+
+      const tData = regions[lang] || regions.et;
+      const current = tData[selectedRegion];
+
       return (
-        <svg viewBox="0 0 400 240" className="w-full h-auto max-w-md mx-auto rounded-2xl border border-indigo-500/20 bg-slate-900/60 p-4 shadow-inner">
-          <defs>
-            <linearGradient id="gradBrain" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#818cf8" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#c084fc" stopOpacity="0.4" />
-            </linearGradient>
-            <linearGradient id="gradEthanol" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#f43f5e" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#fb7185" stopOpacity="0.2" />
-            </linearGradient>
-          </defs>
-          <path d="M 100 120 C 80 80, 130 30, 200 30 C 270 30, 330 70, 320 120 C 330 160, 290 200, 240 190 C 210 210, 160 210, 130 180 C 90 170, 80 140, 100 120 Z" 
-                fill="url(#gradBrain)" stroke="#a5b4fc" strokeWidth="2.5" strokeDasharray="6 3" />
-          <ellipse cx="180" cy="130" rx="35" ry="18" fill="#f43f5e" fillOpacity="0.5" stroke="#fda4af" strokeWidth="1.5" />
-          <text x="180" y="134" textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="bold">Hippocampus</text>
-          <path d="M 250 50 C 290 70, 300 110, 280 140 C 260 110, 250 80, 250 50 Z" fill="#6366f1" fillOpacity="0.5" />
-          <text x="270" y="95" textAnchor="middle" fill="#ffffff" fontSize="9" fontWeight="bold">Prefrontal Cortex</text>
-          <circle cx="160" cy="125" r="4" fill="#fb7185" />
-          <line x1="160" y1="125" x2="140" y2="100" stroke="#f43f5e" strokeWidth="1.5" />
-          <text x="125" y="95" fill="#f43f5e" fontSize="9" fontWeight="bold">NMDA Block (GABA↑)</text>
-        </svg>
+        <div className="p-6 rounded-3xl bg-slate-900/90 border border-indigo-500/30 space-y-6 shadow-2xl">
+          <div className="text-center space-y-2">
+            <span className="px-3 py-1 bg-indigo-950 border border-indigo-700/50 text-indigo-300 rounded-full text-xs font-bold uppercase tracking-wider">
+              {lang === 'et' ? 'Interaktiivne aju mudel' : lang === 'en' ? 'Interactive Brain Model' : 'Интерактивная модель мозга'}
+            </span>
+            <h3 className="text-xl sm:text-2xl font-bold text-white">
+              {lang === 'et' ? 'Klõpsake aju osadel, et näha toimet' : lang === 'en' ? 'Click brain parts to see effects' : 'Нажмите на зоны мозга для изучения'}
+            </h3>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-3">
+            {Object.keys(tData).map((key) => (
+              <button
+                key={key}
+                onClick={() => setSelectedRegion(key)}
+                className={`px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm border transition shadow-lg ${
+                  selectedRegion === key 
+                    ? 'bg-indigo-600 text-white border-indigo-400 scale-105' 
+                    : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+                }`}
+              >
+                {tData[key].name.split(' ')[0]}
+              </button>
+            ))}
+          </div>
+
+          {/* Визуальная интерактивная схема мозга */}
+          <div className="relative max-w-sm mx-auto h-48 bg-slate-950/80 rounded-2xl border border-slate-800 flex items-center justify-center p-4 overflow-hidden">
+            <div className={`absolute inset-0 bg-gradient-to-r ${current.color} opacity-20 transition-all duration-500 animate-pulse`}></div>
+            
+            <div className="relative z-10 text-center space-y-2 animate-fadeIn">
+              <div className="p-3 bg-slate-900/90 rounded-2xl border border-indigo-500/40 inline-block shadow-inner">
+                <LucideIcon name="brain" className="w-10 h-10 text-indigo-400 mx-auto" />
+              </div>
+              <h4 className="font-bold text-white text-base">{current.name}</h4>
+              <p className="text-xs text-slate-300 max-w-xs mx-auto leading-relaxed">{current.desc}</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ==========================================
+    // НОВЫЙ ИНТЕРАКТИВНЫЙ МОДУЛЬ: СИМУЛЯТОР АЛКОГОЛЬНЫХ БУТЫЛОК (БАР)
+    // ==========================================
+    function AlcoholBarSimulator({ lang }) {
+      const [drinksCount, setDrinksCount] = useState(0);
+      const [bloodAlcohol, setBloodAlcohol] = useState(0.0); // промилле
+
+      const addDrink = (promilleAdd) => {
+        setDrinksCount(prev => prev + 1);
+        setBloodAlcohol(prev => Number((prev + promilleAdd).toFixed(2)));
+      };
+
+      const resetBar = () => {
+        setDrinksCount(0);
+        setBloodAlcohol(0.0);
+      };
+
+      const getStatusText = () => {
+        if (bloodAlcohol === 0) return lang === 'et' ? 'Kaine / Selge meel' : lang === 'en' ? 'Sober / Clear minded' : 'Трезв / Ясный ум';
+        if (bloodAlcohol < 0.5) return lang === 'et' ? 'Kerge lõõgastus, tähelepanu hajub' : lang === 'en' ? 'Mild relaxation, slight attention drop' : 'Лёгкое расслабление, рассеянность внимания';
+        if (bloodAlcohol < 1.2) return lang === 'et' ? 'Koordinatsiooni langus, reaktsioon aeglustub' : lang === 'en' ? 'Coordination loss, slowed reaction' : 'Снижение координации, замедленная реакция';
+        return lang === 'et' ? 'Tugev joove, ohtlik mälulünkade ja kontrolli kaotuse risk!' : lang === 'en' ? 'Heavy intoxication, severe risk of blackouts!' : 'Сильное опьянение, риск провалов в памяти и потери контроля!';
+      };
+
+      return (
+        <div className="p-6 rounded-3xl bg-slate-900/90 border border-rose-500/30 space-y-6 shadow-2xl glow-bottle">
+          <div className="text-center space-y-2">
+            <span className="px-3 py-1 bg-rose-950 border border-rose-700/50 text-rose-300 rounded-full text-xs font-bold uppercase tracking-wider">
+              {lang === 'et' ? 'Interaktiivne baar / Alkohol' : lang === 'en' ? 'Interactive Bar / Alcohol' : 'Интерактивный бар / Алкоголь'}
+            </span>
+            <h3 className="text-xl sm:text-2xl font-bold text-white">
+              {lang === 'et' ? 'Katseta virtuaalsete pudelitega' : lang === 'en' ? 'Test with virtual bottles' : 'Симулятор дозировки и эффекта'}
+            </h3>
+            <p className="text-xs text-slate-400 max-w-md mx-auto">
+              {lang === 'et' ? 'Vali jook, et näha, kuidas etanool koguneb ja mõjutab aju toimimist.' : lang === 'en' ? 'Choose a drink to see how ethanol accumulates and affects brain function.' : 'Нажимайте на бутылки, чтобы увидеть рост промилле и влияние на мозг.'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3 max-w-md mx-auto">
+            <button 
+              onClick={() => addDrink(0.2)}
+              className="p-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-2xl flex flex-col items-center gap-2 transition active:scale-95 group"
+            >
+              <span className="text-2xl group-hover:scale-110 transition-transform">🍺</span>
+              <span className="text-xs font-bold text-slate-200">Õlu / Beer</span>
+              <span className="text-[10px] text-rose-400 font-semibold">+0.2‰</span>
+            </button>
+
+            <button 
+              onClick={() => addDrink(0.35)}
+              className="p-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-2xl flex flex-col items-center gap-2 transition active:scale-95 group"
+            >
+              <span className="text-2xl group-hover:scale-110 transition-transform">🍷</span>
+              <span className="text-xs font-bold text-slate-200">Vein / Wine</span>
+              <span className="text-[10px] text-rose-400 font-semibold">+0.35‰</span>
+            </button>
+
+            <button 
+              onClick={() => addDrink(0.6)}
+              className="p-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-2xl flex flex-col items-center gap-2 transition active:scale-95 group"
+            >
+              <span className="text-2xl group-hover:scale-110 transition-transform">🥃</span>
+              <span className="text-xs font-bold text-slate-200">Viin / Spirit</span>
+              <span className="text-[10px] text-rose-400 font-semibold">+0.6‰</span>
+            </button>
+          </div>
+
+          {/* Панель статуса */}
+          <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 max-w-md mx-auto text-center space-y-2">
+            <div className="flex justify-between items-center text-xs text-slate-400 font-medium px-2">
+              <span>{lang === 'et' ? 'Jooke kokku:' : lang === 'en' ? 'Total drinks:' : 'Всего порций:'} <strong className="text-white">{drinksCount}</strong></span>
+              <span>{lang === 'et' ? 'Hinnanguline tase:' : lang === 'en' ? 'Estimated level:' : 'Уровень:'} <strong className="text-rose-400 text-sm">{bloodAlcohol} ‰</strong></span>
+            </div>
+            <div className="p-3 bg-slate-900 rounded-xl border border-rose-500/20 text-xs font-bold text-rose-200">
+              {getStatusText()}
+            </div>
+            {drinksCount > 0 && (
+              <button 
+                onClick={resetBar}
+                className="mt-2 text-[11px] text-indigo-400 hover:underline font-semibold"
+              >
+                {lang === 'et' ? 'Nulli tulemus (kainene)' : lang === 'en' ? 'Reset bar' : 'Сбросить (протрезветь)'}
+              </button>
+            )}
+          </div>
+        </div>
       );
     }
 
@@ -175,6 +315,7 @@
         nav: {
           hero: "Avaleht",
           brain: "Mis toimub ajus?",
+          bar: "Virtuaalne baar",
           memory: "Mälutest",
           attention: "Tähelepanutest",
           quiz: "Müüt või fakt?",
@@ -190,19 +331,19 @@
         brainSectionDesc: "Klõpsa valdkonnal, et näha lähemat selgitust etanooli mõju kohta konkreetses ajuosas.",
         btnReadMore: "Loe rohkem teaduslikku tausta",
         btnClose: "Sulge selgitus",
-        memoryTitle: "3. Pane oma mälu proovile",
+        memoryTitle: "4. Pane oma mälu proovile",
         memoryDesc: "See on üldine lühimälu harjutus teabe säilitamise demonstreerimiseks. See EI SIMULEERI ega diagnoosi alkoholijoovet.",
-        attentionTitle: "4. Kui tähelepanelik sa oled?",
+        attentionTitle: "5. Kui tähelepanelik sa oled?",
         attentionDesc: "Leia ruudustikust üles kõik märgitud sihtsümbolid nii kiiresti ja täpselt kui võimalik.",
-        quizTitle: "5. Müüt või fakt?",
+        quizTitle: "6. Müüt või fakt?",
         quizDesc: "KONTROLLI OMA TEADMISI: Vali, kas esitatud väide on tõene fakt või levinud müüt.",
-        sourcesTitle: "7. Allikad ja viited (Teaduskirjandus)",
+        sourcesTitle: "8. Allikad ja viited (Teaduskirjandus)",
         aboutTitle: "Projektist",
         aboutDesc: "See veebikeskkond on loodud 11. klassi praktilise töö raames gümnaasiumiõpilastele hariduslikul eesmärgil.",
         authorLabel: "Autor:",
         schoolLabel: "Kool:",
         yearLabel: "Aasta:",
-        surveyTitle: "6. Osale uurimuses ja anna tagasisidet",
+        surveyTitle: "7. Osale uurimuses ja anna tagasisidet",
         surveyDesc: "Palun vasta järgmistele küsimustele. Sinu vastused aitavad täiendada praktilise töö analüüsi ja saadetakse otse uurimistöö autorile.",
         block1: "Plokk 1: Demograafia ja algseis",
         schoolInput: "Kool:",
@@ -222,7 +363,7 @@
         btnSend: "Saada vastused uurijale",
         sending: "Saadab vastuseid...",
         sendSuccess: "Suur tänu! Sinu vastused on edukalt saadetud.",
-        sendError: "Viga saatmisel. Kontrolli internetiühendust.",
+        sendError: "Viga saatmisel. Kontrolli, kas oled botile ( /start ) kirjutanud ja proovi uuesti.",
         optsQ1: ["Umbes kuni 14. eluaastani", "Umbes kuni 18. eluaastani", "Umbes kuni 25. eluaastani"],
         optsQ3: ["Jah, umbes poole võrra", "Ei, need tekitavad vaid pettealuse ärksuse, maksamolekulide kiirus ei muutu"],
         optsQ5: ["Aju piirkondade ja funktsioonide kaardid", "Lühimälu harjutus (Memory Task)", "Tähelepanu ja fookuse ruudustik (Attention Grid)", "Müüt või fakt viktoriin"],
@@ -235,6 +376,7 @@
         nav: {
           hero: "Home",
           brain: "Brain Mechanisms",
+          bar: "Virtual Bar",
           memory: "Memory Test",
           attention: "Attention Test",
           quiz: "Myth or Fact?",
@@ -250,19 +392,19 @@
         brainSectionDesc: "Click on a domain to read a detailed explanation of ethanol's effects on specific brain regions.",
         btnReadMore: "Read scientific background",
         btnClose: "Close explanation",
-        memoryTitle: "3. Test your memory",
+        memoryTitle: "4. Test your memory",
         memoryDesc: "This is a general short-term memory exercise. It DOES NOT simulate or diagnose alcohol intoxication.",
-        attentionTitle: "4. How attentive are you?",
+        attentionTitle: "5. How attentive are you?",
         attentionDesc: "Find and click all target symbols in the grid as quickly and accurately as possible.",
-        quizTitle: "5. Myth or Fact?",
+        quizTitle: "6. Myth or Fact?",
         quizDesc: "TEST YOUR KNOWLEDGE: Choose whether the statement is a true fact or a common myth.",
-        sourcesTitle: "7. Sources & References (Scientific Literature)",
+        sourcesTitle: "8. Sources & References (Scientific Literature)",
         aboutTitle: "About the Project",
         aboutDesc: "This web environment was developed for educational purposes as part of an 11th-grade research project.",
         authorLabel: "Author:",
         schoolLabel: "School:",
         yearLabel: "Year:",
-        surveyTitle: "6. Participate in the study & give feedback",
+        surveyTitle: "7. Participate in the study & give feedback",
         surveyDesc: "Please answer the following questions. Your responses will help complement the research analysis and will be sent directly to the author.",
         block1: "Block 1: Demographics & Initial Knowledge",
         schoolInput: "School:",
@@ -282,7 +424,7 @@
         btnSend: "Submit answers to researcher",
         sending: "Submitting...",
         sendSuccess: "Thank you! Your responses have been sent successfully.",
-        sendError: "Error sending data. Please check your internet connection.",
+        sendError: "Error sending data. Please make sure you started the bot via /start and try again.",
         optsQ1: ["Until about 14 years old", "Until about 18 years old", "Until about 25 years old"],
         optsQ3: ["Yes, by about half", "No, they only create a false sense of alertness; liver enzyme activity remains unchanged"],
         optsQ5: ["Brain region & function cards", "Short-term memory exercise", "Attention grid exercise", "Myth or Fact quiz"],
@@ -294,10 +436,11 @@
         subtitle: "Практическая работа 11 класса • Обучающая веб-платформа",
         nav: {
           hero: "Главная",
-          brain: "Что происходит с мозгом?",
-          memory: "Тест памяти",
-          attention: "Тест внимания",
-          quiz: "Миф или факт?",
+          brain: "Мозг",
+          bar: "Вирт. Бар",
+          memory: "Память",
+          attention: "Внимание",
+          quiz: "Миф/Факт",
           feedback: "Опросник",
           sources: "Источники"
         },
@@ -310,19 +453,19 @@
         brainSectionDesc: "Нажмите на нужную область, чтобы прочитать подробное объяснение воздействия этанола.",
         btnReadMore: "Читать научное обоснование",
         btnClose: "Закрыть описание",
-        memoryTitle: "3. Проверьте свою память",
+        memoryTitle: "4. Проверьте свою память",
         memoryDesc: "Это упражнение для проверки кратковременной памяти. Оно НЕ СИМУЛИРУЕТ и не диагностирует состояние алкогольного опьянения.",
-        attentionTitle: "4. Насколько вы внимательны?",
+        attentionTitle: "5. Насколько вы внимательны?",
         attentionDesc: "Найдите и нажмите все отмеченные символы в сетке как можно быстрее и точнее.",
-        quizTitle: "5. Миф или факт?",
+        quizTitle: "6. Миф или факт?",
         quizDesc: "ПРОВЕРЬТЕ СВОИ ЗНАНИЯ: Выберите, является ли утверждение достоверным фактом или распространенным мифом.",
-        sourcesTitle: "7. Источники и литература (Научные публикации)",
+        sourcesTitle: "8. Источники и литература (Научные публикации)",
         aboutTitle: "О проекте",
         aboutDesc: "Этот веб-ресурс создан в образовательных целях в рамках практической исследовательской работы 11 класса.",
         authorLabel: "Автор:",
         schoolLabel: "Школа:",
         yearLabel: "Год:",
-        surveyTitle: "6. Примите участие в исследовании и оставьте отзыв",
+        surveyTitle: "7. Примите участие в исследовании и оставьте отзыв",
         surveyDesc: "Пожалуйста, ответьте на вопросы ниже. Ваши ответы помогут дополнить анализ практической работы и будут отправлены напрямую автору.",
         block1: "Блок 1: Демография и начальный уровень",
         schoolInput: "Школа:",
@@ -342,7 +485,7 @@
         btnSend: "Отправить ответы автору",
         sending: "Отправка...",
         sendSuccess: "Большое спасибо! Ваши ответы успешно отправлены.",
-        sendError: "Ошибка при отправке. Проверьте подключение к интернету.",
+        sendError: "Ошибка при отправке. Убедитесь, что вы нажали /start в боте, и попробуйте снова.",
         optsQ1: ["Примерно до 14 лет", "Примерно до 18 лет", "Примерно до 25 лет"],
         optsQ3: ["Да, примерно в два раза", "Нет, они лишь создают иллюзию бодрости, скорость ферментов печени не меняется"],
         optsQ5: ["Карточки областей мозга и их функций", "Упражнение на кратковременную память", "Сетка внимания и концентрации", "Викторина «Миф или факт»"],
@@ -359,8 +502,8 @@
           subtitle: 'Kuidas alkohol segab mälestuste salvestamist',
           iconName: 'brain',
           shortDesc: 'Alkohol pärsib hippokampuse funktsiooni, mis on hädavajalik uue teabe kinnistamiseks lühimälust pikaajalisse mällu.',
-          detailedText: `Alkohol mõjutab otseselt hippokampust — ajuosa, mis vastutab uute mälestuste moodustamise ja õppimise eest [3, 8]. Ägeda joobe korral pärsib etanool NMDA-glutamaadi retseptoreid, takistades pikaajalist potentsreerumist (LTP) [1, 3].\n\nSee võib põhjustada mälulünki (blackouts), kus inimene on ärkvel, kuid aju ei salvesta toimuvat pikaajalisse mällu [3].`,
-          citationIds: [1, 3, 4, 5, 8]
+          detailedText: `Alkohol mõjutab otseselt hippokampust — ajuosa, mis vastutab uute mälestuste moodustamise ja õppimise eest[cite: 1]. Ägeda joobe korral pärsib etanool NMDA-glutamaadi retseptoreid, takistades pikaajalist potentsreerumist (LTP)[cite: 1].\n\nSee võib põhjustada mälulünki (blackouts), kus inimene on ärkvel, kuid aju ei salvesta toimuvat pikaajalisse mällu[cite: 1].`,
+          citationIds: [1]
         },
         {
           id: 'attention',
@@ -368,8 +511,8 @@
           subtitle: 'Keskendumisvõime ja tähelepanu jaotamine',
           iconName: 'target',
           shortDesc: 'Prefrontaalne korteks ehk otsmikusagar kaotab võime tõhusalt filtreerida stiimuleid ja hoida fookust.',
-          detailedText: `Prefrontaalne korteks (otsmikusagar) on aju juhtimiskeskus [5, 9]. Alkohol tugevdab GABA-A retseptorite pärssivat mõju, mis aeglustab närviimpulsside edastamist tähelepanukeskustes [8].\n\nTulemuseks on selektiivse tähelepanu nõrgenemine ja raskused fookuse hoidmisel [6].`,
-          citationIds: [5, 6, 8, 9]
+          detailedText: `Prefrontaalne korteks (otsmikusagar) on aju juhtimiskeskus[cite: 1]. Alkohol tugevdab GABA-A retseptorite pärssivat mõju, mis aeglustab närviimpulsside edastamist tähelepanukeskustes[cite: 1].\n\nTulemuseks on selektiivse tähelepanu nõrgenemine ja raskused fookuse hoidmisel[cite: 1].`,
+          citationIds: [1]
         },
         {
           id: 'reaction',
@@ -377,8 +520,8 @@
           subtitle: 'Signaalide aeglustumine ja koordinatsioon',
           iconName: 'activity',
           shortDesc: 'Väikeaju (cerebellum) pärssimine pikendab reageerimisaega ja halvendab tasakaalu.',
-          detailedText: `Reaktsiooniaeg sõltub visuaalse signaali töötlemisest ja mootorsignaali edastamisest [6]. Alkohol pärsib väikeaju (cerebellum), mis halvendab peenmotoorikat ja pikendab reageerimisaega ohtudele.`,
-          citationIds: [1, 6]
+          detailedText: `Reaktsiooniaeg sõltub visuaalse signaali töötlemisest ja mootorsignaali edastamisest[cite: 1]. Alkohol pärsib väikeaju (cerebellum), mis halvendab peenmotoorikat ja pikendab reageerimisaega ohtudele.`,
+          citationIds: [1]
         },
         {
           id: 'decision',
@@ -386,8 +529,8 @@
           subtitle: 'Raskused riskide hindamisel',
           iconName: 'shield-alert',
           shortDesc: 'Inhibitsioonide vähenemine viib kriitilise mõtlemise halvenemiseni ja riskantsuse suurenemiseni.',
-          detailedText: `Prefrontaalne korteks areneb täielikult umbes 25. eluaastaks [4, 5]. Alkohol pärsib ihade ja impulsside pidurdamist (response inhibition), suurendades riskeerivat käitumist [1, 5, 6].`,
-          citationIds: [1, 4, 5, 6]
+          detailedText: `Prefrontaalne korteks areneb täielikult umbes 25. eluaastaks[cite: 1]. Alkohol pärsib ihade ja impulsside pidurdamist (response inhibition), suurendades riskeerivat käitumist[cite: 1].`,
+          citationIds: [1]
         }
       ],
       en: [
@@ -397,8 +540,8 @@
           subtitle: 'How alcohol impairs memory formation',
           iconName: 'brain',
           shortDesc: 'Alcohol suppresses hippocampal function, essential for consolidating memory.',
-          detailedText: `Ethanol inhibits NMDA glutamate receptors in the hippocampus, preventing LTP [1, 3]. This produces blackouts where memories fail to form [3].`,
-          citationIds: [1, 3, 4, 5, 8]
+          detailedText: `Ethanol inhibits NMDA glutamate receptors in the hippocampus, preventing LTP[cite: 1]. This produces blackouts where memories fail to form[cite: 1].`,
+          citationIds: [1]
         },
         {
           id: 'attention',
@@ -406,8 +549,8 @@
           subtitle: 'Focus and cognitive control',
           iconName: 'target',
           shortDesc: 'The prefrontal cortex loses focus control due to GABA-A receptor enhancement.',
-          detailedText: `Alcohol slows down executive function networks in the frontal lobe, impairing working memory and attention filtering [5, 8].`,
-          citationIds: [5, 6, 8, 9]
+          detailedText: `Alcohol slows down executive function networks in the frontal lobe, impairing working memory and attention filtering[cite: 1].`,
+          citationIds: [1]
         },
         {
           id: 'reaction',
@@ -415,8 +558,8 @@
           subtitle: 'Coordination and delay',
           iconName: 'activity',
           shortDesc: 'Cerebellar suppression delays motor reaction times.',
-          detailedText: `Synaptic transmission in the cerebellum is dampened, prolonging motor reaction latency [1, 6].`,
-          citationIds: [1, 6]
+          detailedText: `Synaptic transmission in the cerebellum is dampened, prolonging motor reaction latency[cite: 1].`,
+          citationIds: [1]
         },
         {
           id: 'decision',
@@ -424,8 +567,8 @@
           subtitle: 'Risk evaluation failure',
           iconName: 'shield-alert',
           shortDesc: 'Decreased response inhibition promotes impulsive behavior.',
-          detailedText: `Because the prefrontal cortex matures around age 25, alcohol severely impairs risk perception in young individuals [4, 5].`,
-          citationIds: [1, 4, 5, 6]
+          detailedText: `Because the prefrontal cortex matures around age 25, alcohol severely impairs risk perception in young individuals[cite: 1].`,
+          citationIds: [1]
         }
       ],
       ru: [
@@ -435,8 +578,8 @@
           subtitle: 'Блокировка сохранения воспоминаний',
           iconName: 'brain',
           shortDesc: 'Этанол угнетает функцию гиппокампа, нарушая консолидацию воспоминаний.',
-          detailedText: `Блокада NMDA-рецепторов глутамата в гиппокампе препятствует возникновению долговременной потенциации (LTP) [1, 3], вызывая блэкауты [3].`,
-          citationIds: [1, 3, 4, 5, 8]
+          detailedText: `Блокада NMDA-рецепторов глутамата в гиппокампе препятствует возникновению долговременной потенциации (LTP)[cite: 1], вызывая блэкауты[cite: 1].`,
+          citationIds: [1]
         },
         {
           id: 'attention',
@@ -444,8 +587,8 @@
           subtitle: 'Концентрация и контроль',
           iconName: 'target',
           shortDesc: 'Префронтальная кора теряет способность фильтровать фоновые раздражители.',
-          detailedText: `Усиление тормозного действия ГАМК-А рецепторов замедляет передачу сигналов в управляющих сетях мозга [5, 8].`,
-          citationIds: [5, 6, 8, 9]
+          detailedText: `Усиление тормозного действия ГАМК-А рецепторов замедляет передачу сигналов в управляющих сетях мозга[cite: 1].`,
+          citationIds: [1]
         },
         {
           id: 'reaction',
@@ -453,8 +596,8 @@
           subtitle: 'Замедление и координация',
           iconName: 'activity',
           shortDesc: 'Подавление мозжечка увеличивает время реакции на внешние стимулы.',
-          detailedText: `Алкоголь задерживает прохождение синаптических импульсов к моторным центрам [1, 6].`,
-          citationIds: [1, 6]
+          detailedText: `Алкоголь задерживает прохождение синаптических импульсов к моторным центрам[cite: 1].`,
+          citationIds: [1]
         },
         {
           id: 'decision',
@@ -462,8 +605,8 @@
           subtitle: 'Сбои оценки рисков',
           iconName: 'shield-alert',
           shortDesc: 'Снижение самоконтроля ведет к необдуманным рискам.',
-          detailedText: `Развивающаяся до 25 лет префронтальная кора теряет способность сдерживать импульсивные порывы [4, 5].`,
-          citationIds: [1, 4, 5, 6]
+          detailedText: `Развивающаяся до 25 лет префронтальная кора теряет способность сдерживать импульсивные порывы[cite: 1].`,
+          citationIds: [1]
         }
       ]
     };
@@ -482,22 +625,22 @@
 
     const MYTH_FACT_QUIZ_I18N = {
       et: [
-        { id: 1, statement: "Tass kanget kohvi või külm dušš aitavad alkoholist kiiremini kaineda.", isFact: false, explanation: "MÜÜT! Kohv ega külm dušš ei kiirenda maksas etanooli lagundamist. Maks lagundab alkoholi keskmiselt umbes 0.1–0.15 promilli tunnis [1]." },
-        { id: 2, statement: "Nooruki aju on alkoholi mõjude suhtes tundlikum kui täiskasvanu aju.", isFact: true, explanation: "FAKT! Kuna prefrontaalne korteks ja müeliniseerumine jätkuvad kuni umbes 25. eluaastani, on nooruki aju vastuvõtlikum neurotoksilistele mõjudele [4, 5]." },
-        { id: 3, statement: "Alkoholile järgnev mälulünk (blackout) tähendab lihtsalt seda, et asjad ununesid hiljem ära.", isFact: false, explanation: "MÜÜT! Mälulünga ajal teave EI SALVESTUNUDKI pikaajalisse mällu NMDA-retseptorite pärssimise tõttu [3]." },
-        { id: 4, statement: "Väikeses koguses alkoholi tarvitamine on südame-veresoonkonnale kasulik.", isFact: false, explanation: "MÜÜT! Kaasaegsed Mendeli randomiseerimise uuringud näitavad, et igasugune alkoholitarvitamine suurendab vererõhu- ja insuldiriski [7]." }
+        { id: 1, statement: "Tass kanget kohvi või külm dušš aitavad alkoholist kiiremini kaineda.", isFact: false, explanation: "MÜÜT! Kohv ega külm dušš ei kiirenda maksas etanooli lagundamist. Maks lagundab alkoholi keskmiselt umbes 0.1–0.15 promilli tunnis[cite: 1]." },
+        { id: 2, statement: "Nooruki aju on alkoholi mõjude suhtes tundlikum kui täiskasvanu aju.", isFact: true, explanation: "FAKT! Kuna prefrontaalne korteks ja müeliniseerumine jätkuvad kuni umbes 25. eluaastani, on nooruki aju vastuvõtlikum neurotoksilistele mõjudele[cite: 1]." },
+        { id: 3, statement: "Alkoholile järgnev mälulünk (blackout) tähendab lihtsalt seda, et asjad ununesid hiljem ära.", isFact: false, explanation: "MÜÜT! Mälulünga ajal teave EI SALVESTUNUDKI pikaajalisse mällu NMDA-retseptorite pärssimise tõttu[cite: 1]." },
+        { id: 4, statement: "Väikeses koguses alkoholi tarvitamine on südame-veresoonkonnale kasulik.", isFact: false, explanation: "MÜÜT! Kaasaegsed Mendeli randomiseerimise uuringud näitavad, et igasugune alkoholitarvitamine suurendab vererõhu- ja insuldiriski[cite: 1]." }
       ],
       en: [
-        { id: 1, statement: "A cup of strong coffee or a cold shower helps you sober up faster.", isFact: false, explanation: "MYTH! Coffee or cold showers do not speed up ethanol metabolism in the liver [1]." },
-        { id: 2, statement: "An adolescent brain is more vulnerable to alcohol than an adult brain.", isFact: true, explanation: "FACT! Because the prefrontal cortex develops until around age 25, young brains are structurally more sensitive to neurotoxic damage [4, 5]." },
-        { id: 3, statement: "An alcohol blackout just means you forgot what happened later.", isFact: false, explanation: "MYTH! Information was NEVER saved to long-term memory due to NMDA receptor blockade [3]." },
-        { id: 4, statement: "Moderate alcohol consumption is good for cardiovascular health.", isFact: false, explanation: "MYTH! Genetic studies show that any alcohol intake increases hypertension and stroke risks [7]." }
+        { id: 1, statement: "A cup of strong coffee or a cold shower helps you sober up faster.", isFact: false, explanation: "MYTH! Coffee or cold showers do not speed up ethanol metabolism in the liver[cite: 1]." },
+        { id: 2, statement: "An adolescent brain is more vulnerable to alcohol than an adult brain.", isFact: true, explanation: "FACT! Because the prefrontal cortex develops until around age 25, young brains are structurally more sensitive to neurotoxic damage[cite: 1]." },
+        { id: 3, statement: "An alcohol blackout just means you forgot what happened later.", isFact: false, explanation: "MYTH! Information was NEVER saved to long-term memory due to NMDA receptor blockade[cite: 1]." },
+        { id: 4, statement: "Moderate alcohol consumption is good for cardiovascular health.", isFact: false, explanation: "MYTH! Genetic studies show that any alcohol intake increases hypertension and stroke risks[cite: 1]." }
       ],
       ru: [
-        { id: 1, statement: "Чашка крепкого кофе или холодный душ помогают быстрее протрезветь.", isFact: false, explanation: "МИФ! Кофе и душ не ускоряют расщепление этанола печенью [1]." },
-        { id: 2, statement: "Мозг подростка более уязвим к алкоголю, чем мозг взрослого.", isFact: true, explanation: "ФАКТ! Так как префронтальная кора созревает примерно до 25 лет, развивающийся мозг более чувствителен к повреждениям [4, 5]." },
-        { id: 3, statement: "Алкогольный блэкаут означает, что человек просто забыл события позже.", isFact: false, explanation: "МИФ! Во время блэкаута информация ВООБЩЕ НЕ ЗАПИСЫВАЛАСЬ в долговременную память [3]." },
-        { id: 4, statement: "Употребление алкоголя в малых дозах полезно для сердца и сосудов.", isFact: false, explanation: "МИФ! Генетические исследования показывают, что любые дозы алкоголя повышают риск гипертонии [7]." }
+        { id: 1, statement: "Чашка крепкого кофе или холодный душ помогают быстрее протрезветь.", isFact: false, explanation: "МИФ! Кофе и душ не ускоряют расщепление этанола печенью[cite: 1]." },
+        { id: 2, statement: "Мозг подростка более уязвим к алкоголю, чем мозг взрослого.", isFact: true, explanation: "ФАКТ! Так как префронтальная кора созревает примерно до 25 лет, развивающийся мозг более чувствителен к повреждениям[cite: 1]." },
+        { id: 3, statement: "Алкогольный блэкаут означает, что человек просто забыл события позже.", isFact: false, explanation: "МИФ! Во время блэкаута информация ВООБЩЕ НЕ ЗАПИСЫВАЛАСЬ в долговременную память[cite: 1]." },
+        { id: 4, statement: "Употребление алкоголя в малых дозах полезно для сердца и сосудов.", isFact: false, explanation: "МИФ! Генетические исследования показывают, что любые дозы алкоголя повышают риск гипертонии[cite: 1]." }
       ]
     };
 
@@ -564,6 +707,7 @@
                 {[
                   { id: 'hero', label: t.nav.hero },
                   { id: 'brain', label: t.nav.brain },
+                  { id: 'bar-sim', label: t.nav.bar },
                   { id: 'memory-task', label: t.nav.memory },
                   { id: 'attention-task', label: t.nav.attention },
                   { id: 'quiz', label: t.nav.quiz },
@@ -612,6 +756,7 @@
                 {[
                   { id: 'hero', label: t.nav.hero },
                   { id: 'brain', label: t.nav.brain },
+                  { id: 'bar-sim', label: t.nav.bar },
                   { id: 'memory-task', label: t.nav.memory },
                   { id: 'attention-task', label: t.nav.attention },
                   { id: 'quiz', label: t.nav.quiz },
@@ -658,12 +803,7 @@
                   {t.heroDesc}
                 </p>
 
-                {/* VISUAL ILLUSTRATION */}
-                <div className="pt-4 pb-2">
-                  <BrainIllustration />
-                </div>
-
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto sm:max-w-none">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto sm:max-w-none pt-4">
                   <button 
                     onClick={() => scrollTo('brain')}
                     className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold flex items-center justify-center gap-2 transition shadow-xl shadow-indigo-600/25 active:scale-95"
@@ -672,10 +812,11 @@
                     <LucideIcon name="arrow-right" className="w-4 h-4" />
                   </button>
                   <button 
-                    onClick={() => scrollTo('memory-task')}
-                    className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold border border-slate-700 transition active:scale-95"
+                    onClick={() => scrollTo('bar-sim')}
+                    className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-rose-600/80 hover:bg-rose-500 text-white font-semibold flex items-center justify-center gap-2 transition shadow-xl shadow-rose-600/20 active:scale-95"
                   >
-                    {t.btnTryTests}
+                    <span>{lang === 'et' ? 'Virtuaalne baar' : lang === 'en' ? 'Virtual Bar' : 'Симулятор бара'}</span>
+                    <span className="text-lg">🍺</span>
                   </button>
                 </div>
               </div>
@@ -688,7 +829,10 @@
                 <p className="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base">{t.brainSectionDesc}</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Интерактивная 3D-модель мозга */}
+              <InteractiveBrainModel lang={lang} />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
                 {brainAreas.map((area) => {
                   const isExpanded = expandedCard === area.id;
 
@@ -735,6 +879,11 @@
                   );
                 })}
               </div>
+            </section>
+
+            {/* BAR SIMULATOR SECTION */}
+            <section id="bar-sim" className="space-y-8 scroll-mt-20">
+              <AlcoholBarSimulator lang={lang} />
             </section>
 
             {/* MEMORY TASK */}
@@ -876,22 +1025,29 @@
           `💡 *Parim element:* ${formData.qInteractive}\n` +
           `💬 *Arvamus / Müüdid:* ${formData.qMythReflect || "Puudub"}`;
 
+        const BOT_TOKEN = '8322607707:AAGg_C72l99Vh1rck5iE6uszzd9azRNlfB4';
+        const CHAT_ID = '1065529492';
+
         try {
-          const res = await fetch('/api/telegram', {
+          const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+              chat_id: CHAT_ID,
               text: messageText,
               parse_mode: 'Markdown'
             })
           });
 
-          if (res.ok) {
+          const data = await res.json();
+
+          if (res.ok && data.ok) {
             setStatus({ loading: false, success: true, error: false });
           } else {
-            throw new Error("API Proxy Error");
+            throw new Error(data.description || "Telegram API Error");
           }
         } catch (err) {
+          console.error(err);
           setStatus({ loading: false, success: false, error: true });
         }
       };
